@@ -15,7 +15,7 @@
 
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-		parser = window.excelFormulaUtilities.parser = {},
+		parser = excelFormulaUtilities.parser = {},
 		core = window.excelFormulaUtilities.core,
 		formatStr = window.excelFormulaUtilities.string.formatStr,
 	
@@ -532,7 +532,7 @@
         tokens = new F_tokens();
 
         while (tokens2.moveNext()) {
-            if (tokens2.current().type != TOK_TYPE_NOOP) { 
+            if (tokens2.current().type.toString() !== TOK_TYPE_NOOP) { 
 				tokens.addRef(tokens2.current());
 			}
         }
@@ -550,9 +550,9 @@
      * @param {object} options optional param
      * @returns {string}
      */
-	var formatFormula = excelFormulaUtilities.formatFormula  = function (formula) {
+	var formatFormula = parser.formatFormula  = function (formula, options) {
         var isFirstToken = true;
-		var useOverrideFunction = false;
+		//var useOverrideFunction = false;
 		
 		var defaultOptions = {
 			tmplFunctionStart: "{{token}}(\n",
@@ -570,9 +570,8 @@
 			tmplIndent: "\t"
 		};
 		
-		var options;
-		if (arguments[1]) {
-			options = core.extend(true, defaultOptions, arguments[1]);
+		if (options) {
+			options = core.extend(true, defaultOptions, options);
 		} else {
 			options = defaultOptions;
 		}
@@ -601,36 +600,42 @@
 
 			var token = tokens.current();
 
-			if (token.subtype == TOK_SUBTYPE_STOP) indentCount -= ((indentCount > 0) ? 1 : 0);
+			if (token.subtype.toString() === TOK_SUBTYPE_STOP) {
+				indentCount -= ((indentCount > 0) ? 1 : 0);
+			}
 
-			var tokenString = ((token.value.length == 0) ? " " : token.value ).split(" ").join("");
+			var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
 			
-			switch(token.type){
-				case "function":
-					if(token.subtype === "start"){
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
-					}else{
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
-					}
+			switch (token.type) {
+			
+			case "function":
+				if (token.subtype.toString() === "start") {
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
+				} else {
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
+				}
 				break;
-				case "operand":
-					switch(token.subtype){
-						default:
-							tokenString = tokenString;
-						break;
-					}
-				break;
-				case "argument":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
-				break;
+			case "operand":
+				switch (token.subtype.toString()) {
+				case "error":
+					break;
 				default:
-					
+						
+					break;
+				}
 				break;
+			case "argument":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
+				break;
+			default:
+				
+				break;
+			
 			}
 			
 			var indt = " "; //cache current indent;
 			
-			if(outputFormula.search(/\n$/gi)!==-1){
+			if (outputFormula.search(/\n$/gi) !== -1) {
 				indt = indent();
 			}
 			
@@ -638,11 +643,14 @@
 			
 			
 
-			if (token.subtype == TOK_SUBTYPE_START) indentCount += 1;
+			if (token.subtype.toString() === TOK_SUBTYPE_START) {
+				indentCount += 1;
+			
+			}
 			isFirstToken = false;
 		}
 
 		return outputFormula;
 	};
 	
-}())
+}());
