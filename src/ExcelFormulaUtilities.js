@@ -4,14 +4,7 @@
  * Copyright 2011, Josh Bennett
  * Licensed under the MIT LICENSE
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/blob/master/LICENSE.txt
- *
- * Includes functionality from 
- * Copyright 2011, John Resig
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
- * Dual licensed under the MIT or GPL Version 2 licenses.
- 
-*/
+ */
 
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
