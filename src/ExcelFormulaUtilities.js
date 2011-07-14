@@ -492,28 +492,35 @@
                 continue;
             }
 
-            if ((token.type === TOK_TYPE_OP_IN) && (token.subtype.length === 0)) {
-                if (("<>=").indexOf(token.value.substr(0, 1)) != -1) {
-					token.subtype = TOK_SUBTYPE_LOGICAL;
-				}
-                else if (token.value === "&") {
-					token.subtype = TOK_SUBTYPE_CONCAT; 
-				}
-                else {
-					token.subtype = TOK_SUBTYPE_MATH;
+            if ((token.type.toString() === TOK_TYPE_OP_IN) && (token.subtype.length === 0)) {
+                if (("<>=").indexOf(token.value.substr(0, 1)) !== -1) {
+					token.subtype = TOK_SUBTYPE_LOGICAL.toString();
+				} else if (token.value.toString() === "&") {
+					token.subtype = TOK_SUBTYPE_CONCAT.toString(); 
+				} else {
+					token.subtype = TOK_SUBTYPE_MATH.toString();
 				}
                 continue;
             }
 
-            if ((token.type === TOK_TYPE_OPERAND) && (token.subtype.length === 0)) {
-                if (isNaN(parseFloat(token.value))) if ((token.value == 'TRUE') || (token.value == 'FALSE')) token.subtype = TOK_SUBTYPE_LOGICAL;
-                else token.subtype = TOK_SUBTYPE_RANGE;
-                else token.subtype = TOK_SUBTYPE_NUMBER;
+            if ((token.type.toString() === TOK_TYPE_OPERAND) && (token.subtype.length === 0)) {
+                if (isNaN(parseFloat(token.value))) { 
+					if ((token.value.toString() === 'TRUE') || (token.value.toString() === 'FALSE')) {
+						token.subtype = TOK_SUBTYPE_LOGICAL.toString();
+					} else {
+						token.subtype = TOK_SUBTYPE_RANGE.toString();
+					}
+				} else {
+					token.subtype = TOK_SUBTYPE_NUMBER.toString();
+				}
+				
                 continue;
             }
 
-            if (token.type === TOK_TYPE_FUNCTION) {
-                if (token.value.substr(0, 1) == "@") token.value = token.value.substr(1);
+            if (token.type.toString() === TOK_TYPE_FUNCTION) {
+                if (token.value.substr(0, 1) === "@") {
+					token.value = token.value.substr(1).toString();
+				}
                 continue;
             }
 
@@ -525,7 +532,9 @@
         tokens = new F_tokens();
 
         while (tokens2.moveNext()) {
-            if (tokens2.current().type != TOK_TYPE_NOOP) tokens.addRef(tokens2.current());
+            if (tokens2.current().type != TOK_TYPE_NOOP) { 
+				tokens.addRef(tokens2.current());
+			}
         }
 
         tokens.reset();
@@ -635,6 +644,5 @@
 
 		return outputFormula;
 	};
-
-    
+	
 }())
