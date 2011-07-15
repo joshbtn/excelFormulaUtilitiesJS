@@ -8,7 +8,7 @@
 
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-		parser = excelFormulaUtilities.parser = {},
+		parser = excelFormulaUtilities.parser = {}, // window.excelFormulaUtilities.parser
 		core = window.excelFormulaUtilities.core,
 		formatStr = window.excelFormulaUtilities.string.formatStr,
 	
@@ -101,9 +101,9 @@
         this.push = function (token) {
             this.items.push(token);
         };
-        this.pop = function () {
+        this.pop = function (name) {
             var token = this.items.pop();
-            return (new F_token("", token.type, TOK_SUBTYPE_STOP));
+            return (new F_token( name ? name : "", token.type, TOK_SUBTYPE_STOP));
         };
 
         this.token = function () {
@@ -309,8 +309,8 @@
                     tokens.add(token, TOK_TYPE_OPERAND);
                     token = "";
                 }
-                tokens.addRef(tokenStack.pop());
-                tokens.addRef(tokenStack.pop());
+                tokens.addRef(tokenStack.pop("ARRAYROWSTOP"));
+                tokens.addRef(tokenStack.pop("ARRAYSTOP"));
                 offset += 1;
                 continue;
             }
@@ -535,6 +535,66 @@
         return tokens;
     }
 	
+	
+	var parseFormula = parser.parseFormula = function(inputID, outputID) {
+ 
+		  var indentCount = 0;
+		  
+		  var indent = function() {
+			var s = "|";
+			for (var i = 0; i < indentCount; i++) {
+			  s += "&nbsp;&nbsp;&nbsp;|";
+			}  
+			return s;
+		  };
+		 
+		  var formulaControl = document.getElementById(inputID);  
+		  var formula = formulaControl.value;
+		 
+		  var tokens = getTokens(formula);
+		 
+		  var tokensHtml = "";
+		  
+		  tokensHtml += "<table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'>";
+		  tokensHtml += "<tr>";
+		  tokensHtml += "<td class='token' style='font-weight: bold; width: 50px'>index</td>";
+		  tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>type</td>";
+		  tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>subtype</td>";
+		  tokensHtml += "<td class='token' style='font-weight: bold; width: 150px'>token</td>";
+		  tokensHtml += "<td class='token' style='font-weight: bold; width: 300px'>token tree</td></tr>";
+		 
+		  while (tokens.moveNext()) {
+		  
+			var token = tokens.current();
+		 
+			if (token.subtype == TOK_SUBTYPE_STOP) 
+			  indentCount -= ((indentCount > 0) ? 1 : 0);
+		 
+			tokensHtml += "<tr>";
+		 
+			tokensHtml += "<td class='token'>" + (tokens.index + 1) + "</td>";
+		 
+			tokensHtml += "<td class='token'>" + token.type + "</td>";
+			tokensHtml += "<td class='token'>" + ((token.subtype.length == 0) ? "&nbsp;" : token.subtype) + "</td>";
+			tokensHtml += "<td class='token'>" + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
+			tokensHtml += "<td class='token'>" + indent() + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
+			
+			tokensHtml += "</tr>";
+		 
+			if (token.subtype == TOK_SUBTYPE_START) 
+			  indentCount += 1;
+		 
+		  }
+			
+		  tokensHtml += "</table>";
+			  
+		  document.getElementById(outputID).innerHTML = tokensHtml;
+		  
+		  formulaControl.select();
+		  formulaControl.focus();
+		  
+		}
+	
 	/**
 	 *
      * @memberof excelFormulaUtilities.parser
@@ -558,8 +618,8 @@
 			tmplArgument: "{{token}}\n",
 			tmplFunctionStartArray: "",
 			tmplFunctionStartArrayRow: "{",
-			tmplFunctionStopArray: "",
 			tmplFunctionStopArrayRow: "}",
+			tmplFunctionStopArray: "",
 			tmplIndent: "\t"
 		};
 		
@@ -588,7 +648,7 @@
 
 		var outputFormula = "";
 		
-		
+		//Tokens
 		while (tokens.moveNext()) {
 
 			var token = tokens.current();
@@ -601,19 +661,44 @@
 			
 			switch (token.type) {
 			
-			case "function":
+			case "function": //-----------------FUNCTION------------------
+				switch(token.value){
+					case "ARRAY":
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray),tokenString);
+						break;
+					case "ARRAYROW":
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString);
+						break;
+				}
+				
 				if (token.subtype.toString() === "start") {
 					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
 				} else {
 					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
 				}
+				
 				break;
-			case "operand":
+			case "operand": //-----------------OPERAND------------------
 				switch (token.subtype.toString()) {
 				case "error":
+					okenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString);
+					break;
+				case "range":
+					okenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString);
+					break;
+				case "logical":
+					okenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString);
+					break;
+				case "number":
+					okenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString);
+					break;
+				case "text":
+					okenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString);
+					break;
+				case "argument":
+					okenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
 					break;
 				default:
-						
 					break;
 				}
 				break;

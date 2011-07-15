@@ -19,4 +19,3 @@ test("Test extend with simple objects", function() {
   equals(excelFormulaUtilities.parser.formatFormula(inputFormula), excpected, "advanced example.");
   
 });
-
