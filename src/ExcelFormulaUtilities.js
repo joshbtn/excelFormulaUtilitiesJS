@@ -609,7 +609,7 @@
 		
 		var defaultOptions = {
 			tmplFunctionStart: "{{token}}(\n",
-			tmplFunctionStop: "\n{{token}} )\n",
+			tmplFunctionStop: "\n{{token}})\n",
 			tmplOperandError: "{{token}}",
 			tmplOperandRange: "{{token}}",
 			tmplOperandLogical: "{{token}}",
@@ -620,7 +620,7 @@
 			tmplFunctionStartArrayRow: "{",
 			tmplFunctionStopArrayRow: "}",
 			tmplFunctionStopArray: "",
-			tmplIndent: "\t"
+			tmplIndentTab: "\t",
 		};
 		
 		if (options) {
@@ -635,7 +635,7 @@
 				var s = "",
 					i = 0;
 				for (; i < indentCount; i += 1) {
-					s += options.tmplIndent;
+					s += options.tmplIndentTab;
 				}
 				return s;
 			};
@@ -669,34 +669,40 @@
 					case "ARRAYROW":
 						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString);
 						break;
+					case "ARRAY":
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray),tokenString);
+						break;
+					case "ARRAYROW":
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString);
+						break;
+					default:
+						if (token.subtype.toString() === "start") {
+							tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
+						} else {
+							tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
+						}
+						break;
 				}
-				
-				if (token.subtype.toString() === "start") {
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
-				} else {
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
-				}
-				
 				break;
 			case "operand": //-----------------OPERAND------------------
 				switch (token.subtype.toString()) {
 				case "error":
-					okenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString);
 					break;
 				case "range":
-					okenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString);
 					break;
 				case "logical":
-					okenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString);
 					break;
 				case "number":
-					okenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString);
 					break;
 				case "text":
-					okenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString);
 					break;
 				case "argument":
-					okenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
+					tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
 					break;
 				default:
 					break;
@@ -711,20 +717,23 @@
 			
 			}
 			
-			var indt = " "; //cache current indent;
+			var indt = indent(); //cache current indent;
 			
-			if (outputFormula.search(/\n$/gi) !== -1) {
-				indt = indent();
-			}
+			//if (outputFormula.search(/\n$/gi) === -1) {
+			//	indt = indent(false);
+			//}
+			
+			//if(tokens.EOF() || isFirstToken){
+			//	indt = "";
+			//}
 			
 			outputFormula += indt + tokenString;
-			
-			
 
 			if (token.subtype.toString() === TOK_SUBTYPE_START) {
 				indentCount += 1;
 			
 			}
+			
 			isFirstToken = false;
 		}
 
