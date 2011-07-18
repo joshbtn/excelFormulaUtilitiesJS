@@ -31,4 +31,8 @@ test("formula to CSharp Tests", function() {
 	inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
 	excpected = '"(foo" == "foo" ? "foo" : "bar")';
 	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Nested If Test.");
+	
+	inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
+	excpected = '"(foo" == "foo" ? "foo" : "bar")';
+	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Nested If Test with a nested function.");
 });

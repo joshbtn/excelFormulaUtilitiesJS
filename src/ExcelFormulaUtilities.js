@@ -826,7 +826,10 @@
 				tokenString = (token.value.length === 0) ? "" : token.value.toString(),
 				directConversionMap = {
 					"=" : "==",
-					"<>": "!="
+					"<>": "!=",
+					"MIN": "Math.Min",
+					"MAX": "Math.Max",
+					"ABS" : "Math.ABS"
 				},
 				currentFunctionOnStack = functionStack[functionStack.length-1],
 				useTemplate = false;
@@ -896,8 +899,8 @@
 			cSharpOutput = formatFormula(
 				formula,
 				{
-					tmplFunctionStart: '{{token}}',
-					tmplFunctionStop: '{{token}}',
+					tmplFunctionStart: '{{token}}(',
+					tmplFunctionStop: '{{token}})',
 					tmplOperandError: '{{token}}',
 					tmplOperandRange: '{{token}}',
 					tmplOperandLogical: '{{token}}',
