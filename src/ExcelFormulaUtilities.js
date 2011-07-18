@@ -707,12 +707,12 @@
 	 *                                 
 	 *                                    customTokenRender: function(tokenString, token, indent, linbreak){
 	 *                                        var outstr = token,
-	 *                                            useTemplate = true,
-	 *
+	 *                                            useTemplate = true;
 	 *                                        // In the return object "useTemplate" tells formatFormula() 
 	 *                                        // weather or not to apply the template to what your return from the "tokenString".
 	 *                                        return {tokenString: outstr, useTemplate: useTemplate}; 
 	 *                                    }
+	 *                                    
 	 *</pre>
      * @returns {string}
      */
@@ -818,6 +818,7 @@
      */
 	var formula2CSharp = convert.formula2CSharp = function (formula) {
 		
+		//Custom callback to format as c#
 		var functionStack = [];
 		
 		var tokRender = function(tokenString, token, indent, linbreak){
@@ -833,14 +834,33 @@
 			switch(token.type.toString()){
 			
 			case TOK_TYPE_FUNCTION:
-				if ((/^if$/gi).test(tokenString)) {
-					functionStack.push({isIf:true, argumentNumber: 0});
-					outstr = "";
-				} else {
-					functionStack.push({isIf:false, argumentNumber: 0});
-					outstr = directConversionMap[tokenString] || tokenString;
+				
+				switch(token.subtype){
+				
+				case TOK_SUBTYPE_START :
+					if ((/^if$/gi).test(tokenString)) {
+						functionStack.push({name: tokenString, isIf:true, argumentNumber: 0});
+						outstr = "(";
+					} else {
+						functionStack.push({name: tokenString, isIf:false, argumentNumber: 0});
+						outstr = directConversionMap[tokenString] || tokenString;
+						useTemplate = true;
+					}
+					break;
+				case TOK_SUBTYPE_STOP :
+					
 					useTemplate = true;
+					if(currentFunctionOnStack.isIf){
+						outstr = ")";
+						
+						useTemplate = false;
+					} else {
+						outstr = directConversionMap[tokenString] || tokenString;
+					}
+					functionStack.pop();
+					break;
 				}
+				
 				break;
 			
 			case TOK_TYPE_ARGUMENT:
@@ -882,7 +902,7 @@
 					tmplOperandRange: '{{token}}',
 					tmplOperandLogical: '{{token}}',
 					tmplOperandNumber: '{{token}}',
-					tmplOperandText: '{{token}}',
+					tmplOperandText: '"{{token}}"',
 					tmplArgument: '{{token}}',
 					tmplFunctionStartArray: "",
 					tmplFunctionStartArrayRow: "{",
