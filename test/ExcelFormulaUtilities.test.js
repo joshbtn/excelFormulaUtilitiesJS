@@ -25,14 +25,14 @@ module("Conversions");
 
 test("formula to CSharp Tests", function() {
 	var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
-		excpected = '"(foo" == "foo" ? "foo" : "bar")';
+		excpected = '("foo"=="foo"?"foo":"bar")';
 	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Simple if example.");
   
 	inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
-	excpected = '"(foo" == "foo" ? "foo" : "bar")';
+	excpected = '((true?"foo":"bar")=="foo"?"foo":"bar")';
 	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Nested If Test.");
 	
 	inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
-	excpected = '"(foo" == "foo" ? "foo" : "bar")';
+	excpected = '((Math.Max(1,-10)>0?"foo":"bar")=="foo"?"foo":"bar")';
 	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Nested If Test with a nested function.");
 });
