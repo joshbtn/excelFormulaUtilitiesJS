@@ -12,7 +12,6 @@
 		convert = excelFormulaUtilities.convert = {},
 		core = window.excelFormulaUtilities.core,
 		formatStr = window.excelFormulaUtilities.string.formatStr,
-		format = window.excelFormulaUtilities.string.formatStr,
 		trim = window.excelFormulaUtilities.string.trim,
 		
 		types = {},
@@ -546,8 +545,9 @@
 		var indentCount = 0;
 
 		var indent = function () {
-				var s = "|";
-				for (var i = 0; i < indentCount; i++) {
+				var s = "|",
+					i = 0;
+				for (; i < indentCount; i += 1) {
 					s += "&nbsp;&nbsp;&nbsp;|";
 				}
 				return s;
@@ -572,20 +572,24 @@
 
 			var token = tokens.current();
 
-			if (token.subtype == TOK_SUBTYPE_STOP) indentCount -= ((indentCount > 0) ? 1 : 0);
+			if (token.subtype === TOK_SUBTYPE_STOP) {
+				indentCount -= ((indentCount > 0) ? 1 : 0);
+			}
 
 			tokensHtml += "<tr>";
 
 			tokensHtml += "<td class='token'>" + (tokens.index + 1) + "</td>";
 
 			tokensHtml += "<td class='token'>" + token.type + "</td>";
-			tokensHtml += "<td class='token'>" + ((token.subtype.length == 0) ? "&nbsp;" : token.subtype) + "</td>";
-			tokensHtml += "<td class='token'>" + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
-			tokensHtml += "<td class='token'>" + indent() + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
+			tokensHtml += "<td class='token'>" + ((token.subtype.length === 0) ? "&nbsp;" : token.subtype.toString()) + "</td>";
+			tokensHtml += "<td class='token'>" + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
+			tokensHtml += "<td class='token'>" + indent() + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
 
 			tokensHtml += "</tr>";
 
-			if (token.subtype == TOK_SUBTYPE_START) indentCount += 1;
+			if (token.subtype === TOK_SUBTYPE_START) {
+				indentCount += 1;
+			}
 
 		}
 
@@ -596,7 +600,7 @@
 		formulaControl.select();
 		formulaControl.focus();
 
-	}
+	};
 	
 	var applyTokenTemplate = function (token, options, indent, lineBreak, override) {
 		
@@ -608,8 +612,8 @@
 		
 		var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
 		
-		if(typeof override === 'function'){
-			returnVal = override(tokenString, token, indent, lineBreak);
+		if (typeof override === 'function') {
+			var returnVal = override(tokenString, token, indent, lineBreak);
 			
 			tokenString = returnVal.tokenString;
 			
@@ -699,7 +703,7 @@
 	 *  tmplFunctionStopArrayRow    - template for the end of an array row.
 	 *  tmplFunctionStopArray       - template for the end of an array.
 	 *  tmplIndentTab               - template for the tab char.
-	 *  tmplIndentSpace 			- template for space char.
+     *  tmplIndentSpace             - template for space char.
 	 *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
 	 *  trim: true                  - trim the output.
 	 *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like
@@ -736,9 +740,7 @@
 				autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
 				trim: true,
 				customTokenRender: null
-			},
-			functionStack = [],
-			currentFunctionStackItem = 0;
+			};
 		
 		if (options) {
 			options = core.extend(true, defaultOptions, options);
@@ -774,8 +776,8 @@
 					}
 				}
 				return false;
-			},
-			inFunction = false;
+			};
+			
 		while (tokens.moveNext()) {
 
 			var token = tokens.current();
@@ -821,9 +823,10 @@
 		//Custom callback to format as c#
 		var functionStack = [];
 		
-		var tokRender = function(tokenString, token, indent, linbreak){
+		var tokRender = function (tokenStr, token, indent, linbreak) {
 			var outstr = "",
-				tokenString = (token.value.length === 0) ? "" : token.value.toString(),
+				//tokenString = (token.value.length === 0) ? "" : token.value.toString(),
+				tokenString = tokenStr,
 				directConversionMap = {
 					"=" : "==",
 					"<>": "!=",
@@ -831,29 +834,29 @@
 					"MAX": "Math.Max",
 					"ABS" : "Math.ABS"
 				},
-				currentFunctionOnStack = functionStack[functionStack.length-1],
+				currentFunctionOnStack = functionStack[functionStack.length - 1],
 				useTemplate = false;
 			
-			switch(token.type.toString()){
+			switch (token.type.toString()) {
 			
 			case TOK_TYPE_FUNCTION:
 				
-				switch(token.subtype){
+				switch (token.subtype) {
 				
-				case TOK_SUBTYPE_START :
+				case TOK_SUBTYPE_START:
 					if ((/^if$/gi).test(tokenString)) {
-						functionStack.push({name: tokenString, isIf:true, argumentNumber: 0});
+						functionStack.push({name: tokenString, isIf: true, argumentNumber: 0});
 						outstr = "(";
 					} else {
-						functionStack.push({name: tokenString, isIf:false, argumentNumber: 0});
+						functionStack.push({name: tokenString, isIf: false, argumentNumber: 0});
 						outstr = directConversionMap[tokenString] || tokenString;
 						useTemplate = true;
 					}
 					break;
-				case TOK_SUBTYPE_STOP :
+				case TOK_SUBTYPE_STOP:
 					
 					useTemplate = true;
-					if(currentFunctionOnStack.isIf){
+					if (currentFunctionOnStack.isIf) {
 						outstr = ")";
 						
 						useTemplate = false;
@@ -867,8 +870,8 @@
 				break;
 			
 			case TOK_TYPE_ARGUMENT:
-				if(currentFunctionOnStack.isIf){
-					switch(currentFunctionOnStack.argumentNumber){
+				if (currentFunctionOnStack.isIf) {
+					switch (currentFunctionOnStack.argumentNumber) {
 					case 0:
 						outstr = "?";
 						break;
@@ -881,12 +884,11 @@
 					useTemplate = true;
 				}
 				
-				currentFunctionOnStack.argumentNumber += 1
+				currentFunctionOnStack.argumentNumber += 1;
 				
 				break;
 			
 			default:
-				functionStack
 				outstr = directConversionMap[tokenString] || tokenString;
 				useTemplate = true;
 				break;
@@ -895,8 +897,7 @@
 			return {tokenString: outstr, useTemplate: useTemplate};
 		};
 		
-		var cSharpOutput = "",
-			cSharpOutput = formatFormula(
+		var cSharpOutput = formatFormula(
 				formula,
 				{
 					tmplFunctionStart: '{{token}}(',
