@@ -1,7 +1,6 @@
 # Excel Formula Utilities for JavaScript
 
 ##Basic usage
-    //Set up a quick alias.
 	var formatFormula = excelFormulaUtilities.parser.formatFormula,
 		formula2Csharp = excelFormulaUtilities.convert.formula2CSharp;
 	
