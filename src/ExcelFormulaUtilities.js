@@ -10,7 +10,8 @@
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
 		parser = excelFormulaUtilities.parser = {}, // window.excelFormulaUtilities.parser
 		core = window.excelFormulaUtilities.core,
-		formatStr = window.excelFormulaUtilities.string.formatStr
+		formatStr = window.excelFormulaUtilities.string.formatStr,
+		trim = window.excelFormulaUtilities.string.trim
 	
 	var types = {},
 		TOK_TYPE_NOOP =  types.TOK_TYPE_NOOP = "noop",
@@ -679,7 +680,7 @@
 		//var useOverrideFunction = false;
 		
 		var defaultOptions = {
-			tmplFunctionStart: "{{autolinebreak}}{{autoindent}}{{token}}\n{{autoindent}}(\n",
+			tmplFunctionStart: "\n{{autoindent}}{{token}}\n{{autoindent}}(\n",
 			tmplFunctionStop: "\n{{autoindent}}{{token}})",
 			tmplOperandError: "{{token}}",
 			tmplOperandRange: "{{autoindent}}{{token}}",
@@ -693,7 +694,8 @@
 			tmplFunctionStopArray: "",
 			tmplIndentTab: "\t",
 			tmplIndentSpace: " ",
-			autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
+			autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
+			trim:true
 		};
 		
 		if (options) {
@@ -759,7 +761,7 @@
 			isFirstToken = false;
 		}
 
-		return outputFormula;
+		return options.trim ? trim(outputFormula) : outputFormula;
 	};
 	
 }());

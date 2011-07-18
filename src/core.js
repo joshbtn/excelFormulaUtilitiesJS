@@ -43,7 +43,9 @@
 			return formattedStr;
 		}
     
-    
+    var trim = window.excelFormulaUtilities.string.trim = function(inStr){
+			return inStr.replace(/^\s|\s$/, "");
+		}
 	//DO NOT PLACE ANY CODE BELOW THIS. they will not run if jquery is present.
 	
 	//ExcelFormulaUtilities relies on the extend functionality of jquery. 
