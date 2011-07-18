@@ -8,13 +8,14 @@
 
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-		parser = excelFormulaUtilities.parser = excelFormulaUtilities.parser || {}, // window.excelFormulaUtilities.parser
-		convert = excelFormulaUtilities.convert = excelFormulaUtilities.convert || {},
+		parser = excelFormulaUtilities.parser = {}, // window.excelFormulaUtilities.parser
+		convert = excelFormulaUtilities.convert = {},
 		core = window.excelFormulaUtilities.core,
 		formatStr = window.excelFormulaUtilities.string.formatStr,
-		trim = window.excelFormulaUtilities.string.trim
-	
-	var types = {},
+		format = window.excelFormulaUtilities.string.formatStr,
+		trim = window.excelFormulaUtilities.string.trim,
+		
+		types = {},
 		TOK_TYPE_NOOP =  types.TOK_TYPE_NOOP = "noop",
 		TOK_TYPE_OPERAND = types.TOK_TYPE_OPERAND = "operand",
 		TOK_TYPE_FUNCTION = types.TOK_TYPE_FUNCTION = "function",
@@ -105,7 +106,7 @@
         };
         this.pop = function (name) {
             var token = this.items.pop();
-            return (new F_token( name ? name : "", token.type, TOK_SUBTYPE_STOP));
+            return (new F_token(name || "", token.type, TOK_SUBTYPE_STOP));
         };
 
         this.token = function () {
@@ -125,31 +126,32 @@
 
     function getTokens(formula) {
 
-        var tokens = new F_tokens();
-        var tokenStack = new F_tokenStack();
+        var tokens = new F_tokens(),
+			tokenStack = new F_tokenStack(),
 
-        var offset = 0;
+			offset = 0,
 
-        var currentChar = function () {
+			currentChar = function () {
                 return formula.substr(offset, 1);
-            };
-        var doubleChar = function () {
+            },
+			doubleChar = function () {
                 return formula.substr(offset, 2);
-            };
-        var nextChar = function () {
+            },
+			nextChar = function () {
                 return formula.substr(offset + 1, 1);
-            };
-        var EOF = function () {
+            },
+			EOF = function () {
                 return (offset >= formula.length);
-            };
+            },
 
-        var token = "";
+			token = "",
 
-        var inString = false;
-        var inPath = false;
-        var inRange = false;
-        var inError = false;
-
+			inString = false,
+			inPath = false,
+			inRange = false,
+			inError = false,
+			regexSN = /^[1-9]{1}(\.[0-9]+)?E{1}$/;
+			
         while (formula.length > 0) {
             if (formula.substr(0, 1) === " ") {
 				formula = formula.substr(1); 
@@ -159,7 +161,7 @@
             }
         }
 
-        var regexSN = /^[1-9]{1}(\.[0-9]+)?E{1}$/;
+        
 
         while (!EOF()) {
 
@@ -182,7 +184,7 @@
                 }
                 offset += 1;
                 continue;
-            }
+			}
 
             // single-quoted strings (links)
             // embeds are double
@@ -538,66 +540,65 @@
     }
 	
 	
-	var parseFormula = parser.parseFormula = function(inputID, outputID) {
- 
-		  var indentCount = 0;
-		  
-		  var indent = function() {
-			var s = "|";
-			for (var i = 0; i < indentCount; i++) {
-			  s += "&nbsp;&nbsp;&nbsp;|";
-			}  
-			return s;
-		  };
-		 
-		  var formulaControl = document.getElementById(inputID);  
-		  var formula = formulaControl.value;
-		 
-		  var tokens = getTokens(formula);
-		 
-		  var tokensHtml = "";
-		  
-		  tokensHtml += "<table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'>";
-		  tokensHtml += "<tr>";
-		  tokensHtml += "<td class='token' style='font-weight: bold; width: 50px'>index</td>";
-		  tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>type</td>";
-		  tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>subtype</td>";
-		  tokensHtml += "<td class='token' style='font-weight: bold; width: 150px'>token</td>";
-		  tokensHtml += "<td class='token' style='font-weight: bold; width: 300px'>token tree</td></tr>";
-		 
-		  while (tokens.moveNext()) {
-		  
+	var parseFormula = parser.parseFormula = function (inputID, outputID) {
+		
+
+		var indentCount = 0;
+
+		var indent = function () {
+				var s = "|";
+				for (var i = 0; i < indentCount; i++) {
+					s += "&nbsp;&nbsp;&nbsp;|";
+				}
+				return s;
+			};
+
+		var formulaControl = document.getElementById(inputID);
+		var formula = formulaControl.value;
+
+		var tokens = getTokens(formula);
+
+		var tokensHtml = "";
+
+		tokensHtml += "<table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'>";
+		tokensHtml += "<tr>";
+		tokensHtml += "<td class='token' style='font-weight: bold; width: 50px'>index</td>";
+		tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>type</td>";
+		tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>subtype</td>";
+		tokensHtml += "<td class='token' style='font-weight: bold; width: 150px'>token</td>";
+		tokensHtml += "<td class='token' style='font-weight: bold; width: 300px'>token tree</td></tr>";
+
+		while (tokens.moveNext()) {
+
 			var token = tokens.current();
-		 
-			if (token.subtype == TOK_SUBTYPE_STOP) 
-			  indentCount -= ((indentCount > 0) ? 1 : 0);
-		 
+
+			if (token.subtype == TOK_SUBTYPE_STOP) indentCount -= ((indentCount > 0) ? 1 : 0);
+
 			tokensHtml += "<tr>";
-		 
+
 			tokensHtml += "<td class='token'>" + (tokens.index + 1) + "</td>";
-		 
+
 			tokensHtml += "<td class='token'>" + token.type + "</td>";
 			tokensHtml += "<td class='token'>" + ((token.subtype.length == 0) ? "&nbsp;" : token.subtype) + "</td>";
 			tokensHtml += "<td class='token'>" + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
 			tokensHtml += "<td class='token'>" + indent() + ((token.value.length == 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
-			
+
 			tokensHtml += "</tr>";
-		 
-			if (token.subtype == TOK_SUBTYPE_START) 
-			  indentCount += 1;
-		 
-		  }
-			
-		  tokensHtml += "</table>";
-			  
-		  document.getElementById(outputID).innerHTML = tokensHtml;
-		  
-		  formulaControl.select();
-		  formulaControl.focus();
-		  
+
+			if (token.subtype == TOK_SUBTYPE_START) indentCount += 1;
+
 		}
+
+		tokensHtml += "</table>";
+
+		document.getElementById(outputID).innerHTML = tokensHtml;
+
+		formulaControl.select();
+		formulaControl.focus();
+
+	}
 	
-	var applyTokenTemplate = function(token, options, indent, lineBreak){
+	var applyTokenTemplate = function (token, options, indent, lineBreak) {
 		
 		var indt = indent;
 		
@@ -610,26 +611,20 @@
 		switch (token.type) {
 		
 		case "function": //-----------------FUNCTION------------------
-			switch(token.value){
-				case "ARRAY":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
-					break;
-				case "ARRAYROW":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
-					break;
-				case "ARRAY":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
-					break;
-				case "ARRAYROW":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
-					break;
-				default:
-					if (token.subtype.toString() === "start") {
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
-					} else {
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
-					}
-					break;
+			switch (token.value) {
+			case "ARRAY":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+				break;
+			case "ARRAYROW":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+				break;
+			default:
+				if (token.subtype.toString() === "start") {
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
+				} else {
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
+				}
+				break;
 			}
 			break;
 		case "operand": //-----------------OPERAND------------------
@@ -665,8 +660,8 @@
 		
 		}
 		
-		return tokenString
-	}
+		return tokenString;
+	};
 	
 	/**
 	 *
@@ -677,27 +672,27 @@
      * @returns {string}
      */
 	var formatFormula = parser.formatFormula  = function (formula, options) {
-        var isFirstToken = true;
-		//var useOverrideFunction = false;
-		
-		var defaultOptions = {
-			tmplFunctionStart: "\n{{autoindent}}{{token}}\n{{autoindent}}(\n",
-			tmplFunctionStop: "\n{{autoindent}}{{token}})",
-			tmplOperandError: "{{token}}",
-			tmplOperandRange: "{{autoindent}}{{token}}",
-			tmplOperandLogical: "{{token}}",
-			tmplOperandNumber: "{{autoindent}}{{token}}",
-			tmplOperandText: '{{autoindent}}"{{token}}"',
-			tmplArgument: "{{token}}\n",
-			tmplFunctionStartArray: "",
-			tmplFunctionStartArrayRow: "{",
-			tmplFunctionStopArrayRow: "}",
-			tmplFunctionStopArray: "",
-			tmplIndentTab: "\t",
-			tmplIndentSpace: " ",
-			autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
-			trim:true
-		};
+        var isFirstToken = true,
+			defaultOptions = {
+				tmplFunctionStart: "\n{{autoindent}}{{token}}\n{{autoindent}}(\n",
+				tmplFunctionStop: "\n{{autoindent}}{{token}})",
+				tmplOperandError: "{{token}}",
+				tmplOperandRange: "{{autoindent}}{{token}}",
+				tmplOperandLogical: "{{token}}",
+				tmplOperandNumber: "{{autoindent}}{{token}}",
+				tmplOperandText: '{{autoindent}}"{{token}}"',
+				tmplArgument: "{{token}}\n",
+				tmplFunctionStartArray: "",
+				tmplFunctionStartArrayRow: "{",
+				tmplFunctionStopArrayRow: "}",
+				tmplFunctionStopArray: "",
+				tmplIndentTab: "\t",
+				tmplIndentSpace: " ",
+				autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
+				trim: true
+			},
+			functionStack = [],
+			currentFunctionStackItem = 0;
 		
 		if (options) {
 			options = core.extend(true, defaultOptions, options);
@@ -720,10 +715,21 @@
 		
 		var outputFormula = "";
 		
-		var autoBreakArray = options.autoLineBreak.replace(/\s/gi,"").split("|");
+		var autoBreakArray = options.autoLineBreak.replace(/\s/gi, "").split("|");
 		
 		//Tokens
 		var isNewLine = true;
+		
+		var testAutoBreak = function (nextToken) {
+			var i = 0;
+			for (; i < autoBreakArray.length; i += 1) {
+				if (nextToken !== null && typeof nextToken !== 'undefined' && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
+					return true;
+				}
+			}
+			return false;
+		};
+		
 		while (tokens.moveNext()) {
 
 			var token = tokens.current();
@@ -734,17 +740,8 @@
 			}
 			
 			var matchBeginNewline = /^\n/;
-			
-			var autoBreak = (function(){
-				var i = 0;
-				for(;i < autoBreakArray.length; i+=1){
-					if(nextToken != null && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString()) ){
-						return true;
-					}
-				}
-				return false;
-			}());
-			
+						
+			var autoBreak = testAutoBreak(nextToken);
 			
 			var autoIndent = isNewLine;
 			
@@ -765,25 +762,10 @@
 		return options.trim ? trim(outputFormula) : outputFormula;
 	};
 	
-	var formula2CSharp = convert.convert2CSharp(formula){
-		var csharpOutput;
-		
-		csharpOutput = formatFormula({
-			tmplFunctionStart: '{{token}} ',
-			tmplFunctionStop: '{{token}} ',
-			tmplOperandError: '{{token}} ',
-			tmplOperandRange: '{{token}} ',
-			tmplOperandLogical: '{{token}} ',
-			tmplOperandNumber: '{{token}} ',
-			tmplOperandText: '{{token}} ',
-			tmplArgument: '{{token}} ',
-			tmplFunctionStartArray: '',
-			tmplFunctionStartArrayRow: "[",
-			tmplFunctionStopArrayRow: "]",
-			tmplFunctionStopArray: ""
-		});
+	var formula2CSharp = convert.formula2CSharp = function (formula) {
+		var csharpOutput = "blah";
 		
 		return csharpOutput;
-	}
+	};
 	
 }());
