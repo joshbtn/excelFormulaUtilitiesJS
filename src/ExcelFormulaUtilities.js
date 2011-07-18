@@ -598,7 +598,7 @@
 
 	}
 	
-	var applyTokenTemplate = function (token, options, indent, lineBreak) {
+	var applyTokenTemplate = function (token, options, indent, lineBreak, override) {
 		
 		var indt = indent;
 		
@@ -608,6 +608,16 @@
 		
 		var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
 		
+		if(typeof override === 'function'){
+			returnVal = override(tokenString, token, indent, lineBreak);
+			
+			tokenString = returnVal.tokenString;
+			
+			if (!returnVal.useTemplate) {
+				return tokenString;
+			}
+		}
+	
 		switch (token.type) {
 		
 		case "function": //-----------------FUNCTION------------------
@@ -660,6 +670,7 @@
 		
 		}
 		
+		
 		return tokenString;
 	};
 	
@@ -669,6 +680,40 @@
 	 * @function
 	 * @param {string} formula
      * @param {object} options optional param
+	 *<pre>
+	 * Any options starting with 'tmpl' are template strings, which can be plain text and have acess to 
+	 *  {{autoindent}} - apply auto indent based on current tree level
+	 *  {{token}} - the named token such as FUNCTION_NAME or "string"
+	 *
+	 * Options include:
+	 *  tmplFunctionStart           - template for the start of a function, the {{token}} will contain the name of the function.
+	 *  tmplFunctionStop            - template for when the end of a function has been reached.
+	 *  tmplOperandError            - template for errors.
+	 *  tmplOperandRange            - template for ranges and variable names.
+	 *  tmplOperandLogical          - template for logical operators such as + - = ...
+	 *  tmplOperandNumber           - template for numbers.
+	 *  tmplOperandText             - template for text/strings.
+	 *  tmplArgument				- template for argument seperators such as ,.
+	 *  tmplFunctionStartArray      - template for the start of an array.
+	 *  tmplFunctionStartArrayRow   - template for the start of an array row.
+	 *  tmplFunctionStopArrayRow    - template for the end of an array row.
+	 *  tmplFunctionStopArray       - template for the end of an array.
+	 *  tmplIndentTab               - template for the tab char.
+	 *  tmplIndentSpace 			- template for space char.
+	 *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
+	 *  trim: true                  - trim the output.
+	 *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like
+	 *                                EXAMPLE:
+	 *                                 
+	 *                                    customTokenRender: function(tokenString, token, indent, linbreak){
+	 *                                        var outstr = token,
+	 *                                            useTemplate = true,
+	 *
+	 *                                        // In the return object "useTemplate" tells formatFormula() 
+	 *                                        // weather or not to apply the template to what your return from the "tokenString".
+	 *                                        return {tokenString: outstr, useTemplate: useTemplate}; 
+	 *                                    }
+	 *</pre>
      * @returns {string}
      */
 	var formatFormula = parser.formatFormula  = function (formula, options) {
@@ -689,7 +734,8 @@
 				tmplIndentTab: "\t",
 				tmplIndentSpace: " ",
 				autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
-				trim: true
+				trim: true,
+				customTokenRender: null
 			},
 			functionStack = [],
 			currentFunctionStackItem = 0;
@@ -721,15 +767,15 @@
 		var isNewLine = true;
 		
 		var testAutoBreak = function (nextToken) {
-			var i = 0;
-			for (; i < autoBreakArray.length; i += 1) {
-				if (nextToken !== null && typeof nextToken !== 'undefined' && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
-					return true;
+				var i = 0;
+				for (; i < autoBreakArray.length; i += 1) {
+					if (nextToken !== null && typeof nextToken !== 'undefined' && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
+						return true;
+					}
 				}
-			}
-			return false;
-		};
-		
+				return false;
+			},
+			inFunction = false;
 		while (tokens.moveNext()) {
 
 			var token = tokens.current();
@@ -748,7 +794,7 @@
 			var indt = autoIndent ?  indent() : options.tmplIndentSpace;
 			var lineBreak = autoBreak ? "\n" : "";
 			
-			outputFormula += applyTokenTemplate(token, options, indt, lineBreak);
+			outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender);
 
 			if (token.subtype.toString() === TOK_SUBTYPE_START) {
 				indentCount += 1;
@@ -762,10 +808,94 @@
 		return options.trim ? trim(outputFormula) : outputFormula;
 	};
 	
+	
+	/**
+	 *
+     * @memberof excelFormulaUtilities.convert
+	 * @function
+	 * @param {string} formula
+     * @returns {string}
+     */
 	var formula2CSharp = convert.formula2CSharp = function (formula) {
-		var csharpOutput = "blah";
 		
-		return csharpOutput;
+		var functionStack = [];
+		
+		var tokRender = function(tokenString, token, indent, linbreak){
+			var outstr = "",
+				tokenString = (token.value.length === 0) ? "" : token.value.toString(),
+				directConversionMap = {
+					"=" : "==",
+					"<>": "!="
+				},
+				currentFunctionOnStack = functionStack[functionStack.length-1],
+				useTemplate = false;
+			
+			switch(token.type.toString()){
+			
+			case TOK_TYPE_FUNCTION:
+				if ((/^if$/gi).test(tokenString)) {
+					functionStack.push({isIf:true, argumentNumber: 0});
+					outstr = "";
+				} else {
+					functionStack.push({isIf:false, argumentNumber: 0});
+					outstr = directConversionMap[tokenString] || tokenString;
+					useTemplate = true;
+				}
+				break;
+			
+			case TOK_TYPE_ARGUMENT:
+				if(currentFunctionOnStack.isIf){
+					switch(currentFunctionOnStack.argumentNumber){
+					case 0:
+						outstr = "?";
+						break;
+					case 1:
+						outstr = ":";
+						break;
+					}
+				} else {
+					outstr = directConversionMap[tokenString] || tokenString;
+					useTemplate = true;
+				}
+				
+				currentFunctionOnStack.argumentNumber += 1
+				
+				break;
+			
+			default:
+				functionStack
+				outstr = directConversionMap[tokenString] || tokenString;
+				useTemplate = true;
+				break;
+			}
+
+			return {tokenString: outstr, useTemplate: useTemplate};
+		};
+		
+		var cSharpOutput = "",
+			cSharpOutput = formatFormula(
+				formula,
+				{
+					tmplFunctionStart: '{{token}}',
+					tmplFunctionStop: '{{token}}',
+					tmplOperandError: '{{token}}',
+					tmplOperandRange: '{{token}}',
+					tmplOperandLogical: '{{token}}',
+					tmplOperandNumber: '{{token}}',
+					tmplOperandText: '{{token}}',
+					tmplArgument: '{{token}}',
+					tmplFunctionStartArray: "",
+					tmplFunctionStartArrayRow: "{",
+					tmplFunctionStopArrayRow: "}",
+					tmplFunctionStopArray: "",
+					tmplIndentTab: "\t",
+					tmplIndentSpace: " ",
+					autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
+					trim: true,
+					customTokenRender: tokRender
+				}
+			);
+		return cSharpOutput;
 	};
 	
 }());

@@ -24,7 +24,11 @@ test("Test extend with simple objects", function() {
 module("Conversions");
 
 test("formula to CSharp Tests", function() {
-  var inputFormula = 'IF("foo" = "foo", "foo", "bar")';
-  var excpected = '"(foo" == "foo" ? "foo" : "bar")';
-  equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Simple if example.");
+	var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
+		excpected = '"(foo" == "foo" ? "foo" : "bar")';
+	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Simple if example.");
+  
+	inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
+	excpected = '"(foo" == "foo" ? "foo" : "bar")';
+	equals(excelFormulaUtilities.convert.formula2CSharp(inputFormula), excpected, "Nested If Test.");
 });
