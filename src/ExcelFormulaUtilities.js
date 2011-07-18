@@ -10,33 +10,33 @@
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
 		parser = excelFormulaUtilities.parser = {}, // window.excelFormulaUtilities.parser
 		core = window.excelFormulaUtilities.core,
-		formatStr = window.excelFormulaUtilities.string.formatStr,
+		formatStr = window.excelFormulaUtilities.string.formatStr
 	
-		TOK_TYPE_NOOP = "noop",
-		TOK_TYPE_OPERAND = "operand",
-		TOK_TYPE_FUNCTION = "function",
-		TOK_TYPE_SUBEXPR = "subexpression",
-		TOK_TYPE_ARGUMENT = "argument",
-		TOK_TYPE_OP_PRE = "operator-prefix",
-		TOK_TYPE_OP_IN = "operator-infix",
-		TOK_TYPE_OP_POST = "operator-postfix",
-		TOK_TYPE_WSPACE = "white-space",
-		TOK_TYPE_UNKNOWN = "unknown",
+	var types = {},
+		TOK_TYPE_NOOP =  types.TOK_TYPE_NOOP = "noop",
+		TOK_TYPE_OPERAND = types.TOK_TYPE_OPERAND = "operand",
+		TOK_TYPE_FUNCTION = types.TOK_TYPE_FUNCTION = "function",
+		TOK_TYPE_SUBEXPR = types.TOK_TYPE_SUBEXPR = "subexpression",
+		TOK_TYPE_ARGUMENT = types.TOK_TYPE_ARGUMENT  = "argument",
+		TOK_TYPE_OP_PRE = types.TOK_TYPE_OP_PRE = "operator-prefix",
+		TOK_TYPE_OP_IN = types.TOK_TYPE_OP_IN = "operator-infix",
+		TOK_TYPE_OP_POST = types.TOK_TYPE_OP_POST = "operator-postfix",
+		TOK_TYPE_WSPACE = types.TOK_TYPE_WSPACE = "white-space",
+		TOK_TYPE_UNKNOWN = types.TOK_TYPE_UNKNOWN = "unknown",
 
-		TOK_SUBTYPE_START = "start",
-		TOK_SUBTYPE_STOP = "stop",
+		TOK_SUBTYPE_START = types.TOK_SUBTYPE_START = "start",
+		TOK_SUBTYPE_STOP = types.TOK_SUBTYPE_STOP = "stop",
 
-		TOK_SUBTYPE_TEXT = "text",
-		TOK_SUBTYPE_NUMBER = "number",
-		TOK_SUBTYPE_LOGICAL = "logical",
-		TOK_SUBTYPE_ERROR = "error",
-		TOK_SUBTYPE_RANGE = "range",
+		TOK_SUBTYPE_TEXT = types.TOK_SUBTYPE_TEXT = "text",
+		TOK_SUBTYPE_NUMBER = types.TOK_SUBTYPE_NUMBER = "number",
+		TOK_SUBTYPE_LOGICAL = types.TOK_SUBTYPE_LOGICAL = "logical",
+		TOK_SUBTYPE_ERROR = types.TOK_SUBTYPE_ERROR = "error",
+		TOK_SUBTYPE_RANGE = types.TOK_SUBTYPE_RANGE = "range",
 
-		TOK_SUBTYPE_MATH = "math",
-		TOK_SUBTYPE_CONCAT = "concatenate",
-		TOK_SUBTYPE_INTERSECT = "intersect",
-		TOK_SUBTYPE_UNION = "union";
-
+		TOK_SUBTYPE_MATH = types.TOK_SUBTYPE_MATH = "math",
+		TOK_SUBTYPE_CONCAT = types.TOK_SUBTYPE_CONCAT = "concatenate",
+		TOK_SUBTYPE_INTERSECT = types.TOK_SUBTYPE_INTERSECT = "intersect",
+		TOK_SUBTYPE_UNION = types.TOK_SUBTYPE_UNION = "union";
 
     /**
 	* @class
@@ -595,6 +595,77 @@
 		  
 		}
 	
+	var applyTokenTemplate = function(token, options, indent, lineBreak){
+		
+		var indt = indent;
+		
+		var replaceTokenTmpl = function (inStr) {
+			return inStr.replace(/\{\{token\}\}/gi, "{0}").replace(/\{\{autoindent\}\}/gi, "{1}").replace(/\{\{autolinebreak\}\}/gi, "{2}");
+		};
+		
+		var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
+		
+		switch (token.type) {
+		
+		case "function": //-----------------FUNCTION------------------
+			switch(token.value){
+				case "ARRAY":
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+					break;
+				case "ARRAYROW":
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+					break;
+				case "ARRAY":
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+					break;
+				case "ARRAYROW":
+					tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+					break;
+				default:
+					if (token.subtype.toString() === "start") {
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
+					} else {
+						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
+					}
+					break;
+			}
+			break;
+		case "operand": //-----------------OPERAND------------------
+			switch (token.subtype.toString()) {
+			case "error":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indt, lineBreak);
+				break;
+			case "range":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
+				break;
+			case "logical":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
+				break;
+			case "number":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
+				break;
+			case "text":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indt, lineBreak);
+				break;
+			case "argument":
+				tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+				break;
+			default:
+				break;
+			}
+			break;
+		case "argument":
+			tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+			break;
+		default:
+			
+			break;
+		
+		}
+		
+		return tokenString
+	}
+	
 	/**
 	 *
      * @memberof excelFormulaUtilities.parser
@@ -608,19 +679,21 @@
 		//var useOverrideFunction = false;
 		
 		var defaultOptions = {
-			tmplFunctionStart: "{{token}}(\n",
-			tmplFunctionStop: "\n{{token}})\n",
+			tmplFunctionStart: "{{autolinebreak}}{{autoindent}}{{token}}\n{{autoindent}}(\n",
+			tmplFunctionStop: "\n{{autoindent}}{{token}})",
 			tmplOperandError: "{{token}}",
-			tmplOperandRange: "{{token}}",
+			tmplOperandRange: "{{autoindent}}{{token}}",
 			tmplOperandLogical: "{{token}}",
-			tmplOperandNumber: "{{token}}",
-			tmplOperandText: '"{{token}}"',
+			tmplOperandNumber: "{{autoindent}}{{token}}",
+			tmplOperandText: '{{autoindent}}"{{token}}"',
 			tmplArgument: "{{token}}\n",
 			tmplFunctionStartArray: "",
 			tmplFunctionStartArrayRow: "{",
 			tmplFunctionStopArrayRow: "}",
 			tmplFunctionStopArray: "",
 			tmplIndentTab: "\t",
+			tmplIndentSpace: " ",
+			autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
 		};
 		
 		if (options) {
@@ -640,100 +713,49 @@
 				return s;
 			};
 		
-		var replaceTokenTmpl = function (inStr) {
-			return inStr.replace("{{token}}", "{0}");
-		};
-
 		var tokens = getTokens(formula);
-
+		
 		var outputFormula = "";
 		
+		var autoBreakArray = options.autoLineBreak.replace(/\s/gi,"").split("|");
+		
 		//Tokens
+		var isNewLine = true;
 		while (tokens.moveNext()) {
 
 			var token = tokens.current();
-
+			var nextToken = tokens.next();
+			
 			if (token.subtype.toString() === TOK_SUBTYPE_STOP) {
 				indentCount -= ((indentCount > 0) ? 1 : 0);
 			}
-
-			var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
 			
-			switch (token.type) {
+			var matchBeginNewline = /^\n/;
 			
-			case "function": //-----------------FUNCTION------------------
-				switch(token.value){
-					case "ARRAY":
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray),tokenString);
-						break;
-					case "ARRAYROW":
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString);
-						break;
-					case "ARRAY":
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray),tokenString);
-						break;
-					case "ARRAYROW":
-						tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString);
-						break;
-					default:
-						if (token.subtype.toString() === "start") {
-							tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString);
-						} else {
-							tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString);
-						}
-						break;
+			var autoBreak = (function(){
+				var i = 0;
+				for(;i < autoBreakArray.length; i+=1){
+					if(nextToken != null && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString()) ){
+						return true;
+					}
 				}
-				break;
-			case "operand": //-----------------OPERAND------------------
-				switch (token.subtype.toString()) {
-				case "error":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString);
-					break;
-				case "range":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString);
-					break;
-				case "logical":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString);
-					break;
-				case "number":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString);
-					break;
-				case "text":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString);
-					break;
-				case "argument":
-					tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
-					break;
-				default:
-					break;
-				}
-				break;
-			case "argument":
-				tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString);
-				break;
-			default:
-				
-				break;
+				return false;
+			}());
 			
-			}
 			
-			var indt = indent(); //cache current indent;
+			var autoIndent = isNewLine;
 			
-			//if (outputFormula.search(/\n$/gi) === -1) {
-			//	indt = indent(false);
-			//}
+			var indt = autoIndent ?  indent() : options.tmplIndentSpace;
+			var lineBreak = autoBreak ? "\n" : "";
 			
-			//if(tokens.EOF() || isFirstToken){
-			//	indt = "";
-			//}
-			
-			outputFormula += indt + tokenString;
+			outputFormula += applyTokenTemplate(token, options, indt, lineBreak);
 
 			if (token.subtype.toString() === TOK_SUBTYPE_START) {
 				indentCount += 1;
-			
+
 			}
 			
+			isNewLine = autoBreak || (/\n$/).test(outputFormula);
 			isFirstToken = false;
 		}
 
