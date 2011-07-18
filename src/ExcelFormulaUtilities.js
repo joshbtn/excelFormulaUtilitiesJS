@@ -8,7 +8,8 @@
 
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-		parser = excelFormulaUtilities.parser = {}, // window.excelFormulaUtilities.parser
+		parser = excelFormulaUtilities.parser = excelFormulaUtilities.parser || {}, // window.excelFormulaUtilities.parser
+		convert = excelFormulaUtilities.convert = excelFormulaUtilities.convert || {},
 		core = window.excelFormulaUtilities.core,
 		formatStr = window.excelFormulaUtilities.string.formatStr,
 		trim = window.excelFormulaUtilities.string.trim
@@ -763,5 +764,26 @@
 
 		return options.trim ? trim(outputFormula) : outputFormula;
 	};
+	
+	var formula2CSharp = convert.convert2CSharp(formula){
+		var csharpOutput;
+		
+		csharpOutput = formatFormula({
+			tmplFunctionStart: '{{token}} ',
+			tmplFunctionStop: '{{token}} ',
+			tmplOperandError: '{{token}} ',
+			tmplOperandRange: '{{token}} ',
+			tmplOperandLogical: '{{token}} ',
+			tmplOperandNumber: '{{token}} ',
+			tmplOperandText: '{{token}} ',
+			tmplArgument: '{{token}} ',
+			tmplFunctionStartArray: '',
+			tmplFunctionStartArrayRow: "[",
+			tmplFunctionStopArrayRow: "]",
+			tmplFunctionStopArray: ""
+		});
+		
+		return csharpOutput;
+	}
 	
 }());
