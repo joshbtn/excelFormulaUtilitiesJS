@@ -14,7 +14,7 @@
 		document.getElementById('fomatFormula_1_out').innerHTML = excelFormulaUtilities.formatFormula(formula_1);
 		
 		document.getElementById('fomatFormula_2').innerHTML = formula_2;
-		document.getElementById('fomatFormula_2_out').innerHTML = excelFormulaUtilities.formatFormulaHTML(formula_2);
+		document.getElementById('fomatFormula_2_out').innerHTML = excelFormulaUtilities.formatFormula(formula_2);
 	}
 
 }())

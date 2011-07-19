@@ -744,7 +744,7 @@
                     tmplOperandLogical: " {{token}}",
                     tmplOperandNumber: "{{autoindent}}{{token}}",
                     tmplOperandText: '{{autoindent}}"{{token}}"',
-                    tmplArgument: "{{token}}\n",
+                    tmplArgument: "{{token}}",
                     tmplFunctionStartArray: "",
                     tmplFunctionStartArrayRow: "{",
                     tmplFunctionStopArrayRow: "}",
