@@ -699,7 +699,7 @@
      *   TEMPLATE VALUES 
      *  {{autoindent}} - apply auto indent based on current tree level
      *  {{token}} - the named token such as FUNCTION_NAME or "string"
-     *  {{autolinebreak}} - apply linbreak automaticly
+     *  {{autolinebreak}} - apply linbreak automaticly. tests for next element only at this point
 	 *
      * Options include:
      *  tmplFunctionStart           - template for the start of a function, the {{token}} will contain the name of the function.
@@ -719,7 +719,8 @@
      *  tmplIndentTab               - template for the tab char.
      *  tmplIndentSpace             - template for space char.
      *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
-     *  trim: true                  - trim the output.
+     *  newLine                     - used for the {{autolinebreak}} replacement as well as some string parsing. if this is not set correctly you may get undesired results. usually \n for text or <br /> for html
+	 *  trim: true                  - trim the output.
      *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like
      *                                EXAMPLE:
      *                                 
@@ -737,23 +738,24 @@
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
             var isFirstToken = true,
                 defaultOptions = {
-                    tmplFunctionStart: "\n{{autoindent}}{{token}}\n{{autoindent}}(\n",
-                    tmplFunctionStop: "\n{{autoindent}}{{token}})",
-                    tmplOperandError: "{{token}}",
-                    tmplOperandRange: "{{autoindent}}{{token}}",
-                    tmplOperandLogical: " {{token}}",
-                    tmplOperandNumber: "{{autoindent}}{{token}}",
+                    tmplFunctionStart: '{{autoindent}}{{token}}\n{{autoindent}}(\n',
+                    tmplFunctionStop: '\n{{autoindent}}{{token}})',
+                    tmplOperandError: '{{token}}',
+                    tmplOperandRange: '{{autoindent}}{{token}}',
+                    tmplOperandLogical: '{{token}}{{autolinebreak}}',
+                    tmplOperandNumber: '{{autoindent}}{{token}}',
                     tmplOperandText: '{{autoindent}}"{{token}}"',
-                    tmplArgument: "{{token}}",
-                    tmplFunctionStartArray: "",
-                    tmplFunctionStartArrayRow: "{",
-                    tmplFunctionStopArrayRow: "}",
-                    tmplFunctionStopArray: "",
-					tmplSubexpressionStart: "{{autoindent}}(",
-					tmplSubexpressionStop: " )",
-                    tmplIndentTab: "\t",
-                    tmplIndentSpace: " ",
-                    autoLineBreak: "TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT",
+                    tmplArgument: '{{token}}\n',
+                    tmplFunctionStartArray: '',
+                    tmplFunctionStartArrayRow: '{',
+                    tmplFunctionStopArrayRow: '}',
+                    tmplFunctionStopArray: '',
+					tmplSubexpressionStart: '{{autoindent}}(',
+					tmplSubexpressionStop: ' )',
+                    tmplIndentTab: '\t',
+                    tmplIndentSpace: ' ',
+                    autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
+					newLine: '\n',
                     trim: true,
                     customTokenRender: null
                 };
@@ -804,11 +806,12 @@
                     indentCount -= ((indentCount > 0) ? 1 : 0);
                 }
 				
-				var matchBeginNewline = /^\n/,
+				var matchBeginNewline = new RegExp('^' + options.newLine, ''),
+					matchEndNewLine = new RegExp(options.newLine + '$', ''),
 					autoBreak = testAutoBreak(nextToken),
 					autoIndent = isNewLine,
 					indt = autoIndent ? indent() : options.tmplIndentSpace,
-					lineBreak = autoBreak ? "\n" : "";
+					lineBreak = autoBreak ? options.newLine : "";
 
                 outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender);
 
@@ -817,7 +820,7 @@
 
                 }
 				
-                isNewLine = autoBreak || (/\n$/).test(outputFormula);
+                isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
                 isFirstToken = false;
             }
 
@@ -833,23 +836,24 @@
 	 */
 	var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function(formula){
 				var options = {
-                    tmplFunctionStart: '<br />\n{{autoindent}}<span class="function">{{token}}</span><br />\n{{autoindent}}<span class="function_start">(</span><br />\n',
-                    tmplFunctionStop: '<br />\n{{autoindent}}<span class="function_stop">{{token}})</span>',
-                    tmplOperandError: '<span class="error">{{token}}</span>',
-                    tmplOperandRange: '{{autoindent}}<span class="range">{{token}}</span>',
-                    tmplOperandLogical: '<span class="logical">{{token}}</span>{{autoline',
-                    tmplOperandNumber: '{{autoindent}}<span class="range">{{token}}</span>',
-                    tmplOperandText: '{{autoindent}}<span class="text">"{{token}}"</span>',
-                    tmplArgument: '<span class="argument">{{token}}</span>\n',
+                    tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><br />{{autoindent}}<span class="function_start">(</span><br />',
+                    tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
+                    tmplOperandError: '{{token}}',
+                    tmplOperandRange: '{{autoindent}}{{token}}',
+                    tmplOperandLogical: '{{token}}{{autolinebreak}}',
+                    tmplOperandNumber: '{{autoindent}}{{token}}',
+                    tmplOperandText: '{{autoindent}}<span class="quote_mark">"</span><span class="text">{{token}}</span><span class="quote_mark">"</span>',
+                    tmplArgument: '{{token}}<br />',
                     tmplFunctionStartArray: '',
-                    tmplFunctionStartArrayRow: '<span calss="array_row_start">{</span>',
-                    tmplFunctionStopArrayRow: '<span calss="array_row_stop">}',
+                    tmplFunctionStartArrayRow: '{',
+                    tmplFunctionStopArrayRow: '}',
                     tmplFunctionStopArray: '',
-					tmplSubexpressionStart: '<span class="subexpression_start">(</span>',
-					tmplSubexpressionStop: '<span class="subexpression_stop">)</span>',
-                    tmplIndentTab: '<span class="tabs">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+					tmplSubexpressionStart: '{{autoindent}}(',
+					tmplSubexpressionStop: ' )',
+                    tmplIndentTab: '<span class="tabs">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
                     tmplIndentSpace: '&nbsp;',
-                    autoLineBreak: "TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT",
+					newLine: '<br />',
+                    autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
                     trim: true,
                     customTokenRender: null
                 };
@@ -878,7 +882,8 @@
                             "<>": "!=",
                             "MIN": "Math.Min",
                             "MAX": "Math.Max",
-                            "ABS": "Math.ABS"
+                            "ABS": "Math.ABS",
+							"&" : "+"
                         },
                         currentFunctionOnStack = functionStack[functionStack.length - 1],
                         useTemplate = false;
@@ -980,7 +985,7 @@
         };
 	
 	/**
-     * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp
+     * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp. there are some subtle differences such as == vrs ===, this will be addressed in a later version.
      * @memberof excelFormulaUtilities.convert
      * @function
      * @param {string} formula

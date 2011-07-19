@@ -15,7 +15,7 @@
 		padding:0;
 		margin-bottom:0.61em;
 	}
-	#main .formula pre{
+	#main .formula pre, #main .formula div{
 		margin:0;
 		padding:0.61em;
 		margin-bottom:1.618em;
@@ -46,6 +46,17 @@
 	#main .formula h2 span{
 		font-weight:normal;
 	}
+	
+	/*-----------FORMULA STYLES------------*/
+	.function{
+		color:#069;
+	}
+	.function_start, .function_stop{
+		color:#ff0000;
+	}
+	.quote_mark, .text{color:#0000ff}
+	.tabs{border-left:dotted 1px #a0a0a0}
+	/*-----------FORMULA STYLES------------*/
   /*]]>*/</style>
 
 </head>
@@ -60,22 +71,22 @@
 		<div id="main" role="main">
 			
 			<div class="formula">
-				<h2>formatFormula( "<span id="fomatFormula_1"></span>" );</h2>
+				<h2>excelFormulaUtilities.formatFormula( "<span id="fomatFormula_1"></span>" );</h2>
 				<pre id="fomatFormula_1_out"></pre>
 			</div>
 			
 			<div class="formula">
-				<h2>formatFormula( "<span id="fomatFormula_2"></span>" );</h2>
+				<h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2>
 				<pre id="fomatFormula_2_out"></pre>
 			</div>
 			
 			<div class="formula">
-				<h2>formula2CSharp( "<span id="fomatFormula_3"></span>" );</h2>
-				<pre id="fomatFormula_3_out"></pre>
+				<h2>excelFormulaUtilities.formula2CSharp( "<span id="fomatFormula_3"></span>" );</h2>
+				<div id="fomatFormula_3_out"></div>
 			</div>
 			
 			<div class="formula">
-				<h2>formula2Javascript( "<span id="fomatFormula_4"></span>" );</h2>
+				<h2>excelFormulaUtilities.formula2Javascript( "<span id="fomatFormula_4"></span>" );</h2>
 				<pre id="fomatFormula_4_out"></pre>
 			</div>
 
