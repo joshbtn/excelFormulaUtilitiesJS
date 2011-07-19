@@ -1,12 +1,17 @@
 /*
+ * excelFormulaUtilitiesJS v0.9.0
+ * https://github.com/joshatjben/excelFormulaUtilitiesJS/
+ *
  * Copyright 2011, Josh Bennett
  * licensed under the MIT license.
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/blob/master/LICENSE.txt
  *
- * some functionality based off of the jquery core lib
+ * Some functionality based off of the jquery core lib
  * Copyright 2011, John Resig
  * Dual licensed under the MIT or GPL Version 2 licenses.
  * http://jquery.org/license
+ *
+ * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */
  
 (function () {

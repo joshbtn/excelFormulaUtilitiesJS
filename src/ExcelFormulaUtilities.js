@@ -6,7 +6,12 @@
  * licensed under the MIT license.
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/blob/master/LICENSE.txt
  *
- * Parts of this have been based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
+ * Some functionality based off of the jquery core lib
+ * Copyright 2011, John Resig
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
