@@ -16,7 +16,7 @@ To get started download the excelFormulaUtilities-0.9.1.js and check out the exa
 	
 ##EXAMPLE
 
-This example is also in examples/basic_example1/index.html
+To see this example check out ./examples/basic_example1/index.html
 
 ###The JavaScript
 	window.onload = function(){
