@@ -7,7 +7,45 @@
   <meta name="author" content="Josh Bennett">
   
   <style type="text/css">/*<![CDATA[*/
+	html, body{font-size:12px; font-family:"Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;}
+	body{margin:0.618em;}
 	footer, header{display:none;}
+	#main .formula{
+		margin:0;
+		padding:0;
+		margin-bottom:0.61em;
+	}
+	#main .formula pre{
+		margin:0;
+		padding:0.61em;
+		margin-bottom:1.618em;
+		background: #ffffff; /* Old browsers */
+		background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Opera11.10+ */
+		background: -ms-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* IE10+ */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+		background: linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* W3C */
+	}
+	#main .formula h2{
+		font-weight:700;
+		margin:0;
+		padding:0.61em;
+		font-size:12px;
+		color:#fff;
+		background: #b8e1fc; /* Old browsers */
+		background: -moz-linear-gradient(top, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b8e1fc), color-stop(10%,#a9d2f3), color-stop(25%,#90bae4), color-stop(37%,#90bcea), color-stop(50%,#90bff0), color-stop(51%,#6ba8e5), color-stop(83%,#a2daf5), color-stop(100%,#bdf3fd)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top, #b8e1fc 0%,#a9d2f3 10%,#90bae4 25%,#90bcea 37%,#90bff0 50%,#6ba8e5 51%,#a2daf5 83%,#bdf3fd 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top, #b8e1fc 0%,#a9d2f3 10%,#90bae4 25%,#90bcea 37%,#90bff0 50%,#6ba8e5 51%,#a2daf5 83%,#bdf3fd 100%); /* Opera11.10+ */
+		background: -ms-linear-gradient(top, #b8e1fc 0%,#a9d2f3 10%,#90bae4 25%,#90bcea 37%,#90bff0 50%,#6ba8e5 51%,#a2daf5 83%,#bdf3fd 100%); /* IE10+ */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b8e1fc', endColorstr='#bdf3fd',GradientType=0 ); /* IE6-9 */
+		background: linear-gradient(top, #b8e1fc 0%,#a9d2f3 10%,#90bae4 25%,#90bcea 37%,#90bff0 50%,#6ba8e5 51%,#a2daf5 83%,#bdf3fd 100%); /* W3C */
+	}
+	#main .formula h2 span{
+		font-weight:normal;
+	}
   /*]]>*/</style>
 
 </head>
@@ -21,11 +59,26 @@
 
 		<div id="main" role="main">
 			
-			<p>
-				formatFormula( 'SUM((A1:A10>=5)*(A1:A10<=10)*A1:A10)' );<br />
-				<pre id="fomatFormula_1"></pre>
-			<p>
+			<div class="formula">
+				<h2>formatFormula( "<span id="fomatFormula_1"></span>" );</h2>
+				<pre id="fomatFormula_1_out"></pre>
+			</div>
 			
+			<div class="formula">
+				<h2>formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2>
+				<div id="fomatFormula_2_out"></div>
+			</div>
+			
+			<div class="formula">
+				<h2>formula2CSharp( "<span id="fomatFormula_3"></span>" );</h2>
+				<pre id="fomatFormula_3_out"></pre>
+			</div>
+			
+			<div class="formula">
+				<h2>formula2Javascript( "<span id="fomatFormula_4"></span>" );</h2>
+				<pre id="fomatFormula_4_out"></pre>
+			</div>
+
 		</div>
 		
 		<footer>

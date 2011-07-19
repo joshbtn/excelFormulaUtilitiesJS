@@ -919,7 +919,7 @@
             }
 
             var indentCount = 0;
-
+			debugger;
             var indent = function () {
                     var s = "",
                         i = 0;
@@ -1001,7 +1001,7 @@
                     tmplFunctionStartArrayRow: '<span calss="array_row_start">{</span>',
                     tmplFunctionStopArrayRow: '<span calss="array_row_stop">}',
                     tmplFunctionStopArray: "",
-                    tmplIndentTab: "&nbsp;&nbsp;&nbsp;&nbsp;",
+                    tmplIndentTab: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
                     tmplIndentSpace: "&nbsp;",
                     autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
                     trim: true,
