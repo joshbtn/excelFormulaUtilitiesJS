@@ -14,7 +14,7 @@ To get started download the excelFormulaUtilities-0.9.1.js and check out the exa
 	formula = 'IF(MAX(10, 30)>20,1,0)'
 	var beautified = formatFormula( formula );
 	
-##EXAMPLE
+##Example
 
 To see this example check out ./examples/basic_example1/index.html
 
