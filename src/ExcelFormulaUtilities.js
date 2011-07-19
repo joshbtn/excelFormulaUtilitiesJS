@@ -8,7 +8,6 @@
 (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
         parser = excelFormulaUtilities.parser = {},
-        // window.excelFormulaUtilities.parser
         convert = excelFormulaUtilities.convert = {},
         core = window.excelFormulaUtilities.core,
         formatStr = window.excelFormulaUtilities.string.formatStr,
@@ -963,4 +962,15 @@
             });
             return cSharpOutput;
         };
+	
+	/**
+     * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp
+     * @memberof excelFormulaUtilities.convert
+     * @function
+     * @param {string} formula
+     * @returns {string}
+     */
+	var formula2JavaScript = convert.formula2JavaScript = function (formula) {
+			return formula2CSharp(formula);
+		}
 }());
