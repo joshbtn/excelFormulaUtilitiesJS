@@ -46,6 +46,10 @@
     var trim = window.excelFormulaUtilities.string.trim = function(inStr){
 			return inStr.replace(/^\s|\s$/, "");
 		}
+	
+	var trimHTML = window.excelFormulaUtilities.string.trim = function(inStr){
+			return inStr.replace(/^(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*|(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*$/, "");
+		}
 	//DO NOT PLACE ANY CODE BELOW THIS. they will not run if jquery is present.
 	
 	//ExcelFormulaUtilities relies on the extend functionality of jquery. 
