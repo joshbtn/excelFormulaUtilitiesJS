@@ -888,6 +888,8 @@
                             "MIN": "Math.Min",
                             "MAX": "Math.Max",
                             "ABS": "Math.ABS",
+							"SUM": "",
+							"IF": "",
 							"&" : "+"
                         },
                         currentFunctionOnStack = functionStack[functionStack.length - 1],
@@ -900,35 +902,26 @@
                         switch (token.subtype) {
 
                         case TOK_SUBTYPE_START:
-                            //TODO also add functionality to convert SUM(foo, bar) to (foo + bar)
-							if ((/^if$/gi).test(tokenString)) {
-                                functionStack.push({
-                                    name: tokenString,
-                                    isIf: true,
-									isSum: false,
-                                    argumentNumber: 0
-                                });
-                                outstr = "(";
-                            } else {
-                                functionStack.push({
-                                    name: tokenString,
-                                    isIf: false,
-									isSum: false,
-                                    argumentNumber: 0
-                                });
-                                outstr = directConversionMap[tokenString] || tokenString;
-                                useTemplate = true;
-                            }
+							
+							functionStack.push({
+								name: tokenString,
+								argumentNumber: 0
+							});
+							outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
+							useTemplate = true;
+							
                             break;
                         case TOK_SUBTYPE_STOP:
 
                             useTemplate = true;
-                            if (currentFunctionOnStack.isIf) {
+							switch (currentFunctionOnStack.name.toLowerCase()){
+                            case "if":
                                 outstr = ")";
-
                                 useTemplate = false;
-                            } else {
-                                outstr = directConversionMap[tokenString] || tokenString;
+								break;
+                            default:
+                                outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
+								break
                             }
                             functionStack.pop();
                             break;
@@ -948,8 +941,11 @@
                                 break;
                             }
 							break;
+						case "sum":
+							outstr = "+";
+							break;
                         default:
-                            outstr = directConversionMap[tokenString] || tokenString;
+                            outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
                             useTemplate = true;
 							break;
 						}
@@ -959,7 +955,7 @@
                         break;
 
                     default:
-                        outstr = directConversionMap[tokenString] || tokenString;
+                        outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
                         useTemplate = true;
                         break;
                     }

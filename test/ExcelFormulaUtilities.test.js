@@ -47,6 +47,14 @@ test("formula2CSharp", function() {
 	inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
 	excpected = '((Math.Max(1,-10)>0?"foo":"bar")=="foo"?"foo":"bar")';
 	equals(excelFormulaUtilities.formula2CSharp(inputFormula), excpected, "Nested If Test with a nested function.");
+	
+	inputFormula = 'SUM(1,1)';
+	excpected = '(1+1)';
+	equals(excelFormulaUtilities.formula2CSharp(inputFormula), excpected, "SUM(1,1)");
+	
+	inputFormula = 'SUM(1,1,1,1)';
+	excpected = '(1+1+1+1)';
+	equals(excelFormulaUtilities.formula2CSharp(inputFormula), excpected, "SUM(1,1,1,1)");
 });
 
 test("formula2JavaScript", function() {
