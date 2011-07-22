@@ -1,27 +1,68 @@
-(function () {
+//Beautifier.js
+//
+//Copywrite 2011 Josh Benentt
+//License - https://raw.github.com/joshatjben/excelFormulaUtilitiesJS/master/LICENSE.txt
+//[on github](https://github.com/joshatjben/excelFormulaUtilitiesJS/tree/master/examples/basic_example1 "github")
+//
+(function (window, undefiend) {
     "use strict";
-    window.excelFormulaBeautifier = window.excelFormulaBeautifier || {};
+	
+    //Check and setup name spaces.
+	window.excelFormulaBeautifier = window.excelFormulaBeautifier || {};
     window.excelFormulaBeautifier.examples = window.excelFormulaBeautifier.examples || {};
+	
+	//Configuration
+    //-------------------------------
+	var config = {
+		//The ID for the formula Input input/textarea
+		INPUT_ID: 'formula_input',
+		
+		//The ID for the formula title area. in this example it spits out the function call;
+		FORMULA_TITLE_ID: 'fomatFormula_2',
+		
+		//THE ID for the area to contain the beautified excel formula.
+		FORMULA_BODY_ID:'fomatFormula_2_out',
+		
+		//Use this to set the inital textare/input text area.
+		DEFAULT_FORMULA: ''
+	},
+	
 
-    var beautifier = window.excelFormulaBeautifier.examples.beautifier = {},
-		formula, 
-		input, 
-		formulaTitle, 
-		formulaBody,
-		update = beautifier.update = function () {
-            formula = input.value;
-            formulaTitle.innerHTML = formula;
-            formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(formula);
-        };
+    //Beautifier Page functionality
+    //-------------------------------
+	beautifier = window.excelFormulaBeautifier.examples.beautifier = 
+		(function () {
+			var oldFormula;
+			
+			return {
+				formula: '',
+				input: null,
+				formulaTitle: null,
+				formulaBody: null,
+				update: function () {
+					this.formula = this.input.value;
 
-    window.onload = function () {
-        formula = '';
-        input = document.getElementById('formula_input');
-        formulaTitle = document.getElementById('fomatFormula_2');
-        formulaBody = document.getElementById('fomatFormula_2_out');
+					//Test to see if the formula has changed, if it hasn't don't do anything
+					if (oldFormula === this.formula) {
+						return;
+					}
 
-        input.value = formula;
+					this.formulaTitle.innerHTML = this.formula;
+					this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
+				}
+			};
+		}());
 
-        update();
-    };
-}());
+	//On Page Load
+	//-------------------
+	window.onload = function () {
+		beautifier.input = document.getElementById(config.INPUT_ID);
+		beautifier.formulaTitle = document.getElementById(config.FORMULA_TITLE_ID);
+		beautifier.formulaBody = document.getElementById(config.FORMULA_BODY_ID);
+
+		beautifier.input.value = beautifier.formula;
+		
+		//add beautifier.update(); here if if you have set an inital DEFAULT_FORMULA and would like it to render on page load.
+	};
+	
+}(window));
