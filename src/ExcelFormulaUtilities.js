@@ -937,7 +937,8 @@
                         break;
 
                     case TOK_TYPE_ARGUMENT:
-                        if (currentFunctionOnStack.isIf) {
+                        switch (currentFunctionOnStack.name.toLowerCase()){
+						case "if":
                             switch (currentFunctionOnStack.argumentNumber) {
                             case 0:
                                 outstr = "?";
@@ -946,10 +947,12 @@
                                 outstr = ":";
                                 break;
                             }
-                        } else {
+							break;
+                        default:
                             outstr = directConversionMap[tokenString] || tokenString;
                             useTemplate = true;
-                        }
+							break;
+						}
 
                         currentFunctionOnStack.argumentNumber += 1;
 
