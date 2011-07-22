@@ -46,6 +46,9 @@
 	#main .formula h2 span{
 		font-weight:normal;
 	}
+	#inputArea{
+		margin:1.618em 0;
+	}
 	
 	/*-----------FORMULA STYLES------------*/
 	.function{
@@ -69,27 +72,14 @@
 		</header>
 
 		<div id="main" role="main">
-			
-			<div class="formula">
-				<h2>excelFormulaUtilities.formatFormula( "<span id="fomatFormula_1"></span>" );</h2>
-				<pre id="fomatFormula_1_out"></pre>
+			<div id="inputArea">
+				<label for="formula_input">Start Typing formula here.</label><input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
 			</div>
-			
 			<div class="formula">
 				<h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2>
 				<code id="fomatFormula_2_out"></code>
 			</div>
 			
-			<div class="formula">
-				<h2>excelFormulaUtilities.formula2CSharp( "<span id="fomatFormula_3"></span>" );</h2>
-				<code id="fomatFormula_3_out"></code>
-			</div>
-			
-			<div class="formula">
-				<h2>excelFormulaUtilities.formula2Javascript( "<span id="fomatFormula_4"></span>" );</h2>
-				<code id="fomatFormula_4_out"></code>
-			</div>
-
 		</div>
 		
 		<footer>
@@ -98,7 +88,7 @@
 	</div>
 	
 	<script src="../../excelFormulaUtilities-0.9.1.js"></script>
-	<script src="basicExample.js"></script>
+	<script src="beautifier.js"></script>
 
   </body>
 </html>
