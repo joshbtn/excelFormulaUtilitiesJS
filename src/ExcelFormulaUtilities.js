@@ -900,10 +900,12 @@
                         switch (token.subtype) {
 
                         case TOK_SUBTYPE_START:
-                            if ((/^if$/gi).test(tokenString)) {
+                            //TODO also add functionality to convert SUM(foo, bar) to (foo + bar)
+							if ((/^if$/gi).test(tokenString)) {
                                 functionStack.push({
                                     name: tokenString,
                                     isIf: true,
+									isSum: false,
                                     argumentNumber: 0
                                 });
                                 outstr = "(";
@@ -911,6 +913,7 @@
                                 functionStack.push({
                                     name: tokenString,
                                     isIf: false,
+									isSum: false,
                                     argumentNumber: 0
                                 });
                                 outstr = directConversionMap[tokenString] || tokenString;
