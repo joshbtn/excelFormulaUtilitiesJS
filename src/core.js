@@ -55,80 +55,71 @@
 	var trimHTML = window.excelFormulaUtilities.string.trim = function(inStr){
 			return inStr.replace(/^(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*|(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*$/, "");
 		}
-	//DO NOT PLACE ANY CODE BELOW THIS. they will not run if jquery is present.
-	
-	//ExcelFormulaUtilities relies on the extend functionality of jquery. 
-	//If jquery is present use that.
-	if (window.jQuery) 
-	{
-        core = window.jQuery;
-		return;
-    }
 
 	//Quick and dirty type checks
 	/**
-	 * @param {object} obj
-	 * @returns {boolean}
-	 * @memberOf window.excelFormulaUtilities.core
-	 */
+	* @param {object} obj
+	* @returns {boolean}
+	* @memberOf window.excelFormulaUtilities.core
+	*/
 	var isFunction = core.isFunction = function (obj) {
-			return (typeof obj) === "function";
-		}
-	
+		return (typeof obj) === "function";
+	}
+
 	/**
-	 * @param {object} obj
-	 * @returns {boolean}
-	 * @memberOf window.excelFormulaUtilities.core
-	 */
+	* @param {object} obj
+	* @returns {boolean}
+	* @memberOf window.excelFormulaUtilities.core
+	*/
 	var isArray = core.isArray = function (obj) {
-			return (typeof obj) === "object" && obj.length;
-		}
-	
+		return (typeof obj) === "object" && obj.length;
+	}
+
 	/**
-	 * @param {object} obj
-	 * @returns {boolean}
-	 * @memberOf window.excelFormulaUtilities.core
-	 */
+	* @param {object} obj
+	* @returns {boolean}
+	* @memberOf window.excelFormulaUtilities.core
+	*/
 	var isWindow = core.isWindow = function () {
-			return obj && typeof obj === "object" && "setInterval" in obj;
-		} /*----The functionality below has based off of the jQuery core library----*/
-		
+		return obj && typeof obj === "object" && "setInterval" in obj;
+	} /*----The functionality below has based off of the jQuery core library----*/
+
 	/**
-	 * Check if the object is a plain object or not. This has been pulled from the jQuery core and modified slightly.
-	 * @param {object} obj
-	 * @returns {boolean} returns weather the object is a plain object or not.
-	 * @memberOf window.excelFormulaUtilities.core
-	 */
+	* Check if the object is a plain object or not. This has been pulled from the jQuery core and modified slightly.
+	* @param {object} obj
+	* @returns {boolean} returns weather the object is a plain object or not.
+	* @memberOf window.excelFormulaUtilities.core
+	*/
 	var isPlainObject = core.isPlainObject = function (obj) {
-			// Must be an Object.
-			// Because of IE, we also have to check the presence of the constructor property.
-			// Make sure that DOM nodes and window objects don't pass through, as well
-			if (!obj || typeof obj !== "object" || obj.nodeType || isWindow(obj)) {
-				return false;
-			}
-			// Not own constructor property must be Object
-			if (obj.constructor && !hasOwnProperty.call(obj, "constructor") && !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf")) {
-				return false;
-			}
-			// Own properties are enumerated firstly, so to speed up,
-			// if last one is own, then all properties are own.
-			var key;
-			for (key in obj) {}
-			return key === undefined || hasOwnProperty.call(obj, key);
+		// Must be an Object.
+		// Because of IE, we also have to check the presence of the constructor property.
+		// Make sure that DOM nodes and window objects don't pass through, as well
+		if (!obj || typeof obj !== "object" || obj.nodeType || isWindow(obj)) {
+			return false;
 		}
-		
+		// Not own constructor property must be Object
+		if (obj.constructor && !hasOwnProperty.call(obj, "constructor") && !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf")) {
+			return false;
+		}
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) { }
+		return key === undefined || hasOwnProperty.call(obj, key);
+	}
+
 	/**
-	 * This has been pulled from the jQuery core and modified slightly. see http://api.jquery.com/jQuery.extend/
-	 * @param {object} target
-	 * @param {object} object add one or more object to extend the target.
-	 * @returns {object} returns the extended object.
-	 * @memberOf window.excelFormulaUtilities.core
-	 */
+	* This has been pulled from the jQuery core and modified slightly. see http://api.jquery.com/jQuery.extend/
+	* @param {object} target
+	* @param {object} object add one or more object to extend the target.
+	* @returns {object} returns the extended object.
+	* @memberOf window.excelFormulaUtilities.core
+	*/
 	var extend = core.extend = function () {
 		var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {},
-			i = 1,
-			length = arguments.length,
-			deep = false;
+		i = 1,
+		length = arguments.length,
+		deep = false;
 		// Handle a deep copy situation
 		if (typeof target === "boolean") {
 			deep = target;
@@ -176,5 +167,6 @@
 		// Return the modified object
 		return target;
 	}; /*----end of jquery functionality----*/
+
 	
 }())
