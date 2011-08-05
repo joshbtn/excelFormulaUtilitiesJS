@@ -845,7 +845,7 @@
                     tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
                     tmplOperandError: '{{token}}',
                     tmplOperandRange: '{{autoindent}}{{token}}',
-                    tmplOperandLogical: '{{token}}{{autolinebreak}}',
+                    tmplOperandLogical: ' {{token}}{{autolinebreak}}',
                     tmplOperandNumber: '{{autoindent}}{{token}}',
                     tmplOperandText: '{{autoindent}}<span class="quote_mark">"</span><span class="text">{{token}}</span><span class="quote_mark">"</span>',
                     tmplArgument: '{{token}}<br />',
