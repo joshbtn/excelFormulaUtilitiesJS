@@ -169,4 +169,4 @@
 	}; /*----end of jquery functionality----*/
 
 	
-}())
+}());

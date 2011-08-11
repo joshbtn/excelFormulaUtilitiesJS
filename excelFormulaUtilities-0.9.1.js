@@ -169,7 +169,8 @@
 	}; /*----end of jquery functionality----*/
 
 	
-}())/*
+}());
+/*
  * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
  *

@@ -48,7 +48,11 @@
 					}
 
 					this.formulaTitle.innerHTML = this.formula;
-					this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
+					try{
+						this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
+					}catch(exception){
+						//Do nothing, why? because this will only throw an error when the formula is improperly formed, however shouldn't effect perf.
+					}
 				}
 			};
 		}());
