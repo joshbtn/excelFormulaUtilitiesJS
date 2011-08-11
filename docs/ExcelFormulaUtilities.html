@@ -1,0 +1,923 @@
+<!DOCTYPE html>  <html> <head>   <title>ExcelFormulaUtilities.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="ExcelFormulaUtilities.html">                 ExcelFormulaUtilities.js               </a>                                           <a class="source" href="core.html">                 core.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ExcelFormulaUtilities.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm"> * excelFormulaUtilitiesJS v0.9.0</span>
+<span class="cm"> * https://github.com/joshatjben/excelFormulaUtilitiesJS/</span>
+<span class="cm"> *</span>
+<span class="cm"> * Copyright 2011, Josh Bennett</span>
+<span class="cm"> * licensed under the MIT license.</span>
+<span class="cm"> * https://github.com/joshatjben/excelFormulaUtilitiesJS/blob/master/LICENSE.txt</span>
+<span class="cm"> *</span>
+<span class="cm"> * Some functionality based off of the jquery core lib</span>
+<span class="cm"> * Copyright 2011, John Resig</span>
+<span class="cm"> * Dual licensed under the MIT or GPL Version 2 licenses.</span>
+<span class="cm"> * http://jquery.org/license</span>
+<span class="cm"> *</span>
+<span class="cm"> * Based on Ewbi&#39;s Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">excelFormulaUtilities</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">excelFormulaUtilities</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">excelFormulaUtilities</span> <span class="o">||</span> <span class="p">{},</span>
+        <span class="nx">core</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">core</span><span class="p">,</span>
+        <span class="nx">formatStr</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">string</span><span class="p">.</span><span class="nx">formatStr</span><span class="p">,</span>
+        <span class="nx">trim</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">string</span><span class="p">.</span><span class="nx">trim</span><span class="p">,</span>
+
+        <span class="nx">types</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="nx">TOK_TYPE_NOOP</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_NOOP</span> <span class="o">=</span> <span class="s2">&quot;noop&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_OPERAND</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_OPERAND</span> <span class="o">=</span> <span class="s2">&quot;operand&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_FUNCTION</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_FUNCTION</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_SUBEXPR</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_SUBEXPR</span> <span class="o">=</span> <span class="s2">&quot;subexpression&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_ARGUMENT</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_ARGUMENT</span> <span class="o">=</span> <span class="s2">&quot;argument&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_OP_PRE</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_OP_PRE</span> <span class="o">=</span> <span class="s2">&quot;operator-prefix&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_OP_IN</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_OP_IN</span> <span class="o">=</span> <span class="s2">&quot;operator-infix&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_OP_POST</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_OP_POST</span> <span class="o">=</span> <span class="s2">&quot;operator-postfix&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_WSPACE</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_WSPACE</span> <span class="o">=</span> <span class="s2">&quot;white-space&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_TYPE_UNKNOWN</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_TYPE_UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+
+        <span class="nx">TOK_SUBTYPE_START</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_START</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_STOP</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_STOP</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">,</span>
+
+        <span class="nx">TOK_SUBTYPE_TEXT</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_TEXT</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_NUMBER</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_NUMBER</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_LOGICAL</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_LOGICAL</span> <span class="o">=</span> <span class="s2">&quot;logical&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_ERROR</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_RANGE</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_RANGE</span> <span class="o">=</span> <span class="s2">&quot;range&quot;</span><span class="p">,</span>
+
+        <span class="nx">TOK_SUBTYPE_MATH</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_MATH</span> <span class="o">=</span> <span class="s2">&quot;math&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_CONCAT</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_CONCAT</span> <span class="o">=</span> <span class="s2">&quot;concatenate&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_INTERSECT</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_INTERSECT</span> <span class="o">=</span> <span class="s2">&quot;intersect&quot;</span><span class="p">,</span>
+        <span class="nx">TOK_SUBTYPE_UNION</span> <span class="o">=</span> <span class="nx">types</span><span class="p">.</span><span class="nx">TOK_SUBTYPE_UNION</span> <span class="o">=</span> <span class="s2">&quot;union&quot;</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @class</span>
+<span class="cm">     */</span>
+
+    <span class="kd">function</span> <span class="nx">F_token</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">subtype</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">subtype</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @class</span>
+<span class="cm">     */</span>
+
+    <span class="kd">function</span> <span class="nx">F_tokens</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">subtype</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">subtype</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">subtype</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F_token</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">subtype</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">token</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addRef</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
+        <span class="p">};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">BOF</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">EOF</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">moveNext</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">EOF</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">current</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">]);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">EOF</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">previous</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]);</span>
+        <span class="p">};</span>
+
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">F_tokenStack</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">push</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">pop</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">F_token</span><span class="p">(</span><span class="nx">name</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">));</span>
+        <span class="p">};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">token</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">())</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">().</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">())</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">())</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">token</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+        <span class="p">};</span>
+
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">getTokens</span><span class="p">(</span><span class="nx">formula</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F_tokens</span><span class="p">(),</span>
+            <span class="nx">tokenStack</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F_tokenStack</span><span class="p">(),</span>
+
+            <span class="nx">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+            <span class="nx">currentChar</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">doubleChar</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">nextChar</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">EOF</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">offset</span> <span class="o">&gt;=</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+            <span class="p">},</span>
+
+            <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+
+            <span class="nx">inString</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">inPath</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">inRange</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">inError</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">regexSN</span> <span class="o">=</span> <span class="sr">/^[1-9]{1}(\.[0-9]+)?E{1}$/</span><span class="p">;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">formula</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">formula</span> <span class="o">=</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">formula</span> <span class="o">=</span> <span class="nx">formula</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+
+        <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">EOF</span><span class="p">())</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>state-dependent character evaluation (order is important)
+double-quoted strings
+embeds are doubled
+end marks token</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">inString</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">nextChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">token</span> <span class="o">+=</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
+                        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">inString</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_TEXT</span><span class="p">);</span>
+                        <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>single-quoted strings (links)
+embeds are double
+end does not mark a token</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">inPath</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">nextChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">token</span> <span class="o">+=</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">;</span>
+                        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">inPath</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>bracked strings (range offset or linked workbook name)
+no embeds (changed to "()" by Excel)
+end does not mark a token</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">inRange</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">inRange</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>error values
+end marks a token, determined from absolute list of values</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">inError</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;,#NULL!,#DIV/0!,#VALUE!,#REF!,#NAME?,#NUM!,#N/A,&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nx">token</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">inError</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_ERROR</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>scientific notation check</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;+-&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">())</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">regexSN</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                        <span class="k">continue</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>independent character evaulation (order not important)
+establish state-dependent character evaluations</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>not expected</p>             </td>             <td class="code">               <div class="highlight"><pre>                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_UNKNOWN</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">inString</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>not expected</p>             </td>             <td class="code">               <div class="highlight"><pre>                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_UNKNOWN</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">inPath</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">inRange</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>not expected</p>             </td>             <td class="code">               <div class="highlight"><pre>                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_UNKNOWN</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">inError</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>mark start and end of arrays and array rows</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;{&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>not expected</p>             </td>             <td class="code">               <div class="highlight"><pre>                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_UNKNOWN</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokenStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;ARRAY&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">));</span>
+                <span class="nx">tokenStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;ARRAYROW&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">));</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">tokenStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_ARGUMENT</span><span class="p">);</span>
+                <span class="nx">tokenStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;ARRAYROW&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">));</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">tokenStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;ARRAYROWSTOP&quot;</span><span class="p">));</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">tokenStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="s2">&quot;ARRAYSTOP&quot;</span><span class="p">));</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>trim white-space</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_WSPACE</span><span class="p">);</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">while</span> <span class="p">((</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">EOF</span><span class="p">()))</span> <span class="p">{</span>
+                    <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>multi-character comparators</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;,&gt;=,&lt;=,&lt;&gt;,&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nx">doubleChar</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">doubleChar</span><span class="p">(),</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_LOGICAL</span><span class="p">);</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>standard infix operators</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;+-*/^&amp;=&gt;&lt;&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">())</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">(),</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">);</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>standard postfix operators</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;%&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">())</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">(),</span> <span class="nx">TOK_TYPE_OP_POST</span><span class="p">);</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>start subexpression or function</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;(&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokenStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">));</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">tokenStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">TOK_TYPE_SUBEXPR</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">));</span>
+                <span class="p">}</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>function, subexpression, array parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">tokenStack</span><span class="p">.</span><span class="nx">type</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">(),</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_UNION</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currentChar</span><span class="p">(),</span> <span class="nx">TOK_TYPE_ARGUMENT</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>stop subexpression</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">currentChar</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">tokenStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+                <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>token accumulation</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">token</span> <span class="o">+=</span> <span class="nx">currentChar</span><span class="p">();</span>
+            <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>dump remaining accumulation</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tokens</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>move all tokens to a new collection, excluding all unnecessary white-space tokens</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">tokens2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F_tokens</span><span class="p">();</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">moveNext</span><span class="p">())</span> <span class="p">{</span>
+
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">current</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_WSPACE</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">doAddToken</span> <span class="o">=</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">BOF</span><span class="p">())</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">EOF</span><span class="p">());</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>if ((tokens.BOF()) || (tokens.EOF())) {}</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="nx">doAddToken</span> <span class="o">=</span> <span class="nx">doAddToken</span> <span class="o">&amp;&amp;</span> <span class="p">(((</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">((</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_SUBEXPR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">));</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>else if (!(
+   ((tokens.previous().type === TOK<em>TYPE</em>FUNCTION) &amp;&amp; (tokens.previous().subtype == TOK<em>SUBTYPE</em>STOP)) 
+|| ((tokens.previous().type == TOK<em>TYPE</em>SUBEXPR) &amp;&amp; (tokens.previous().subtype == TOK<em>SUBTYPE</em>STOP)) 
+|| (tokens.previous().type == TOK<em>TYPE</em>OPERAND))) 
+ {}</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="nx">doAddToken</span> <span class="o">=</span> <span class="nx">doAddToken</span> <span class="o">&amp;&amp;</span> <span class="p">(((</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">))</span> <span class="o">||</span> <span class="p">((</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_SUBEXPR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">));</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>else if (!(
+((tokens.next().type == TOK<em>TYPE</em>FUNCTION) &amp;&amp; (tokens.next().subtype == TOK<em>SUBTYPE</em>START)) 
+|| ((tokens.next().type == TOK<em>TYPE</em>SUBEXPR) &amp;&amp; (tokens.next().subtype == TOK<em>SUBTYPE</em>START)) 
+|| (tokens.next().type == TOK<em>TYPE</em>OPERAND))) 
+{} 
+else { tokens2.add(token.value, TOK<em>TYPE</em>OP<em>IN, TOK</em>SUBTYPE_INTERSECT)};</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">doAddToken</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">tokens2</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">,</span> <span class="nx">TOK_SUBTYPE_INTERSECT</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">tokens2</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
+
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>switch infix "-" operator to prefix when appropriate, switch infix "+" operator to noop when appropriate, identify operand 
+and infix-operator subtypes, pull "@" from in front of function names</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">while</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">moveNext</span><span class="p">())</span> <span class="p">{</span>
+
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens2</span><span class="p">.</span><span class="nx">current</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">BOF</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">TOK_TYPE_OP_PRE</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">((</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_SUBEXPR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OP_POST</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_MATH</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">TOK_TYPE_OP_PRE</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;+&quot;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">BOF</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">TOK_TYPE_NOOP</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">((</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_SUBEXPR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OP_POST</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">previous</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_MATH</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">TOK_TYPE_NOOP</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OP_IN</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;&lt;&gt;=&quot;</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_LOGICAL</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_CONCAT</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_MATH</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_OPERAND</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isNaN</span><span class="p">(</span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_LOGICAL</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_RANGE</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">=</span> <span class="nx">TOK_SUBTYPE_NUMBER</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span>
+
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;@&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+
+        <span class="nx">tokens2</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>move all tokens to a new collection, excluding all noops</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">tokens</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">F_tokens</span><span class="p">();</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">moveNext</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">current</span><span class="p">().</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">TOK_TYPE_NOOP</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">tokens</span><span class="p">.</span><span class="nx">addRef</span><span class="p">(</span><span class="nx">tokens2</span><span class="p">.</span><span class="nx">current</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">tokens</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">tokens</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+    <span class="kd">var</span> <span class="nx">parseFormula</span> <span class="o">=</span> <span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">parseFormula</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inputID</span><span class="p">,</span> <span class="nx">outputID</span><span class="p">)</span> <span class="p">{</span>
+
+
+            <span class="kd">var</span> <span class="nx">indentCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">indent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+                        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">indentCount</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">s</span> <span class="o">+=</span> <span class="s2">&quot;&amp;nbsp;&amp;nbsp;&amp;nbsp;|&quot;</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+                <span class="p">};</span>
+
+            <span class="kd">var</span> <span class="nx">formulaControl</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">inputID</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">formula</span> <span class="o">=</span> <span class="nx">formulaControl</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">getTokens</span><span class="p">(</span><span class="nx">formula</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">tokensHtml</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;table cellspacing=&#39;0&#39; style=&#39;border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px&#39;&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;tr&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39; style=&#39;font-weight: bold; width: 50px&#39;&gt;index&lt;/td&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39; style=&#39;font-weight: bold; width: 125px&#39;&gt;type&lt;/td&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39; style=&#39;font-weight: bold; width: 125px&#39;&gt;subtype&lt;/td&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39; style=&#39;font-weight: bold; width: 150px&#39;&gt;token&lt;/td&gt;&quot;</span><span class="p">;</span>
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39; style=&#39;font-weight: bold; width: 300px&#39;&gt;token tree&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class="p">;</span>
+
+            <span class="k">while</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">moveNext</span><span class="p">())</span> <span class="p">{</span>
+
+                <span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">current</span><span class="p">();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">indentCount</span> <span class="o">-=</span> <span class="p">((</span><span class="nx">indentCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;tr&gt;&quot;</span><span class="p">;</span>
+
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39;&gt;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span><span class="p">;</span>
+
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">token</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span><span class="p">;</span>
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39;&gt;&quot;</span> <span class="o">+</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;&amp;nbsp;&quot;</span> <span class="o">:</span> <span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span><span class="p">;</span>
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39;&gt;&quot;</span> <span class="o">+</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;&amp;nbsp;&quot;</span> <span class="o">:</span> <span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span><span class="p">;</span>
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td class=&#39;token&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">indent</span><span class="p">()</span> <span class="o">+</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;&amp;nbsp;&quot;</span> <span class="o">:</span> <span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span><span class="p">;</span>
+
+                <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/tr&gt;&quot;</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">indentCount</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+
+            <span class="nx">tokensHtml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span><span class="p">;</span>
+
+            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">outputID</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">tokensHtml</span><span class="p">;</span>
+
+            <span class="nx">formulaControl</span><span class="p">.</span><span class="nx">select</span><span class="p">();</span>
+            <span class="nx">formulaControl</span><span class="p">.</span><span class="nx">focus</span><span class="p">();</span>
+
+        <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">applyTokenTemplate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">indent</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">,</span> <span class="nx">override</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">indt</span> <span class="o">=</span> <span class="nx">indent</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">replaceTokenTmpl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">inStr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">inStr</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{\{token\}\}/gi</span><span class="p">,</span> <span class="s2">&quot;{0}&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{\{autoindent\}\}/gi</span><span class="p">,</span> <span class="s2">&quot;{1}&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{\{autolinebreak\}\}/gi</span><span class="p">,</span> <span class="s2">&quot;{2}&quot;</span><span class="p">);</span>
+                <span class="p">};</span>
+
+            <span class="kd">var</span> <span class="nx">tokenString</span> <span class="o">=</span> <span class="p">((</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot; &quot;</span> <span class="o">:</span> <span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">).</span><span class="nx">toString</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">override</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">override</span><span class="p">(</span><span class="nx">tokenString</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">indent</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+
+                <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">returnVal</span><span class="p">.</span><span class="nx">tokenString</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">returnVal</span><span class="p">.</span><span class="nx">useTemplate</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">tokenString</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">case</span> <span class="s2">&quot;function&quot;</span><span class="o">:</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>-----------------FUNCTION------------------</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="k">switch</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s2">&quot;ARRAY&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplFunctionStartArray</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;ARRAYROW&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplFunctionStartArrayRow</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">default</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;start&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplFunctionStart</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplFunctionStop</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s2">&quot;operand&quot;</span><span class="o">:</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>-----------------OPERAND------------------</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="k">switch</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s2">&quot;error&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplOperandError</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;range&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplOperandRange</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;number&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplOperandNumber</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;text&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplOperandText</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;argument&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplArgument</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">default</span><span class="o">:</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+			<span class="k">case</span> <span class="s2">&quot;operator-infix&quot;</span><span class="o">:</span>
+				<span class="k">case</span> <span class="s2">&quot;logical&quot;</span><span class="o">:</span>
+                    <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplOperandLogical</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s2">&quot;argument&quot;</span><span class="o">:</span>
+                <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplArgument</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+			<span class="k">case</span> <span class="s2">&quot;subexpression&quot;</span><span class="o">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;start&quot;</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplSubexpressionStart</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+					<span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">formatStr</span><span class="p">(</span><span class="nx">replaceTokenTmpl</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tmplSubexpressionStop</span><span class="p">),</span> <span class="nx">tokenString</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">);</span>
+				<span class="p">}</span>
+				<span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="p">}</span>
+
+
+            <span class="k">return</span> <span class="nx">tokenString</span><span class="p">;</span>
+        <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     *</span>
+<span class="cm">     * @memberof excelFormulaUtilities.parser</span>
+<span class="cm">     * @function</span>
+<span class="cm">     * @param {string} formula</span>
+<span class="cm">     * @param {object} options optional param</span>
+<span class="cm">     *&lt;pre&gt;</span>
+<span class="cm">     *   TEMPLATE VALUES </span>
+<span class="cm">     *  {{autoindent}} - apply auto indent based on current tree level</span>
+<span class="cm">     *  {{token}} - the named token such as FUNCTION_NAME or &quot;string&quot;</span>
+<span class="cm">     *  {{autolinebreak}} - apply linbreak automaticly. tests for next element only at this point</span>
+<span class="cm">	 *</span>
+<span class="cm">     * Options include:</span>
+<span class="cm">     *  tmplFunctionStart           - template for the start of a function, the {{token}} will contain the name of the function.</span>
+<span class="cm">     *  tmplFunctionStop            - template for when the end of a function has been reached.</span>
+<span class="cm">     *  tmplOperandError            - template for errors.</span>
+<span class="cm">     *  tmplOperandRange            - template for ranges and variable names.</span>
+<span class="cm">     *  tmplOperandLogical          - template for logical operators such as + - = ...</span>
+<span class="cm">     *  tmplOperandNumber           - template for numbers.</span>
+<span class="cm">     *  tmplOperandText             - template for text/strings.</span>
+<span class="cm">     *  tmplArgument				- template for argument seperators such as ,.</span>
+<span class="cm">     *  tmplFunctionStartArray      - template for the start of an array.</span>
+<span class="cm">     *  tmplFunctionStartArrayRow   - template for the start of an array row.</span>
+<span class="cm">     *  tmplFunctionStopArrayRow    - template for the end of an array row.</span>
+<span class="cm">     *  tmplFunctionStopArray       - template for the end of an array.</span>
+<span class="cm">	 *  tmplSubexpressionStart      - template for the sub expresson start</span>
+<span class="cm">	 *  tmplSubexpressionStop       - template for the sub expresson stop</span>
+<span class="cm">     *  tmplIndentTab               - template for the tab char.</span>
+<span class="cm">     *  tmplIndentSpace             - template for space char.</span>
+<span class="cm">     *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. &quot;TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT&quot;</span>
+<span class="cm">     *  newLine                     - used for the {{autolinebreak}} replacement as well as some string parsing. if this is not set correctly you may get undesired results. usually \n for text or &lt;br /&gt; for html</span>
+<span class="cm">	 *  trim: true                  - trim the output.</span>
+<span class="cm">     *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like</span>
+<span class="cm">     *                                EXAMPLE:</span>
+<span class="cm">     *                                 </span>
+<span class="cm">     *                                    customTokenRender: function(tokenString, token, indent, linbreak){</span>
+<span class="cm">     *                                        var outstr = token,</span>
+<span class="cm">     *                                            useTemplate = true;</span>
+<span class="cm">     *                                        // In the return object &quot;useTemplate&quot; tells formatFormula() </span>
+<span class="cm">     *                                        // weather or not to apply the template to what your return from the &quot;tokenString&quot;.</span>
+<span class="cm">     *                                        return {tokenString: outstr, useTemplate: useTemplate}; </span>
+<span class="cm">     *                                    }</span>
+<span class="cm">     *                                    </span>
+<span class="cm">     *&lt;/pre&gt;</span>
+<span class="cm">     * @returns {string}</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">formatFormula</span> <span class="o">=</span> <span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">formatFormula</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">formula</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">isFirstToken</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">tmplFunctionStart</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}{{token}}\n{{autoindent}}(\n&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStop</span><span class="o">:</span> <span class="s1">&#39;\n{{autoindent}}{{token}})&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandError</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandRange</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandLogical</span><span class="o">:</span> <span class="s1">&#39;{{token}}{{autolinebreak}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandNumber</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandText</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}&quot;{{token}}&quot;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplArgument</span><span class="o">:</span> <span class="s1">&#39;{{token}}\n&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStartArray</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStartArrayRow</span><span class="o">:</span> <span class="s1">&#39;{&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStopArrayRow</span><span class="o">:</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStopArray</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+					<span class="nx">tmplSubexpressionStart</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}(&#39;</span><span class="p">,</span>
+					<span class="nx">tmplSubexpressionStop</span><span class="o">:</span> <span class="s1">&#39; )&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplIndentTab</span><span class="o">:</span> <span class="s1">&#39;\t&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplIndentSpace</span><span class="o">:</span> <span class="s1">&#39; &#39;</span><span class="p">,</span>
+                    <span class="nx">autoLineBreak</span><span class="o">:</span> <span class="s1">&#39;TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN &#39;</span><span class="p">,</span>
+					<span class="nx">newLine</span><span class="o">:</span> <span class="s1">&#39;\n&#39;</span><span class="p">,</span>
+                    <span class="nx">trim</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">customTokenRender</span><span class="o">:</span> <span class="kc">null</span>
+                <span class="p">};</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">options</span> <span class="o">=</span> <span class="nx">core</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">defaultOptions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">options</span> <span class="o">=</span> <span class="nx">defaultOptions</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="kd">var</span> <span class="nx">indentCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">indent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+					
+                    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">indentCount</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">s</span> <span class="o">+=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">tmplIndentTab</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+                <span class="p">};</span>
+
+            <span class="kd">var</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">getTokens</span><span class="p">(</span><span class="nx">formula</span><span class="p">);</span>
+
+            <span class="kd">var</span> <span class="nx">outputFormula</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">autoBreakArray</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">autoLineBreak</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s/gi</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Tokens</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">isNewLine</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+            <span class="kd">var</span> <span class="nx">testAutoBreak</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">nextToken</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">autoBreakArray</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">nextToken</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">nextToken</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">types</span><span class="p">[</span><span class="nx">autoBreakArray</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">===</span> <span class="nx">nextToken</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">||</span> <span class="nx">types</span><span class="p">[</span><span class="nx">autoBreakArray</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">===</span> <span class="nx">nextToken</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()))</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">};</span>
+
+            <span class="k">while</span> <span class="p">(</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">moveNext</span><span class="p">())</span> <span class="p">{</span>
+
+                <span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">current</span><span class="p">();</span>
+                <span class="kd">var</span> <span class="nx">nextToken</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">indentCount</span> <span class="o">-=</span> <span class="p">((</span><span class="nx">indentCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">);</span>
+                <span class="p">}</span>
+				
+				<span class="kd">var</span> <span class="nx">matchBeginNewline</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">newLine</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+					<span class="nx">matchEndNewLine</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">newLine</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+					<span class="nx">autoBreak</span> <span class="o">=</span> <span class="nx">testAutoBreak</span><span class="p">(</span><span class="nx">nextToken</span><span class="p">),</span>
+					<span class="nx">autoIndent</span> <span class="o">=</span> <span class="nx">isNewLine</span><span class="p">,</span>
+					<span class="nx">indt</span> <span class="o">=</span> <span class="nx">autoIndent</span> <span class="o">?</span> <span class="nx">indent</span><span class="p">()</span> <span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">tmplIndentSpace</span><span class="p">,</span>
+					<span class="nx">lineBreak</span> <span class="o">=</span> <span class="nx">autoBreak</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">newLine</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+
+                <span class="nx">outputFormula</span> <span class="o">+=</span> <span class="nx">applyTokenTemplate</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">indt</span><span class="p">,</span> <span class="nx">lineBreak</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">customTokenRender</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">===</span> <span class="nx">TOK_SUBTYPE_START</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">indentCount</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+                <span class="p">}</span>
+				
+                <span class="nx">isNewLine</span> <span class="o">=</span> <span class="nx">autoBreak</span> <span class="o">||</span> <span class="nx">matchEndNewLine</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">outputFormula</span><span class="p">);</span>
+                <span class="nx">isFirstToken</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">options</span><span class="p">.</span><span class="nx">trim</span> <span class="o">?</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">outputFormula</span><span class="p">)</span> <span class="o">:</span> <span class="nx">outputFormula</span><span class="p">;</span>
+        <span class="p">};</span>
+	<span class="cm">/**</span>
+<span class="cm">     * This function calls {@link excelFormulaUtilities.parser.formatFormula}</span>
+<span class="cm">	 *</span>
+<span class="cm">     * @memberof excelFormulaUtilities.parser</span>
+<span class="cm">     * @function</span>
+<span class="cm">     * @param {string} formula</span>
+<span class="cm">     * @param {object} options optional param</span>
+<span class="cm">	 */</span>
+	<span class="kd">var</span> <span class="nx">formatFormulaHTML</span> <span class="o">=</span> <span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">formatFormulaHTML</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">formula</span><span class="p">){</span>
+				<span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">tmplFunctionStart</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}&lt;span class=&quot;function&quot;&gt;{{token}}&lt;/span&gt;&lt;br /&gt;{{autoindent}}&lt;span class=&quot;function_start&quot;&gt;(&lt;/span&gt;&lt;br /&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStop</span><span class="o">:</span> <span class="s1">&#39;&lt;br /&gt;{{autoindent}}{{token}}&lt;span class=&quot;function_stop&quot;&gt;)&lt;/span&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandError</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandRange</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandLogical</span><span class="o">:</span> <span class="s1">&#39; {{token}}{{autolinebreak}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandNumber</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}{{token}}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplOperandText</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}&lt;span class=&quot;quote_mark&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;text&quot;&gt;{{token}}&lt;/span&gt;&lt;span class=&quot;quote_mark&quot;&gt;&quot;&lt;/span&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplArgument</span><span class="o">:</span> <span class="s1">&#39;{{token}}&lt;br /&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStartArray</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStartArrayRow</span><span class="o">:</span> <span class="s1">&#39;{&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStopArrayRow</span><span class="o">:</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplFunctionStopArray</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+					<span class="nx">tmplSubexpressionStart</span><span class="o">:</span> <span class="s1">&#39;{{autoindent}}(&#39;</span><span class="p">,</span>
+					<span class="nx">tmplSubexpressionStop</span><span class="o">:</span> <span class="s1">&#39; )&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplIndentTab</span><span class="o">:</span> <span class="s1">&#39;&lt;span class=&quot;tabs&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">tmplIndentSpace</span><span class="o">:</span> <span class="s1">&#39;&amp;nbsp;&#39;</span><span class="p">,</span>
+					<span class="nx">newLine</span><span class="o">:</span> <span class="s1">&#39;&lt;br /&gt;&#39;</span><span class="p">,</span>
+                    <span class="nx">autoLineBreak</span><span class="o">:</span> <span class="s1">&#39;TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN &#39;</span><span class="p">,</span>
+                    <span class="nx">trim</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">customTokenRender</span><span class="o">:</span> <span class="kc">null</span>
+                <span class="p">};</span>
+				
+				<span class="k">return</span> <span class="nx">formatFormula</span><span class="p">(</span><span class="nx">formula</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+	<span class="p">}</span>
+		
+    <span class="cm">/**</span>
+<span class="cm">     *</span>
+<span class="cm">     * @memberof excelFormulaUtilities.convert</span>
+<span class="cm">     * @function</span>
+<span class="cm">     * @param {string} formula</span>
+<span class="cm">     * @returns {string}</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">formula2CSharp</span> <span class="o">=</span> <span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">formula2CSharp</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">formula</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Custom callback to format as c#</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">functionStack</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="kd">var</span> <span class="nx">tokRender</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tokenStr</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">indent</span><span class="p">,</span> <span class="nx">linbreak</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>tokenString = (token.value.length === 0) ? "" : token.value.toString(),</p>             </td>             <td class="code">               <div class="highlight"><pre>                        <span class="nx">tokenString</span> <span class="o">=</span> <span class="nx">tokenStr</span><span class="p">,</span>
+                        <span class="nx">directConversionMap</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;=&quot;</span><span class="o">:</span> <span class="s2">&quot;==&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;&lt;&gt;&quot;</span><span class="o">:</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;MIN&quot;</span><span class="o">:</span> <span class="s2">&quot;Math.Min&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;MAX&quot;</span><span class="o">:</span> <span class="s2">&quot;Math.Max&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;ABS&quot;</span><span class="o">:</span> <span class="s2">&quot;Math.ABS&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;SUM&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;IF&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+							<span class="s2">&quot;&amp;&quot;</span> <span class="o">:</span> <span class="s2">&quot;+&quot;</span>
+                        <span class="p">},</span>
+                        <span class="nx">currentFunctionOnStack</span> <span class="o">=</span> <span class="nx">functionStack</span><span class="p">[</span><span class="nx">functionStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                        <span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span> <span class="p">{</span>
+
+                    <span class="k">case</span> <span class="nx">TOK_TYPE_FUNCTION</span><span class="o">:</span>
+
+                        <span class="k">switch</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">subtype</span><span class="p">)</span> <span class="p">{</span>
+
+                        <span class="k">case</span> <span class="nx">TOK_SUBTYPE_START</span><span class="o">:</span>
+							
+							<span class="nx">functionStack</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+								<span class="nx">name</span><span class="o">:</span> <span class="nx">tokenString</span><span class="p">,</span>
+								<span class="nx">argumentNumber</span><span class="o">:</span> <span class="mi">0</span>
+							<span class="p">});</span>
+							<span class="nx">outstr</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span> <span class="o">?</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">:</span> <span class="nx">tokenString</span><span class="p">;</span>
+							<span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+							
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">TOK_SUBTYPE_STOP</span><span class="o">:</span>
+
+                            <span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+							<span class="k">switch</span> <span class="p">(</span><span class="nx">currentFunctionOnStack</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()){</span>
+                            <span class="k">case</span> <span class="s2">&quot;if&quot;</span><span class="o">:</span>
+                                <span class="nx">outstr</span> <span class="o">=</span> <span class="s2">&quot;)&quot;</span><span class="p">;</span>
+                                <span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+								<span class="k">break</span><span class="p">;</span>
+                            <span class="k">default</span><span class="o">:</span>
+                                <span class="nx">outstr</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span> <span class="o">?</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">:</span> <span class="nx">tokenString</span><span class="p">;</span>
+								<span class="k">break</span>
+                            <span class="p">}</span>
+                            <span class="nx">functionStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="p">}</span>
+
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">case</span> <span class="nx">TOK_TYPE_ARGUMENT</span><span class="o">:</span>
+                        <span class="k">switch</span> <span class="p">(</span><span class="nx">currentFunctionOnStack</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()){</span>
+						<span class="k">case</span> <span class="s2">&quot;if&quot;</span><span class="o">:</span>
+                            <span class="k">switch</span> <span class="p">(</span><span class="nx">currentFunctionOnStack</span><span class="p">.</span><span class="nx">argumentNumber</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+                                <span class="nx">outstr</span> <span class="o">=</span> <span class="s2">&quot;?&quot;</span><span class="p">;</span>
+                                <span class="k">break</span><span class="p">;</span>
+                            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                                <span class="nx">outstr</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="p">;</span>
+                                <span class="k">break</span><span class="p">;</span>
+                            <span class="p">}</span>
+							<span class="k">break</span><span class="p">;</span>
+						<span class="k">case</span> <span class="s2">&quot;sum&quot;</span><span class="o">:</span>
+							<span class="nx">outstr</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span><span class="p">;</span>
+							<span class="k">break</span><span class="p">;</span>
+                        <span class="k">default</span><span class="o">:</span>
+                            <span class="nx">outstr</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span> <span class="o">?</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">:</span> <span class="nx">tokenString</span><span class="p">;</span>
+                            <span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+							<span class="k">break</span><span class="p">;</span>
+						<span class="p">}</span>
+
+                        <span class="nx">currentFunctionOnStack</span><span class="p">.</span><span class="nx">argumentNumber</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+                        <span class="k">break</span><span class="p">;</span>
+
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="nx">outstr</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span> <span class="o">?</span> <span class="nx">directConversionMap</span><span class="p">[</span><span class="nx">tokenString</span><span class="p">]</span> <span class="o">:</span> <span class="nx">tokenString</span><span class="p">;</span>
+                        <span class="nx">useTemplate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="nx">tokenString</span><span class="o">:</span> <span class="nx">outstr</span><span class="p">,</span>
+                        <span class="nx">useTemplate</span><span class="o">:</span> <span class="nx">useTemplate</span>
+                    <span class="p">};</span>
+                <span class="p">};</span>
+
+            <span class="kd">var</span> <span class="nx">cSharpOutput</span> <span class="o">=</span> <span class="nx">formatFormula</span><span class="p">(</span>
+            <span class="nx">formula</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">tmplFunctionStart</span><span class="o">:</span> <span class="s1">&#39;{{token}}(&#39;</span><span class="p">,</span>
+                <span class="nx">tmplFunctionStop</span><span class="o">:</span> <span class="s1">&#39;{{token}})&#39;</span><span class="p">,</span>
+                <span class="nx">tmplOperandError</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                <span class="nx">tmplOperandRange</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                <span class="nx">tmplOperandLogical</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                <span class="nx">tmplOperandNumber</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                <span class="nx">tmplOperandText</span><span class="o">:</span> <span class="s1">&#39;&quot;{{token}}&quot;&#39;</span><span class="p">,</span>
+                <span class="nx">tmplArgument</span><span class="o">:</span> <span class="s1">&#39;{{token}}&#39;</span><span class="p">,</span>
+                <span class="nx">tmplFunctionStartArray</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nx">tmplFunctionStartArrayRow</span><span class="o">:</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span>
+                <span class="nx">tmplFunctionStopArrayRow</span><span class="o">:</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+                <span class="nx">tmplFunctionStopArray</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+				<span class="nx">tmplSubexpressionStart</span><span class="o">:</span> <span class="s2">&quot;(&quot;</span><span class="p">,</span>
+				<span class="nx">tmplSubexpressionStop</span><span class="o">:</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+                <span class="nx">tmplIndentTab</span><span class="o">:</span> <span class="s2">&quot;\t&quot;</span><span class="p">,</span>
+                <span class="nx">tmplIndentSpace</span><span class="o">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+                <span class="nx">autoLineBreak</span><span class="o">:</span> <span class="s2">&quot;TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT&quot;</span><span class="p">,</span>
+                <span class="nx">trim</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">customTokenRender</span><span class="o">:</span> <span class="nx">tokRender</span>
+            <span class="p">});</span>
+            <span class="k">return</span> <span class="nx">cSharpOutput</span><span class="p">;</span>
+        <span class="p">};</span>
+	
+	<span class="cm">/**</span>
+<span class="cm">     * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp. there are some subtle differences such as == vrs ===, this will be addressed in a later version.</span>
+<span class="cm">     * @memberof excelFormulaUtilities.convert</span>
+<span class="cm">     * @function</span>
+<span class="cm">     * @param {string} formula</span>
+<span class="cm">     * @returns {string}</span>
+<span class="cm">     */</span>
+	<span class="kd">var</span> <span class="nx">formula2JavaScript</span> <span class="o">=</span> <span class="nx">excelFormulaUtilities</span><span class="p">.</span><span class="nx">formula2JavaScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">formula</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">formula2CSharp</span><span class="p">(</span><span class="nx">formula</span><span class="p">);</span>
+		<span class="p">}</span>
+<span class="p">}());</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
