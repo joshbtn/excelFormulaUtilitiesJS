@@ -1,5 +1,5 @@
 /*
- * excelFormulaUtilitiesJS v0.9.0
+ * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
  *
  * Copyright 2011, Josh Bennett
