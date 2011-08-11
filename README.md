@@ -1,5 +1,7 @@
 # Excel Formula Utilities for JavaScript
 
+**Note:**There's a known issue with the c# and js conversion removing white spaces from strings. Fixes will be coming as soon.
+
 To get started download the excelFormulaUtilities-0.9.1.js and check out the examples below.
 	
 ##Example
