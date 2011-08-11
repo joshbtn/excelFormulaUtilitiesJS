@@ -55,6 +55,10 @@ test("formula2CSharp", function() {
 	inputFormula = 'SUM(1,1,1,1)';
 	excpected = '(1+1+1+1)';
 	equals(excelFormulaUtilities.formula2CSharp(inputFormula), excpected, "SUM(1,1,1,1)");
+	
+	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
+	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
+	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces.");
 });
 
 test("formula2JavaScript", function() {
@@ -69,4 +73,8 @@ test("formula2JavaScript", function() {
 	inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
 	excpected = '((Math.Max(1,-10)>0?"foo":"bar")=="foo"?"foo":"bar")';
 	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Nested If Test with a nested function.");
+	
+	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
+	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
+	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces.");
 });
