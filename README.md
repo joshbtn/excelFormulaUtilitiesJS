@@ -6,7 +6,6 @@ To get started download the excelFormulaUtilities-0.9.1.js and check out the exa
 	
 ##Basic usage
 
-_Excel Formula Beautifier_
 `var messyFormula = 'IF(1+1=2,"true","false")';
 alert(excelFormulaUtilities.formatFormula(messyFormula)) //Display Formated excel formula. `
 
