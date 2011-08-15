@@ -3,11 +3,10 @@
 **Note:**There's a known issue with the c# and js conversion removing white spaces from strings. Fixes will be coming as soon.
 
 To get started download the excelFormulaUtilities-0.9.1.js and check out the examples below.
-	
+    
 ##Basic usage
-
-    var messyFormula = 'IF(1+1=2,"true","false")';  
-    alert( excelFormulaUtilities.formatFormula( messyFormula ) ); //Display formatted excel formula.
+Display formatted excel formula.  
+    excelFormulaUtilities.formatFormula('IF(1+1=2,"true","false")'); //Returns a string containing the formatted formula.
 
 ##Example
 
