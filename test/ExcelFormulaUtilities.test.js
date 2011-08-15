@@ -58,7 +58,7 @@ test("formula2CSharp", function() {
 	
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
 	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
-	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces.");
+	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
 });
 
 test("formula2JavaScript", function() {
@@ -76,5 +76,5 @@ test("formula2JavaScript", function() {
 	
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
 	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
-	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces.");
+	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
 });
