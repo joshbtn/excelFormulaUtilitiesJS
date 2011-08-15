@@ -5,7 +5,9 @@
 To get started download the excelFormulaUtilities-0.9.1.js and check out the examples below.
     
 ##Basic usage
+
 Display formatted excel formula.  
+
     excelFormulaUtilities.formatFormula('IF(1+1=2,"true","false")'); //Returns a string containing the formatted formula.
 
 ##Example
