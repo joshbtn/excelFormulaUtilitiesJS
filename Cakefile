@@ -12,6 +12,9 @@ LICENSE =  fs.readFileSync './license.include', 'utf8'
 
 #build
 #------
+#This is the offline build.  
+#Requires: 
+#  (mac, linux, cygwin(windows), minGW(windows)), node, npm, coffee-script, docco, and the google closure compiler.
 task 'build', 'Building', ->
 	exec "java -jar #{COMPILER_PATH} --compilation_level SIMPLE_OPTIMIZATIONS --js ./src/core.js --js ./src/ExcelFormulaUtilities.js  --js_output_file ./excelFormulaUtilities-#{VERSION}.min.js" , (err, stdout, stderr) ->
 		throw err if err
@@ -30,7 +33,8 @@ task 'build', 'Building', ->
 #Build for cloud9IDE
 #-------------------
 #
-#to get your project set up in 
+#To get up and running on cloud9ide check out the wiki section.
+#
 task 'cloudBuild', 'Building in the cloud.', ->
     CORE_PATH = './src/core.js'
     EXCEL_FORMULA_UTILITIES_PATH = './src/ExcelFormulaUtilities.js'
