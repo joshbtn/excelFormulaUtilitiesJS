@@ -46,15 +46,15 @@
 				formattedStr = formattedStr.replace(replaceRegex, arguments[argIndex]);
 			}
 			return formattedStr;
-		}
+		};
     
     var trim = window.excelFormulaUtilities.string.trim = function(inStr){
 			return inStr.replace(/^\s|\s$/, "");
-		}
+		};
 	
 	var trimHTML = window.excelFormulaUtilities.string.trim = function(inStr){
 			return inStr.replace(/^(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*|(?:\s|&nbsp;|<\s*br\s*\/*\s*>)*$/, "");
-		}
+		};
 
 	//Quick and dirty type checks
 	/**
@@ -64,7 +64,7 @@
 	*/
 	var isFunction = core.isFunction = function (obj) {
 		return (typeof obj) === "function";
-	}
+	};
 
 	/**
 	* @param {object} obj
@@ -73,7 +73,7 @@
 	*/
 	var isArray = core.isArray = function (obj) {
 		return (typeof obj) === "object" && obj.length;
-	}
+	};
 
 	/**
 	* @param {object} obj
@@ -82,7 +82,7 @@
 	*/
 	var isWindow = core.isWindow = function () {
 		return obj && typeof obj === "object" && "setInterval" in obj;
-	} /*----The functionality below has based off of the jQuery core library----*/
+	}; /*----The functionality below has based off of the jQuery core library----*/
 
 	/**
 	* Check if the object is a plain object or not. This has been pulled from the jQuery core and modified slightly.
@@ -106,7 +106,7 @@
 		var key;
 		for (key in obj) { }
 		return key === undefined || hasOwnProperty.call(obj, key);
-	}
+	};
 
 	/**
 	* This has been pulled from the jQuery core and modified slightly. see http://api.jquery.com/jQuery.extend/

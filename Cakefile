@@ -3,7 +3,6 @@
 http = require 'http'
 fs = require 'fs'
 querystring = require 'querystring'
-docco = require 'docco'
 
 #Globals
 COMPILER_PATH = '/usr/share/java/compiler.jar'
