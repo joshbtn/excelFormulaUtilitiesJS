@@ -3,6 +3,7 @@
 http = require 'http'
 fs = require 'fs'
 querystring = require 'querystring'
+docco = require 'docco'
 
 #Globals
 COMPILER_PATH = '/usr/share/java/compiler.jar'
@@ -93,3 +94,5 @@ task 'cloudBuild', 'Building in the cloud.', ->
     
     req.write query
     req.end
+    
+    #TODO Get docco working with cloud9.
