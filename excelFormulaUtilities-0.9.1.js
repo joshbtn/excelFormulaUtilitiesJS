@@ -170,6 +170,7 @@
 
 	
 }());
+
 /*
  * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
