@@ -57,7 +57,7 @@ test("formula2CSharp", function() {
 	equals(excelFormulaUtilities.formula2CSharp(inputFormula), excpected, "SUM(1,1,1,1)");
 	
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
-	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
+	excpected = '(FOO_BAR=="foo bar"?"THIS WORKED":"THIS ISN\'T WORKING")';
 	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
 });
 
@@ -75,6 +75,6 @@ test("formula2JavaScript", function() {
 	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Nested If Test with a nested function.");
 	
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
-	excpected = '(FOO_BAR=="foobar"?"THIS WORKED":"THIS ISN\'T WORKING")';
+	excpected = '(FOO_BAR=="foo bar"?"THIS WORKED":"THIS ISN\'T WORKING")';
 	equals(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
 });

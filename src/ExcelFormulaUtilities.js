@@ -616,11 +616,17 @@
                     return inStr.replace(/\{\{token\}\}/gi, "{0}").replace(/\{\{autoindent\}\}/gi, "{1}").replace(/\{\{autolinebreak\}\}/gi, "{2}");
                 };
 
-            var tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
+            var tokenString = "";
+
+            if(token.subtype === "text" || token.type === "text") {
+                tokenString = token.value.toString();
+            } else {
+                tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
+            }
 
             if (typeof override === 'function') {
                 var returnVal = override(tokenString, token, indent, lineBreak);
-
+                
                 tokenString = returnVal.tokenString;
 
                 if (!returnVal.useTemplate) {
@@ -880,7 +886,7 @@
 
             var tokRender = function (tokenStr, token, indent, linbreak) {
                     var outstr = "",
-                        //tokenString = (token.value.length === 0) ? "" : token.value.toString(),
+                        /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
                         tokenString = tokenStr,
                         directConversionMap = {
                             "=": "==",
