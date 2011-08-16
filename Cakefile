@@ -6,7 +6,7 @@ querystring = require 'querystring'
 
 #Globals
 COMPILER_PATH = '/usr/share/java/compiler.jar'
-VERSION = '0.9.1'
+VERSION = '0.9.3'
 YEAR = (new Date).getFullYear
 LICENSE =  fs.readFileSync './license.include', 'utf8'
 
@@ -42,9 +42,9 @@ task 'cloudBuild', 'Building in the cloud.', ->
     DEV_BUILD_PATH = "./excelFormulaUtilities-#{VERSION}.js"
     PROD_BUILD_PATH = "./excelFormulaUtilities-#{VERSION}.min.js"
     
-    fileLicense = fs.readFileSync(LICENSE_PATH, 'utf8')
-    jsFileCore = fs.readFileSync(CORE_PATH, 'utf8')
-    jsFileExcelFormulaUtilities = fs.readFileSync(EXCEL_FORMULA_UTILITIES_PATH, 'utf8')
+    fileLicense = fs.readFileSync(LICENSE_PATH, 'utf8').toString().replace('#{VERSION}', "#{VERSION}").replace('#{YEAR}', (new Date()).getFullYear())
+    jsFileCore = fs.readFileSync CORE_PATH, 'utf8'
+    jsFileExcelFormulaUtilities = fs.readFileSync EXCEL_FORMULA_UTILITIES_PATH, 'utf8'
     
     jsCode = jsFileCore + "\n" + jsFileExcelFormulaUtilities
     
