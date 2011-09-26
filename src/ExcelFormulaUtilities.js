@@ -753,7 +753,7 @@
                     tmplFunctionStop: '\n{{autoindent}}{{token}})',
                     tmplOperandError: '{{token}}',
                     tmplOperandRange: '{{autoindent}}{{token}}',
-                    tmplOperandLogical: '{{token}}{{autolinebreak}}',
+                    tmplOperandLogical: ' {{token}}{{autolinebreak}}',
                     tmplOperandNumber: '{{autoindent}}{{token}}',
                     tmplOperandText: '{{autoindent}}"{{token}}"',
                     tmplArgument: '{{token}}\n',
