@@ -35,7 +35,7 @@
 			var oldFormula;
 			
 			return {
-				formula: '',
+				formula: 'IF(SUM( If(FOO = BAR, 10, 0), 10 ) = 20 , "FOO", "BAR")',
 				input: null,
 				formulaTitle: null,
 				formulaBody: null,
@@ -47,7 +47,7 @@
 						return;
 					}
 
-					this.formulaTitle.innerHTML = this.formula;
+					//this.formulaTitle.innerHTML = this.formula;
 					try{
 						this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
 					}catch(exception){
@@ -61,11 +61,11 @@
 	//-------------------
 	window.onload = function () {
 		beautifier.input = document.getElementById(config.INPUT_ID);
-		beautifier.formulaTitle = document.getElementById(config.FORMULA_TITLE_ID);
+		//beautifier.formulaTitle = document.getElementById(config.FORMULA_TITLE_ID);
 		beautifier.formulaBody = document.getElementById(config.FORMULA_BODY_ID);
 
 		beautifier.input.value = beautifier.formula;
-		
+		beautifier.update();
 		//add beautifier.update(); here if if you have set an inital DEFAULT_FORMULA and would like it to render on page load.
 	};
 	

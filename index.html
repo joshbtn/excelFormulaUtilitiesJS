@@ -57,8 +57,8 @@
 	.function_start, .function_stop{
 		color:#ff0000;
 	}
-	.quote_mark, .text{color:#0000ff}
 	.tabs{border-left:dotted 1px #a0a0a0}
+	.quote_mark, .text{color:#0000ff}
 	/*-----------FORMULA STYLES------------*/
   /*]]>*/</style>
 
@@ -68,7 +68,7 @@
 
 	<div id="container">
 		<header>
-			<h1>Online Excel Formula Beautifier</h1>
+			<h1>Online Excel Formula Beautifier (Beta)</h1>
 		</header>
 
 		<div id="main" role="main">
@@ -77,7 +77,7 @@
 				<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
 			</div>
 			<div class="formula">
-				<h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2>
+				<!--h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2-->
 				<code id="fomatFormula_2_out"></code>
 			</div>
 			
@@ -87,12 +87,9 @@
 			&copy; copyright 2011 Josh Bennett
 		</footer>
 	</div>
-
-	<script type="text/javascript">
-		var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-25169442-1"]);_gaq.push(["_trackPageview"]);(function(){var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"==document.location.protocol?"https://ssl":"http://www")+".google-analytics.com/ga.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)})();
-	</script>
 	
-	<script src="https://raw.github.com/joshatjben/excelFormulaUtilitiesJS/master/excelFormulaUtilities-0.9.3.min.js"></script>
+	<script type="text/javascript">/*<![CDATA[*/var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-25169442-1']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();/*]]>*/ </script>
+    <script src="https://raw.github.com/joshatjben/excelFormulaUtilitiesJS/master/excelFormulaUtilities-0.9.3.min.js"></script>
 	<script src="js/beautifier.js"></script>
 
   </body>
