@@ -31,7 +31,7 @@ To see this example check out ./examples/basic_example1/index.html
 		document.getElementById('fomatFormula_3').innerHTML = formula_3;
 		document.getElementById('fomatFormula_3_out').innerHTML = excelFormulaUtilities.formula2CSharp(formula_3);
 		
-        //Convert an Excel formula to Javascript
+        //Convert an Excel formula to JavaScript
         var formula_4 = 'ADDRESS(ROW(DataRange2),COLUMN(DataRange2),4)&":"&ADDRESS(MAX((DataRange2<>"")*ROW(DataRange2)),COLUMN(DataRange2)+COLUMNS(DataRange2)-1,4)';
 		document.getElementById('fomatFormula_4').innerHTML = formula_4;
 		document.getElementById('fomatFormula_4_out').innerHTML = excelFormulaUtilities.formula2JavaScript(formula_4);
