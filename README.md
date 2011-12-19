@@ -5,7 +5,7 @@
   2. Save excelFormulaUtilities.css if you'd like basic styling when outputting formulas to html.
   3. Drop these files into your project.
 
-and check out the examples below. If you'd like to just use the beautifier online click here http://excelformulabeautifier.com/
+Check out the examples below or if you'd like to use the beautifier online click here http://excelformulabeautifier.com/
     
 ##Basic usage
 
