@@ -1,6 +1,6 @@
 # Excel Formula Utilities for JavaScript
 
-##Instalation
+##Installation
   1. Save excelFormulaUtilities-[version].js(For dev) or excelFormulaUtilities-[version].js.min (For prod).
   2. Save excelFormulaUtilities.css if you'd like basic styling when outputting formulas to html.
   3. Drop these files into your project.
