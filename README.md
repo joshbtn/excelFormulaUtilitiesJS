@@ -2,7 +2,12 @@
 
 **Note:**There's a known issue with the c# and js conversion removing white spaces from strings. Fixes will be coming as soon.
 
-To get started download the excelFormulaUtilities-0.9.1.js and check out the examples below. If you'd like to just use the beautifier online click here http://excelformulabeautifier.com/
+##Instalation
+  1. Save excelFormulaUtilities-[version].js(For dev) or excelFormulaUtilities-[version].js.min (For prod).
+  2. Save excelFormulaUtilities.css if you'd like basic styling when outputting formulas to html.
+  3. Drop these files into your project.
+
+and check out the examples below. If you'd like to just use the beautifier online click here http://excelformulabeautifier.com/
     
 ##Basic usage
 
