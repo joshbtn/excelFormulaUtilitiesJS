@@ -71,7 +71,7 @@
 
 <body>
     <!-- Fork Button -->
-    <a href="http://github.com/joshatjben/excelFormulaUtilitiesJS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+    <a href="http://github.com/joshatjben/excelFormulaUtilitiesJS" class="external_link"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
 
     <!-- Main Content -->
 	<div id="container">
@@ -99,6 +99,93 @@
 	<script>//<![CDATA[
         var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-27681518-1"]),_gaq.push(["_setDomainName","excelformulabeautifier.com"]),_gaq.push(["_trackPageview"]),function(){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"==document.location.protocol?"https://ssl":"http://www")+".google-analytics.com/ga.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)}()
     //]]></script>
+    
+    <script>/*<![CDATA[*/  
+        //Code at https://gist.github.com/1514715
+(function () {
+    var aTags = document.getElementsByTagName('a'),
+        
+        // This will match weather or not the href is a full url 
+        // such as "http://www.example.com/" and not "/index.html".
+        //
+        // This is needed because matchServer assumes a full url,
+        // however if the href is a path like / nothing will be matched
+        // which means nothing will be replaced and the linkServer will 
+        // resolve to /my/path/html.This can probably be cleaned up to
+        // a use a match instead, and only need 1 regex.
+        matchFullLink = new RegExp("^.+://", "gi"),
+        
+        //RegEx to grab the server name.
+        matchServer = new RegExp("^.*://([^/]+).+", "gi"),
+        
+        //Replace whole match, server name stored in first captured.
+        currentServer = window.location.toString().replace(matchServer, "$1"),
+        
+        // Quick detect which event listener to use.  Quick and dirty but fine
+        // since not it's not getting crazy wiht the event handlers.
+        addEventFunctionName = (document.createElement('a')).addEventListener ? "addEventListener" : "attachEvent",
+
+        //current node in loop
+        link = null,
+        
+        //Used in for loop.  Represents current index of the node list
+        i = 0,
+        
+        //This will hold the server of the curren link's href
+        linkServer = "",
+        
+        //This will hold the current link's href
+        linkHref = "";
+
+    //This will be called when a link is cliked
+    function handleExternLinkTrac(e, linkHref, linkServer){
+        // e will be passed to the function in everything but IE.
+		// if it's IE get window.event
+		var evt = e || window.event;
+		
+		// Prevent the default behavior, of navigating
+		// to linked page in this case
+		evt.cancelBubble = true;
+		if (evt.stopPropagation) evt.stopPropagation();
+		
+		//Do some analytics magic
+		_gat._getTrackerByName()._trackEvent("Outbound Links", linkServer);
+		
+		// Give the browser enough time to submit the tracking
+		// before navigating to the links location
+		setTimeout('document.location = "' + linkHref + '"', 100);
+		
+		//Further prevent default behavior
+		return false;
+	}
+    
+    //Loop though all a tags on the page
+    for (i;i < aTags.length; i += 1) {
+
+        //Set link to the current tag 
+        link = aTags[i];
+
+        linkHref = link.href.toString();
+        linkServer = linkHref.replace(matchServer, "$1");
+
+        // Make sure that the href is a full url(See notes above for
+        // matchFullLink) and check to make sure the server name
+        // isn't the same as the current server.
+        if (matchFullLink.test(linkHref) && linkServer !== currentServer) {
+            
+            //Link Click Event Handler
+            link[addEventFunctionName]('click', function (e) {
+                return handleExternLinkTrac(e, linkHref, linkServer);
+            });
+        }
+    }
+    
+    
+
+})();
+                
+
+    /*]]>*/</script>
     <script src="https://raw.github.com/joshatjben/excelFormulaUtilitiesJS/master/excelFormulaUtilities-0.9.3.min.js"></script>
 	<script src="js/beautifier.js"></script>
 
