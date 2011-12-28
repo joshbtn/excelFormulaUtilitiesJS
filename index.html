@@ -10,6 +10,7 @@
 	html, body{font-size:12px; font-family:"Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;}
 	body{margin:0.618em;}
 	footer{display:none;}
+    .hide{display:none;}
     #container {
         max-width:600px; 
         min-width:120px;
@@ -80,7 +81,7 @@
 		</header>
 
 		<div id="main" role="main">
-            <p style="hide-me description">This is JavaScript and html5 based excel formula beautifier has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
+            <p class="hide description">This is JavaScript and html5 based excel formula beautifier has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
 			<div id="inputArea">
 				<label for="formula_input">Enter your formual here.</label><br />
 				<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
