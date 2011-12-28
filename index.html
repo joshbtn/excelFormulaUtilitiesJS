@@ -149,12 +149,12 @@
 		// to linked page in this case
 		evt.cancelBubble = true;
 		if (evt.stopPropagation) evt.stopPropagation();
-		
+
 		//Do some analytics magic
-		_gat.push('_trackEvent', "Outbound Links", linkServer);
+		_gaq.push('_trackEvent', "Outbound Links", linkServer);
 		
 		//navigating to the links location
-        _gat.push(function(){
+        _gaq.push(function(){
             document.location = linkHref;
         });
 		
