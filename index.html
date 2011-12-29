@@ -151,8 +151,8 @@
 		evt.cancelBubble = true;
 		if (evt.stopPropagation) evt.stopPropagation();
 
-		//Do some analytics magic
-		_gaq.push('_trackEvent', "Outbound Links", linkServer);
+		//Track click event
+        _gaq.push(['_trackEvent', linkServer, 'click']);
 		
 		//navigating to the links location
         _gaq.push(function(){
