@@ -35,7 +35,7 @@
 			var oldFormula;
 			
 			return {
-				formula: 'IF(SUM( If(FOO = BAR, 10, 0), 10 ) = 20 , "FOO", "BAR")',
+				formula: '=IF(SUM( If(FOO = BAR, 10, 0), 10 ) = 20 , "FOO", "BAR")',
 				input: null,
 				formulaTitle: null,
 				formulaBody: null,
