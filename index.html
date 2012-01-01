@@ -152,7 +152,7 @@
 		if (evt.stopPropagation) evt.stopPropagation();
 
 		//Track click event
-        _gaq.push(['_trackEvent', 'Outbound Links', 'Click', linkServer]);
+        _gaq.push(['_trackEvent', 'Outbound Links', linkServer, linkHref]);
 		
 		//navigating to the links location
         _gaq.push(function(){
