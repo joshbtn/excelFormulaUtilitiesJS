@@ -51,10 +51,10 @@
 					if (oldFormula === this.formula) {
 						return;
 					}
-                    debugger;
+                    
 					// Check to see which mode we're in, render appropriately
 					try{
-                        debugger;
+                        
 						switch( this.mode ) {
                             case "beautify":
                                 this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
@@ -64,7 +64,6 @@
                                 break;
 						}
 					}catch(exception){
-                        debugger;
 						//Do nothing, This should throw an error when the formula is improperly formed, which shouldn't blow things up.
 					}
 				}
