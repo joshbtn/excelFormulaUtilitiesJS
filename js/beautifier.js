@@ -39,6 +39,11 @@
 				input: null,
 				formulaTitle: null,
 				formulaBody: null,
+                mode: "beautify",
+                changeMode: function(mode){
+                    window.excelFormulaBeautifier.examples.beautifier.mode = mode;
+                    window.excelFormulaBeautifier.examples.beautifier.update.call(window.excelFormulaBeautifier.examples.beautifier);
+                },
 				update: function () {
 					this.formula = this.input.value;
 
@@ -46,12 +51,21 @@
 					if (oldFormula === this.formula) {
 						return;
 					}
-
-					//this.formulaTitle.innerHTML = this.formula;
+                    debugger;
+					// Check to see which mode we're in, render appropriately
 					try{
-						this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
+                        debugger;
+						switch( this.mode ) {
+                            case "beautify":
+                                this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
+                                break;
+                            case "js":
+                                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2JavaScript(this.formula);
+                                break;
+						}
 					}catch(exception){
-						//Do nothing, why? because this will only throw an error when the formula is improperly formed, however shouldn't effect perf.
+                        debugger;
+						//Do nothing, This should throw an error when the formula is improperly formed, which shouldn't blow things up.
 					}
 				}
 			};

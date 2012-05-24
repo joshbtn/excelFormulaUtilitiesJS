@@ -56,8 +56,9 @@
         <p>
             <label class="span-2" for="mode">Mode: </label>
             <div class="span-4 last">
-                <select id="mode" class="span-4 last">
+                <select id="mode" class="span-4 last" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
                     <option value="beautify">beautify</option>
+                    <option value="js">javascript</option>
                 </select>
             </div>
         </p>
