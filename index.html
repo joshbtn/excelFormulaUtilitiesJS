@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <title>Online Excel Formula Beautifier</title>
   
-  <meta name="description" content="Quickly beautify your excel formulas online.">
+  <meta name="description" content="Quickly beautify your excel formulas online or convert your Excel Formula to JavaScript">
   <meta name="author" content="Josh Bennett">
   
   <meta name="msvalidate.01" content="F075E5FA6F0F18E505A8BED664939F6A" />
@@ -34,7 +34,7 @@
 		</header>
 
 		<div id="main" role="main" class="span-12 last">
-            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert an excel formula to JavaScript or C#. It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
+            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert an excel formula to JavaScript (or C#). It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
 			<div id="inputArea">
 				<label for="formula_input">Enter your formual here. The leading = is optional.</label><br />
 				<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
@@ -57,8 +57,8 @@
             <label class="span-2" for="mode">Mode: </label>
             <div class="span-4 last">
                 <select id="mode" class="span-4 last" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
-                    <option value="beautify">beautify</option>
-                    <option value="js">javascript</option>
+                    <option value="beautify">Beautify</option>
+                    <option value="js">Formula to JavaScript</option>
                 </select>
             </div>
         </p>
