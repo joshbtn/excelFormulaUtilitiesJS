@@ -1,3 +1,9 @@
+# ExcelFormulaBeautifier.com
+
+This lives under the gh-pages branch.
+To submit pull requests for [ExcelFormulaBeautifier.com](http://ExcelFormulaBeautifier.com) please use this branch.
+Changes to the core js library live in the master branch.
+
 # Excel Formula Utilities for JavaScript
 
 ##Installation
