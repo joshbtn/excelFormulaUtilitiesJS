@@ -445,7 +445,7 @@
                 //if ((tokens.BOF()) || (tokens.EOF())) {}
                 doAddToken = doAddToken && (((tokens.previous().type.toString() === TOK_TYPE_FUNCTION) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens.previous().type.toString() === TOK_TYPE_SUBEXPR) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens.previous().type.toString() === TOK_TYPE_OPERAND));
                 //else if (!(
-                //	   ((tokens.previous().type === TOK_TYPE_FUNCTION) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
+                //       ((tokens.previous().type === TOK_TYPE_FUNCTION) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
                 //	|| ((tokens.previous().type == TOK_TYPE_SUBEXPR) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
                 //	|| (tokens.previous().type == TOK_TYPE_OPERAND))) 
                 //  {}
@@ -958,6 +958,21 @@
 
                         currentFunctionOnStack.argumentNumber += 1;
 
+                        break;
+                    
+                    case TOK_SUBTYPE_RANGE:
+                        
+                        switch (currentFunctionOnStack.name.toLowerCase()){
+                            // If in the sum function break aout cell names and add
+                            case "sum":
+                                //TODO loop through and add ranges together
+                                break;
+                            // By Default return an array containing all cell names in array
+                            default:
+                                //TODO create array for ranges
+                                break;
+                        }
+                        
                         break;
 
                     default:
