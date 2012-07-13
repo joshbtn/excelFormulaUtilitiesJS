@@ -965,6 +965,7 @@
                         switch (currentFunctionOnStack.name.toLowerCase()){
                             // If in the sum function break aout cell names and add
                             case "sum":
+                                console.log(tokenString);
                                 //TODO loop through and add ranges together
                                 break;
                             // By Default return an array containing all cell names in array
