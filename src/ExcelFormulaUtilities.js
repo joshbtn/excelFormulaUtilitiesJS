@@ -607,6 +607,32 @@
 
     };
 
+    // Pass a range such as A1:B2 along with a 
+    // delimiter to get back a full list of ranges.
+    //
+    // Example:
+    //    breakOutRanges("A1:B2", "+"); //Returns A1+A2+B1+B2
+    //TODO finish this function.
+    var breakOutRanges(rangeStr, delimStr){
+        
+        //Quick Check to see if if rangeStr is a valid range
+        if ( @(/\w{1,4}\d+:\w{1,4}\d+/gi).test("A1:B2") ){
+            throw "This is not a valid range: " + rangeStr;
+        }
+        
+        //Make the rangeStr lowercase to deal with looping.
+        rangeStr = rangeStr.toLowerCase();
+        
+        ranges = rangeStr.split(":");
+        startCol = range[0].match(/[A-Z]+/gi)[0];
+        startRow = range[0].match(/[0-9]+/gi)[0];
+        endCol = range[1].match(/[A-Z]+/gi)[0];
+        endRow = range[1].match(/[0-9]+/gi)[0];
+        
+        //str.charCodeAt(n)
+        //String.fromCharCode();
+    }
+    
     var applyTokenTemplate = function (token, options, indent, lineBreak, override) {
 
         var indt = indent;
@@ -960,21 +986,29 @@
 
                 break;
 
-            case TOK_SUBTYPE_RANGE:
-
-                switch (currentFunctionOnStack.name.toLowerCase()) {
-                    // If in the sum function break aout cell names and add
-                case "sum":
-                    console.log(tokenString);
-                    //TODO loop through and add ranges together
-                    break;
-                    // By Default return an array containing all cell names in array
-                default:
-                    //TODO create array for ranges
-                    break;
+            case TOK_TYPE_OPERAND:
+                
+                switch (token.subtype) {
+                    
+                    case TOK_SUBTYPE_RANGE:
+                        
+                        switch (currentFunctionOnStack.name.toLowerCase()) {
+                        // If in the sum function break aout cell names and add
+                        case "sum":
+                            console.log(tokenString);
+                            //TODO loop through and add ranges together
+                            break;
+                            // By Default return an array containing all cell names in array
+                        default:
+                            //TODO create array for ranges
+                            break;
+                        }
+                        
+                        break;
+                    
+                    default:
+                        break;
                 }
-
-                break;
 
             default:
                 outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
