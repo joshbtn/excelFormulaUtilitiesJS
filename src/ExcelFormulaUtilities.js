@@ -12,10 +12,9 @@
  * http://jquery.org/license
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
- */
-(function () {
+ */ (function () {
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-        core = window.excelFormulaUtilities.core,
+    core = window.excelFormulaUtilities.core,
         formatStr = window.excelFormulaUtilities.string.formatStr,
         trim = window.excelFormulaUtilities.string.trim,
 
@@ -446,7 +445,7 @@
                 doAddToken = doAddToken && (((tokens.previous().type.toString() === TOK_TYPE_FUNCTION) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens.previous().type.toString() === TOK_TYPE_SUBEXPR) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens.previous().type.toString() === TOK_TYPE_OPERAND));
                 //else if (!(
                 //       ((tokens.previous().type === TOK_TYPE_FUNCTION) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
-                //	|| ((tokens.previous().type == TOK_TYPE_SUBEXPR) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
+                //    || ((tokens.previous().type == TOK_TYPE_SUBEXPR) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
                 //	|| (tokens.previous().type == TOK_TYPE_OPERAND))) 
                 //  {}
                 doAddToken = doAddToken && (((tokens.next().type.toString() === TOK_TYPE_FUNCTION) && (tokens.next().subtype.toString() === TOK_SUBTYPE_START)) || ((tokens.next().type.toString() === TOK_TYPE_SUBEXPR) && (tokens.next().subtype.toString() === TOK_SUBTYPE_START)) || (tokens.next().type.toString() === TOK_TYPE_OPERAND));
@@ -548,157 +547,157 @@
     var parseFormula = excelFormulaUtilities.parseFormula = function (inputID, outputID) {
 
 
-            var indentCount = 0;
+        var indentCount = 0;
 
-            var indent = function () {
-                    var s = "|",
-                        i = 0;
-                    for (; i < indentCount; i += 1) {
-                        s += "&nbsp;&nbsp;&nbsp;|";
-                    }
-                    return s;
-                };
+        var indent = function () {
+            var s = "|",
+                i = 0;
+            for (; i < indentCount; i += 1) {
+                s += "&nbsp;&nbsp;&nbsp;|";
+            }
+            return s;
+        };
 
-            var formulaControl = document.getElementById(inputID);
-            var formula = formulaControl.value;
+        var formulaControl = document.getElementById(inputID);
+        var formula = formulaControl.value;
 
-            var tokens = getTokens(formula);
+        var tokens = getTokens(formula);
 
-            var tokensHtml = "";
+        var tokensHtml = "";
 
-            tokensHtml += "<table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'>";
-            tokensHtml += "<tr>";
-            tokensHtml += "<td class='token' style='font-weight: bold; width: 50px'>index</td>";
-            tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>type</td>";
-            tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>subtype</td>";
-            tokensHtml += "<td class='token' style='font-weight: bold; width: 150px'>token</td>";
-            tokensHtml += "<td class='token' style='font-weight: bold; width: 300px'>token tree</td></tr>";
+        tokensHtml += "<table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'>";
+        tokensHtml += "<tr>";
+        tokensHtml += "<td class='token' style='font-weight: bold; width: 50px'>index</td>";
+        tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>type</td>";
+        tokensHtml += "<td class='token' style='font-weight: bold; width: 125px'>subtype</td>";
+        tokensHtml += "<td class='token' style='font-weight: bold; width: 150px'>token</td>";
+        tokensHtml += "<td class='token' style='font-weight: bold; width: 300px'>token tree</td></tr>";
 
-            while (tokens.moveNext()) {
+        while (tokens.moveNext()) {
 
-                var token = tokens.current();
+            var token = tokens.current();
 
-                if (token.subtype === TOK_SUBTYPE_STOP) {
-                    indentCount -= ((indentCount > 0) ? 1 : 0);
-                }
-
-                tokensHtml += "<tr>";
-
-                tokensHtml += "<td class='token'>" + (tokens.index + 1) + "</td>";
-
-                tokensHtml += "<td class='token'>" + token.type + "</td>";
-                tokensHtml += "<td class='token'>" + ((token.subtype.length === 0) ? "&nbsp;" : token.subtype.toString()) + "</td>";
-                tokensHtml += "<td class='token'>" + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
-                tokensHtml += "<td class='token'>" + indent() + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
-
-                tokensHtml += "</tr>";
-
-                if (token.subtype === TOK_SUBTYPE_START) {
-                    indentCount += 1;
-                }
-
+            if (token.subtype === TOK_SUBTYPE_STOP) {
+                indentCount -= ((indentCount > 0) ? 1 : 0);
             }
 
-            tokensHtml += "</table>";
+            tokensHtml += "<tr>";
 
-            document.getElementById(outputID).innerHTML = tokensHtml;
+            tokensHtml += "<td class='token'>" + (tokens.index + 1) + "</td>";
 
-            formulaControl.select();
-            formulaControl.focus();
+            tokensHtml += "<td class='token'>" + token.type + "</td>";
+            tokensHtml += "<td class='token'>" + ((token.subtype.length === 0) ? "&nbsp;" : token.subtype.toString()) + "</td>";
+            tokensHtml += "<td class='token'>" + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
+            tokensHtml += "<td class='token'>" + indent() + ((token.value.length === 0) ? "&nbsp;" : token.value).split(" ").join("&nbsp;") + "</td>";
 
-        };
+            tokensHtml += "</tr>";
+
+            if (token.subtype === TOK_SUBTYPE_START) {
+                indentCount += 1;
+            }
+
+        }
+
+        tokensHtml += "</table>";
+
+        document.getElementById(outputID).innerHTML = tokensHtml;
+
+        formulaControl.select();
+        formulaControl.focus();
+
+    };
 
     var applyTokenTemplate = function (token, options, indent, lineBreak, override) {
 
-            var indt = indent;
+        var indt = indent;
 
-            var replaceTokenTmpl = function (inStr) {
-                    return inStr.replace(/\{\{token\}\}/gi, "{0}").replace(/\{\{autoindent\}\}/gi, "{1}").replace(/\{\{autolinebreak\}\}/gi, "{2}");
-                };
+        var replaceTokenTmpl = function (inStr) {
+            return inStr.replace(/\{\{token\}\}/gi, "{0}").replace(/\{\{autoindent\}\}/gi, "{1}").replace(/\{\{autolinebreak\}\}/gi, "{2}");
+        };
 
-            var tokenString = "";
+        var tokenString = "";
 
-            if(token.subtype === "text" || token.type === "text") {
-                tokenString = token.value.toString();
-            } else {
-                tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
+        if (token.subtype === "text" || token.type === "text") {
+            tokenString = token.value.toString();
+        } else {
+            tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
+        }
+
+        if (typeof override === 'function') {
+            var returnVal = override(tokenString, token, indent, lineBreak);
+
+            tokenString = returnVal.tokenString;
+
+            if (!returnVal.useTemplate) {
+                return tokenString;
             }
+        }
 
-            if (typeof override === 'function') {
-                var returnVal = override(tokenString, token, indent, lineBreak);
-                
-                tokenString = returnVal.tokenString;
+        switch (token.type) {
 
-                if (!returnVal.useTemplate) {
-                    return tokenString;
-                }
-            }
-
-            switch (token.type) {
-
-            case "function":
-                //-----------------FUNCTION------------------
-                switch (token.value) {
-                case "ARRAY":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
-                    break;
-                case "ARRAYROW":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
-                    break;
-                default:
-                    if (token.subtype.toString() === "start") {
-                        tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
-                    } else {
-                        tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
-                    }
-                    break;
+        case "function":
+            //-----------------FUNCTION------------------
+            switch (token.value) {
+            case "ARRAY":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+                break;
+            case "ARRAYROW":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+                break;
+            default:
+                if (token.subtype.toString() === "start") {
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
+                } else {
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
                 }
                 break;
-            case "operand":
-                //-----------------OPERAND------------------
-                switch (token.subtype.toString()) {
-                case "error":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indt, lineBreak);
-                    break;
-                case "range":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
-                    break;
-                case "number":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
-                    break;
-                case "text":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indt, lineBreak);
-                    break;
-                case "argument":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
-                    break;
-                default:
-                    break;
-                }
+            }
+            break;
+        case "operand":
+            //-----------------OPERAND------------------
+            switch (token.subtype.toString()) {
+            case "error":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indt, lineBreak);
                 break;
-			case "operator-infix":
-				case "logical":
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
-                    break;
+            case "range":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
+                break;
+            case "number":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
+                break;
+            case "text":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indt, lineBreak);
+                break;
             case "argument":
                 tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
                 break;
-			case "subexpression":
-				if (token.subtype.toString() === "start") {
-					tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStart), tokenString, indt, lineBreak);
-				} else {
-					tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStop), tokenString, indt, lineBreak);
-				}
-				break;
             default:
-
                 break;
-
             }
+            break;
+        case "operator-infix":
+        case "logical":
+            tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
+            break;
+        case "argument":
+            tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+            break;
+        case "subexpression":
+            if (token.subtype.toString() === "start") {
+                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStart), tokenString, indt, lineBreak);
+            } else {
+                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStop), tokenString, indt, lineBreak);
+            }
+            break;
+        default:
+
+            break;
+
+        }
 
 
-            return tokenString;
-        };
+        return tokenString;
+    };
 
     /**
      *
@@ -711,7 +710,7 @@
      *  {{autoindent}} - apply auto indent based on current tree level
      *  {{token}} - the named token such as FUNCTION_NAME or "string"
      *  {{autolinebreak}} - apply linbreak automaticly. tests for next element only at this point
-	 *
+     *
      * Options include:
      *  tmplFunctionStart           - template for the start of a function, the {{token}} will contain the name of the function.
      *  tmplFunctionStop            - template for when the end of a function has been reached.
@@ -725,13 +724,13 @@
      *  tmplFunctionStartArrayRow   - template for the start of an array row.
      *  tmplFunctionStopArrayRow    - template for the end of an array row.
      *  tmplFunctionStopArray       - template for the end of an array.
-	 *  tmplSubexpressionStart      - template for the sub expresson start
-	 *  tmplSubexpressionStop       - template for the sub expresson stop
+     *  tmplSubexpressionStart      - template for the sub expresson start
+     *  tmplSubexpressionStop       - template for the sub expresson stop
      *  tmplIndentTab               - template for the tab char.
      *  tmplIndentSpace             - template for space char.
      *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
      *  newLine                     - used for the {{autolinebreak}} replacement as well as some string parsing. if this is not set correctly you may get undesired results. usually \n for text or <br /> for html
-	 *  trim: true                  - trim the output.
+     *  trim: true                  - trim the output.
      *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like
      *                                EXAMPLE:
      *                                 
@@ -747,131 +746,131 @@
      * @returns {string}
      */
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
-            var isFirstToken = true,
-                defaultOptions = {
-                    tmplFunctionStart: '{{autoindent}}{{token}}\n{{autoindent}}(\n',
-                    tmplFunctionStop: '\n{{autoindent}}{{token}})',
-                    tmplOperandError: '{{token}}',
-                    tmplOperandRange: '{{autoindent}}{{token}}',
-                    tmplOperandLogical: ' {{token}}{{autolinebreak}}',
-                    tmplOperandNumber: '{{autoindent}}{{token}}',
-                    tmplOperandText: '{{autoindent}}"{{token}}"',
-                    tmplArgument: '{{token}}\n',
-                    tmplFunctionStartArray: '',
-                    tmplFunctionStartArrayRow: '{',
-                    tmplFunctionStopArrayRow: '}',
-                    tmplFunctionStopArray: '',
-					tmplSubexpressionStart: '{{autoindent}}(',
-					tmplSubexpressionStop: ' )',
-                    tmplIndentTab: '\t',
-                    tmplIndentSpace: ' ',
-                    autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
-					newLine: '\n',
-                    trim: true,
-                    customTokenRender: null
-                };
+        var isFirstToken = true,
+            defaultOptions = {
+                tmplFunctionStart: '{{autoindent}}{{token}}\n{{autoindent}}(\n',
+                tmplFunctionStop: '\n{{autoindent}}{{token}})',
+                tmplOperandError: '{{token}}',
+                tmplOperandRange: '{{autoindent}}{{token}}',
+                tmplOperandLogical: ' {{token}}{{autolinebreak}}',
+                tmplOperandNumber: '{{autoindent}}{{token}}',
+                tmplOperandText: '{{autoindent}}"{{token}}"',
+                tmplArgument: '{{token}}\n',
+                tmplFunctionStartArray: '',
+                tmplFunctionStartArrayRow: '{',
+                tmplFunctionStopArrayRow: '}',
+                tmplFunctionStopArray: '',
+                tmplSubexpressionStart: '{{autoindent}}(',
+                tmplSubexpressionStop: ' )',
+                tmplIndentTab: '\t',
+                tmplIndentSpace: ' ',
+                autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
+                newLine: '\n',
+                trim: true,
+                customTokenRender: null
+            };
 
-            if (options) {
-                options = core.extend(true, defaultOptions, options);
-            } else {
-                options = defaultOptions;
+        if (options) {
+            options = core.extend(true, defaultOptions, options);
+        } else {
+            options = defaultOptions;
+        }
+
+        var indentCount = 0;
+
+        var indent = function () {
+            var s = "",
+                i = 0;
+
+            for (; i < indentCount; i += 1) {
+                s += options.tmplIndentTab;
             }
-
-            var indentCount = 0;
-
-            var indent = function () {
-                    var s = "",
-                        i = 0;
-					
-                    for (; i < indentCount; i += 1) {
-                        s += options.tmplIndentTab;
-                    }
-                    return s;
-                };
-
-            var tokens = getTokens(formula);
-
-            var outputFormula = "";
-
-            var autoBreakArray = options.autoLineBreak.replace(/\s/gi, "").split("|");
-
-            //Tokens
-            var isNewLine = true;
-
-            var testAutoBreak = function (nextToken) {
-                    var i = 0;
-                    for (; i < autoBreakArray.length; i += 1) {
-                        if (nextToken !== null && typeof nextToken !== 'undefined' && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-
-            while (tokens.moveNext()) {
-
-                var token = tokens.current();
-                var nextToken = tokens.next();
-
-                if (token.subtype.toString() === TOK_SUBTYPE_STOP) {
-                    indentCount -= ((indentCount > 0) ? 1 : 0);
-                }
-				
-				var matchBeginNewline = new RegExp('^' + options.newLine, ''),
-					matchEndNewLine = new RegExp(options.newLine + '$', ''),
-					autoBreak = testAutoBreak(nextToken),
-					autoIndent = isNewLine,
-					indt = autoIndent ? indent() : options.tmplIndentSpace,
-					lineBreak = autoBreak ? options.newLine : "";
-
-                outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender);
-
-                if (token.subtype.toString() === TOK_SUBTYPE_START) {
-                    indentCount += 1;
-
-                }
-				
-                isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
-                isFirstToken = false;
-            }
-
-            return options.trim ? trim(outputFormula) : outputFormula;
+            return s;
         };
-	/**
+
+        var tokens = getTokens(formula);
+
+        var outputFormula = "";
+
+        var autoBreakArray = options.autoLineBreak.replace(/\s/gi, "").split("|");
+
+        //Tokens
+        var isNewLine = true;
+
+        var testAutoBreak = function (nextToken) {
+            var i = 0;
+            for (; i < autoBreakArray.length; i += 1) {
+                if (nextToken !== null && typeof nextToken !== 'undefined' && (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        while (tokens.moveNext()) {
+
+            var token = tokens.current();
+            var nextToken = tokens.next();
+
+            if (token.subtype.toString() === TOK_SUBTYPE_STOP) {
+                indentCount -= ((indentCount > 0) ? 1 : 0);
+            }
+
+            var matchBeginNewline = new RegExp('^' + options.newLine, ''),
+                matchEndNewLine = new RegExp(options.newLine + '$', ''),
+                autoBreak = testAutoBreak(nextToken),
+                autoIndent = isNewLine,
+                indt = autoIndent ? indent() : options.tmplIndentSpace,
+                lineBreak = autoBreak ? options.newLine : "";
+
+            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender);
+
+            if (token.subtype.toString() === TOK_SUBTYPE_START) {
+                indentCount += 1;
+
+            }
+
+            isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
+            isFirstToken = false;
+        }
+
+        return options.trim ? trim(outputFormula) : outputFormula;
+    };
+    /**
      * This function calls {@link excelFormulaUtilities.parser.formatFormula}
-	 *
+     *
      * @memberof excelFormulaUtilities.parser
      * @function
      * @param {string} formula
      * @param {object} options optional param
-	 */
-	var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function(formula){
-				var options = {
-                    tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><br />{{autoindent}}<span class="function_start">(</span><br />',
-                    tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
-                    tmplOperandError: '{{token}}',
-                    tmplOperandRange: '{{autoindent}}{{token}}',
-                    tmplOperandLogical: ' {{token}}{{autolinebreak}}',
-                    tmplOperandNumber: '{{autoindent}}{{token}}',
-                    tmplOperandText: '{{autoindent}}<span class="quote_mark">"</span><span class="text">{{token}}</span><span class="quote_mark">"</span>',
-                    tmplArgument: '{{token}}<br />',
-                    tmplFunctionStartArray: '',
-                    tmplFunctionStartArrayRow: '{',
-                    tmplFunctionStopArrayRow: '}',
-                    tmplFunctionStopArray: '',
-					tmplSubexpressionStart: '{{autoindent}}(',
-					tmplSubexpressionStop: ' )',
-                    tmplIndentTab: '<span class="tabs">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
-                    tmplIndentSpace: '&nbsp;',
-					newLine: '<br />',
-                    autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
-                    trim: true,
-                    customTokenRender: null
-                };
-				
-				return formatFormula(formula, options);
-	}
-		
+     */
+    var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula) {
+        var options = {
+            tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><br />{{autoindent}}<span class="function_start">(</span><br />',
+            tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
+            tmplOperandError: '{{token}}',
+            tmplOperandRange: '{{autoindent}}{{token}}',
+            tmplOperandLogical: ' {{token}}{{autolinebreak}}',
+            tmplOperandNumber: '{{autoindent}}{{token}}',
+            tmplOperandText: '{{autoindent}}<span class="quote_mark">"</span><span class="text">{{token}}</span><span class="quote_mark">"</span>',
+            tmplArgument: '{{token}}<br />',
+            tmplFunctionStartArray: '',
+            tmplFunctionStartArrayRow: '{',
+            tmplFunctionStopArrayRow: '}',
+            tmplFunctionStopArray: '',
+            tmplSubexpressionStart: '{{autoindent}}(',
+            tmplSubexpressionStop: ' )',
+            tmplIndentTab: '<span class="tabs">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+            tmplIndentSpace: '&nbsp;',
+            newLine: '<br />',
+            autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
+            trim: true,
+            customTokenRender: null
+        };
+
+        return formatFormula(formula, options);
+    }
+
     /**
      *
      * @memberof excelFormulaUtilities.convert
@@ -881,146 +880,147 @@
      */
     var formula2CSharp = excelFormulaUtilities.formula2CSharp = function (formula) {
 
-            //Custom callback to format as c#
-            var functionStack = [];
+        //Custom callback to format as c#
+        var functionStack = [];
 
-            var tokRender = function (tokenStr, token, indent, linbreak) {
-                    var outstr = "",
-                        /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
-                        tokenString = tokenStr,
-                        directConversionMap = {
-                            "=": "==",
-                            "<>": "!=",
-                            "MIN": "Math.Min",
-                            "MAX": "Math.Max",
-                            "ABS": "Math.ABS",
-							"SUM": "",
-							"IF": "",
-							"&" : "+"
-                        },
-                        currentFunctionOnStack = functionStack[functionStack.length - 1],
+        var tokRender = function (tokenStr, token, indent, linbreak) {
+            var outstr = "",
+                /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
+                tokenString = tokenStr,
+                directConversionMap = {
+                    "=": "==",
+                    "<>": "!=",
+                    "MIN": "Math.Min",
+                    "MAX": "Math.Max",
+                    "ABS": "Math.ABS",
+                    "SUM": "",
+                    "IF": "",
+                    "&": "+"
+                },
+                currentFunctionOnStack = functionStack[functionStack.length - 1],
+                useTemplate = false;
+
+            switch (token.type.toString()) {
+
+            case TOK_TYPE_FUNCTION:
+
+                switch (token.subtype) {
+
+                case TOK_SUBTYPE_START:
+
+                    functionStack.push({
+                        name: tokenString,
+                        argumentNumber: 0
+                    });
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = true;
+
+                    break;
+
+                case TOK_SUBTYPE_STOP:
+
+                    useTemplate = true;
+                    switch (currentFunctionOnStack.name.toLowerCase()) {
+                    case "if":
+                        outstr = ")";
                         useTemplate = false;
-
-                    switch (token.type.toString()) {
-
-                    case TOK_TYPE_FUNCTION:
-
-                        switch (token.subtype) {
-
-                        case TOK_SUBTYPE_START:
-							
-							functionStack.push({
-								name: tokenString,
-								argumentNumber: 0
-							});
-							outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
-							useTemplate = true;
-							
-                            break;
-                        case TOK_SUBTYPE_STOP:
-
-                            useTemplate = true;
-							switch (currentFunctionOnStack.name.toLowerCase()){
-                            case "if":
-                                outstr = ")";
-                                useTemplate = false;
-								break;
-                            default:
-                                outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
-								break
-                            }
-                            functionStack.pop();
-                            break;
-                        }
-
                         break;
-
-                    case TOK_TYPE_ARGUMENT:
-                        switch (currentFunctionOnStack.name.toLowerCase()){
-						case "if":
-                            switch (currentFunctionOnStack.argumentNumber) {
-                            case 0:
-                                outstr = "?";
-                                break;
-                            case 1:
-                                outstr = ":";
-                                break;
-                            }
-							break;
-						case "sum":
-							outstr = "+";
-							break;
-                        default:
-                            outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
-                            useTemplate = true;
-							break;
-						}
-
-                        currentFunctionOnStack.argumentNumber += 1;
-
-                        break;
-                    
-                    case TOK_SUBTYPE_RANGE:
-                        
-                        switch (currentFunctionOnStack.name.toLowerCase()){
-                            // If in the sum function break aout cell names and add
-                            case "sum":
-                                console.log(tokenString);
-                                //TODO loop through and add ranges together
-                                break;
-                            // By Default return an array containing all cell names in array
-                            default:
-                                //TODO create array for ranges
-                                break;
-                        }
-                        
-                        break;
-
                     default:
-                        outstr = typeof directConversionMap[tokenString] === "string" ? directConversionMap[tokenString] : tokenString;
-                        useTemplate = true;
+                        outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                        break
+                    }
+                    functionStack.pop();
+                    break;
+                }
+
+                break;
+
+            case TOK_TYPE_ARGUMENT:
+                switch (currentFunctionOnStack.name.toLowerCase()) {
+                case "if":
+                    switch (currentFunctionOnStack.argumentNumber) {
+                    case 0:
+                        outstr = "?";
+                        break;
+                    case 1:
+                        outstr = ":";
                         break;
                     }
+                    break;
+                case "sum":
+                    outstr = "+";
+                    break;
+                default:
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = true;
+                    break;
+                }
 
-                    return {
-                        tokenString: outstr,
-                        useTemplate: useTemplate
-                    };
-                };
+                currentFunctionOnStack.argumentNumber += 1;
 
-            var cSharpOutput = formatFormula(
-            formula, {
-                tmplFunctionStart: '{{token}}(',
-                tmplFunctionStop: '{{token}})',
-                tmplOperandError: '{{token}}',
-                tmplOperandRange: '{{token}}',
-                tmplOperandLogical: '{{token}}',
-                tmplOperandNumber: '{{token}}',
-                tmplOperandText: '"{{token}}"',
-                tmplArgument: '{{token}}',
-                tmplFunctionStartArray: "",
-                tmplFunctionStartArrayRow: "{",
-                tmplFunctionStopArrayRow: "}",
-                tmplFunctionStopArray: "",
-				tmplSubexpressionStart: "(",
-				tmplSubexpressionStop: ")",
-                tmplIndentTab: "\t",
-                tmplIndentSpace: " ",
-                autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
-                trim: true,
-                customTokenRender: tokRender
-            });
-            return cSharpOutput;
+                break;
+
+            case TOK_SUBTYPE_RANGE:
+
+                switch (currentFunctionOnStack.name.toLowerCase()) {
+                    // If in the sum function break aout cell names and add
+                case "sum":
+                    console.log(tokenString);
+                    //TODO loop through and add ranges together
+                    break;
+                    // By Default return an array containing all cell names in array
+                default:
+                    //TODO create array for ranges
+                    break;
+                }
+
+                break;
+
+            default:
+                outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                useTemplate = true;
+                break;
+            }
+
+            return {
+                tokenString: outstr,
+                useTemplate: useTemplate
+            };
         };
-	
-	/**
+
+        var cSharpOutput = formatFormula(
+        formula, {
+            tmplFunctionStart: '{{token}}(',
+            tmplFunctionStop: '{{token}})',
+            tmplOperandError: '{{token}}',
+            tmplOperandRange: '{{token}}',
+            tmplOperandLogical: '{{token}}',
+            tmplOperandNumber: '{{token}}',
+            tmplOperandText: '"{{token}}"',
+            tmplArgument: '{{token}}',
+            tmplFunctionStartArray: "",
+            tmplFunctionStartArrayRow: "{",
+            tmplFunctionStopArrayRow: "}",
+            tmplFunctionStopArray: "",
+            tmplSubexpressionStart: "(",
+            tmplSubexpressionStop: ")",
+            tmplIndentTab: "\t",
+            tmplIndentSpace: " ",
+            autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
+            trim: true,
+            customTokenRender: tokRender
+        });
+        return cSharpOutput;
+    };
+
+    /**
      * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp. there are some subtle differences such as == vrs ===, this will be addressed in a later version.
      * @memberof excelFormulaUtilities.convert
      * @function
      * @param {string} formula
      * @returns {string}
      */
-	var formula2JavaScript = excelFormulaUtilities.formula2JavaScript = function (formula) {
-			return formula2CSharp(formula);
-		}
+    var formula2JavaScript = excelFormulaUtilities.formula2JavaScript = function (formula) {
+        return formula2CSharp(formula).replace('==', '===');
+    }
 }());

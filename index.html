@@ -18,55 +18,94 @@
 
 <body>
 
+    <!-- Side Content -->
+    <div id="sideContent" class="span-6 last">
+        <p>
+            <label class="span-2" for="mode">Mode: </label>
+            <div class="span-4 last">
+                <select id="mode" class="span-4 last" onchange="window.beautifier.changeMode_update(this.value)">
+                    <option value="beautify">Beautify</option>
+                    <option value="js" selected="selected">Formula to JavaScript</option>
+                </select>
+            </div>
+        </p>
+    </div>
+    
     <!-- Main Content -->
 	<div id="container" class="span-12 colborder">
 		
 		<div id="main" role="main" class="span-12 last">
 			<div id="inputArea">
 				<label for="formula_input">Enter your formula here. The leading = is optional.</label><br />
-				<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
+				<input type="text" id="formula_input" onkeyup="window.beautifier.txtFormula_Update()" />
 			</div>
 			<div class="formula">
 				<!--h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2-->
-				<code id="fomatFormula_2_out"></code>
+				<pre id="fomatFormula_2_out"></pre>
 			</div>
 			
 		</div>
 		
 	</div>
     
-    <!-- Side Content -->
-    <div id="sideContent" class="span-6 last">
-        <p>
-            <label class="span-2" for="mode">Mode: </label>
-            <div class="span-4 last">
-                <select id="mode" class="span-4 last" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
-                    <option value="beautify">Beautify</option>
-                    <option value="js">Formula to JavaScript</option>
-                </select>
-            </div>
-        </p>
-        
-        
-    </div>
+    
 	
     <script src="src/core.js"></script>
 	<script src="src/ExcelFormulaUtilities.js"></script>
     
-    <script type="text/javascript">/*<![CDATA[*/
-        function(){
-            var 
-                txtFormula
-                , codeFormulaOut;
+    <script type="text/javascript">
+    /*<![CDATA[*/
+        (function(){
+            var MODE_BEAUTIFY = "beautify"
+                ,MODE_JS = "js"
+                , txtFormula
+                , formulaOut
+                , selMode
+                , trim = window.excelFormulaUtilities.string.trim;
+                
+            window.beautifier = {}
             
-            window.load = function(){
-                txtFormula = document.getElementById('formula_input'),
-                codeFormulaOut = document.getElementById('fomatFormula_2_out');
+            // Convert the input fields text to the out
+            function convertFormula( inputElement, outputElement, mode ) {
+                switch(mode){
+                    case MODE_BEAUTIFY:
+                        try{
+                            outputElement.innerHTML = excelFormulaUtilities.formatFormula( trim(inputElement.value) );
+                            outputElement.style.background = "transparent";
+                        } catch (ex){
+                            outputElement.style.background  = "red";
+                        }
+                        break;
+                    case MODE_JS:
+                        try{
+                            outputElement.innerHTML = excelFormulaUtilities.formula2JavaScript( trim(inputElement.value) );
+                            outputElement.style.background = "transparent";
+                        } catch (ex){
+                            outputElement.style.background  = "red";
+                        }
+                        break;
+                }
             }
             
-            
-        }
-    /*]]>*/</script>
+            window.onload = function(){
+                
+                txtFormula = document.getElementById('formula_input'),
+                formulaOut = document.getElementById('fomatFormula_2_out');
+                selMode = document.getElementById('mode');
+                
+                // Handle when the formula input changes value
+                window.beautifier.txtFormula_Update = function(){
+                    convertFormula(txtFormula, formulaOut, selMode.value);
+                }
+                
+                // Handle when the mode input changes value
+                window.beautifier.changeMode_update = function(){
+                    
+                }
+            }
+        }());
+    /*]]>*/
+    </script>
 
   </body>
 </html>

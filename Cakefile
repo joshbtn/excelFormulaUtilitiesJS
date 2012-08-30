@@ -6,7 +6,7 @@ querystring = require 'querystring'
 
 #Globals
 COMPILER_PATH = '/usr/share/java/compiler.jar'
-VERSION = '0.9.3'
+VERSION = '0.9.4'
 YEAR = (new Date).getFullYear
 LICENSE =  fs.readFileSync './license.include', 'utf8'
 
