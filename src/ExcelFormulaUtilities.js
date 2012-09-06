@@ -446,7 +446,7 @@
                 //else if (!(
                 //       ((tokens.previous().type === TOK_TYPE_FUNCTION) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
                 //    || ((tokens.previous().type == TOK_TYPE_SUBEXPR) && (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
-                //	|| (tokens.previous().type == TOK_TYPE_OPERAND))) 
+                //    || (tokens.previous().type == TOK_TYPE_OPERAND))) 
                 //  {}
                 doAddToken = doAddToken && (((tokens.next().type.toString() === TOK_TYPE_FUNCTION) && (tokens.next().subtype.toString() === TOK_SUBTYPE_START)) || ((tokens.next().type.toString() === TOK_TYPE_SUBEXPR) && (tokens.next().subtype.toString() === TOK_SUBTYPE_START)) || (tokens.next().type.toString() === TOK_TYPE_OPERAND));
                 //else if (!(
@@ -613,7 +613,7 @@
     // Example:
     //    breakOutRanges("A1:B2", "+"); //Returns A1+A2+B1+B2
     //TODO finish this function.
-    var breakOutRanges(rangeStr, delimStr){
+    function breakOutRanges(rangeStr, delimStr){
         
         //Quick Check to see if if rangeStr is a valid range
         if ( @(/\w{1,4}\d+:\w{1,4}\d+/gi).test("A1:B2") ){
@@ -624,16 +624,65 @@
         rangeStr = rangeStr.toLowerCase();
         
         ranges = rangeStr.split(":");
-        startCol = range[0].match(/[A-Z]+/gi)[0];
+        
+        
         startRow = range[0].match(/[0-9]+/gi)[0];
-        endCol = range[1].match(/[A-Z]+/gi)[0];
+        startCol = range[0].match(/[A-Z]+/gi)[0];
+        
+        
         endRow = range[1].match(/[0-9]+/gi)[0];
+        endCol = range[1].match(/[A-Z]+/gi)[0];
         
         //str.charCodeAt(n)
         //String.fromCharCode();
     }
     
-    var applyTokenTemplate = function (token, options, indent, lineBreak, override) {
+    //Check out http://en.wikipedia.org/wiki/Hexavigesimal
+    function toBase26( value ) {
+       
+       value = Math.abs(value);
+       
+       var converted = ""
+            ,iteration = false
+            ,remainder;
+
+       // Repeatedly divide the numerb by 26 and convert the
+       // remainder into the appropriate letter.
+       do {
+           remainder = value % 26;
+
+           // Compensate for the last letter of the series being corrected on 2 or more iterations.
+           if (iteration && value < 25) {
+               remainder--;
+           }
+            
+           converted = String.fromCharCode((remainder + 'A'.charCodeAt(0))) + converted;
+           value = Math.floor((value - remainder) / 26);
+
+           iteration = true;
+       } while (value > 0);
+
+       return converted;
+   }
+   
+   // Pass in the base 26 string, get back integer
+   function fromBase26(strAlphaNumber) {
+        var s = 1
+            , aMatch = /[a-z]+/gi
+            , i = 0;
+        
+        if ( aMatch.test(strAlphaNumber) ) {
+            s = ( strAlphaNumber.charCodeAt(0) - ("A".charCodeAt(0) - 1) );
+            for (; i < strAlphaNumber.length; i++) {
+                s *= 26;
+                s += (strAlphaNumber.charCodeAt(i) - "A".charCodeAt(0));
+            }
+        }
+        
+        return s;
+    }
+    
+    function applyTokenTemplate(token, options, indent, lineBreak, override) {
 
         var indt = indent;
 
