@@ -666,16 +666,21 @@
    }
    
    // Pass in the base 26 string, get back integer
-   function fromBase26(strAlphaNumber) {
-        var s = 1
-            , aMatch = /[a-z]+/gi
-            , i = 0;
+    function fromBase26(number) {
+        number = number.toUpperCase();
         
-        if ( aMatch.test(strAlphaNumber) ) {
-            s = ( strAlphaNumber.charCodeAt(0) - ("A".charCodeAt(0) - 1) );
-            for (; i < strAlphaNumber.length; i++) {
-                s *= 26;
-                s += (strAlphaNumber.charCodeAt(i) - "A".charCodeAt(0));
+        var s = 0
+            ,i = 1;
+        
+        if (
+            number !== null 
+            && typeof number !== "undefined" 
+            && number.length > 0
+        ) {
+            s = (number.charCodeAt(0) - "A".charCodeAt(0));
+            for (; i < number.length; i++) {
+                s = s === 0 ? 26 : s * 26;
+                s += (number.charCodeAt(i) - ("A".charCodeAt(0) ));
             }
         }
         
