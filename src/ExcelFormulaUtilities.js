@@ -616,19 +616,15 @@
     function breakOutRanges(rangeStr, delimStr){
         
         //Quick Check to see if if rangeStr is a valid range
-        if ( @(/\w{1,4}\d+:\w{1,4}\d+/gi).test("A1:B2") ){
+        if ( (/\w{1,4}\d+:\w{1,4}\d+/gi).test("A1:B2") ){
             throw "This is not a valid range: " + rangeStr;
         }
         
         //Make the rangeStr lowercase to deal with looping.
-        rangeStr = rangeStr.toLowerCase();
-        
         ranges = rangeStr.split(":");
-        
         
         startRow = range[0].match(/[0-9]+/gi)[0];
         startCol = range[0].match(/[A-Z]+/gi)[0];
-        
         
         endRow = range[1].match(/[0-9]+/gi)[0];
         endCol = range[1].match(/[A-Z]+/gi)[0];
@@ -637,7 +633,7 @@
         //String.fromCharCode();
     }
     
-    //Check out http://en.wikipedia.org/wiki/Hexavigesimal
+    //Modified from function at http://en.wikipedia.org/wiki/Hexavigesimal
     function toBase26( value ) {
        
        value = Math.abs(value);
@@ -665,6 +661,7 @@
        return converted;
    }
    
+   // This was Modified from a function at http://en.wikipedia.org/wiki/Hexavigesimal
    // Pass in the base 26 string, get back integer
     function fromBase26(number) {
         number = number.toUpperCase();
@@ -1050,9 +1047,10 @@
                         // If in the sum function break aout cell names and add
                         case "sum":
                             console.log(tokenString);
+                            debugger;
                             //TODO loop through and add ranges together
                             break;
-                            // By Default return an array containing all cell names in array
+                        // By Default return an array containing all cell names in array
                         default:
                             //TODO create array for ranges
                             break;
