@@ -13,6 +13,10 @@
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */ (function () {
+    if (typeof window === 'undefined') {
+      window = root;
+    }
+
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
     core = window.excelFormulaUtilities.core,
         formatStr = window.excelFormulaUtilities.string.formatStr,
@@ -771,10 +775,7 @@
         default:
 
             break;
-
         }
-
-
         return tokenString;
     };
 
@@ -1049,6 +1050,7 @@
                         // If in the sum function break aout cell names and add
                         case "sum":
                             outstr = breakOutRanges(tokenString, "+");
+							
                             debugger;
                             //TODO loop through and add ranges together
                             break;
@@ -1111,4 +1113,6 @@
     var formula2JavaScript = excelFormulaUtilities.formula2JavaScript = function (formula) {
         return formula2CSharp(formula).replace('==', '===');
     }
+
+    excelFormulaUtilities.getTokens = getTokens;
 }());
