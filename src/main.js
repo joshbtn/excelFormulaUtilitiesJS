@@ -12,9 +12,11 @@
     getTokens: function(f) {
       return xl.getTokens(f).items;
     },
-    toJavaScript: function(f) {
-      return xl.formula2JavaScript(f);
-    }
+    formatFormula: function(f, opts) {
+      return xl.formatFormula(f, opts);
+    },
+    toJavaScript: xl.formula2JavaScript,
+    toCSharp: xl.formula2CSharp
   };
 
 }).call(this);
