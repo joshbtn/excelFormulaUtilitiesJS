@@ -5,8 +5,8 @@ fs = require 'fs'
 querystring = require 'querystring'
 
 #Globals
-COMPILER_PATH = '/usr/share/java/compiler.jar'
-VERSION = '0.9.3'
+COMPILER_PATH = './node_modules/closure-compiler/lib/vendor/compiler.jar'
+VERSION = '0.9.4'
 YEAR = (new Date).getFullYear
 LICENSE =  fs.readFileSync './license.include', 'utf8'
 
@@ -23,7 +23,7 @@ task 'build', 'Building', ->
 		exec "sed -i -e '1r ./license.include' -e '1{h; D;}' -e '2{p}' ./excelFormulaUtilities-#{VERSION}.min.js", (err, stdout, stderr) ->
 			throw err if err
 			console.log stdout + stderr
-	exec 'docco ./src/*.js', (err, stdout, stderr) ->
+	exec 'node_modules/.bin/docco ./src/*.js', (err, stdout, stderr) ->
 		throw err if err
 		console.log stdout + stderr
 	exec "cat ./src/core.js ./src/ExcelFormulaUtilities.js > ./excelFormulaUtilities-#{VERSION}.js" , (err, stdout, stderr) ->
