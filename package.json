@@ -1,0 +1,30 @@
+{
+  "author": "Josh Bennett (http://joshbennett.me/)",
+  "name": "excel-formula",
+  "description": "Methods to beautify an excel formula and convert it to JavaScript or C#",
+  "version": "0.9.4",
+  "homepage": "http://excelformulabeautifier.com/",
+  "contributors": [
+    {"name": "Adam Schmideg", "url": "http://adam.schmideg.net"}
+  ],
+  "repository": {
+    "url": "git://github.com/joshatjben/excelFormulaUtilitiesJS.git"
+  },
+  "keyword": ["excel", "formula", "convert"],
+  "scripts": {
+    "test": "qunit -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js"
+  },
+  "main": "./src/main",
+  "dependencies": {},
+  "devDependencies": {
+    "qunit": "0.5.x",
+    "coffee-script": "~1.1.3",
+    "docco": "~0.4.0",
+    "closure-compiler": "0.1.2"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  },
+  "license": "MIT"
+}
