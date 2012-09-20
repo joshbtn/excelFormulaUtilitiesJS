@@ -629,8 +629,10 @@
         endRow = range[1].match(/[0-9]+/gi)[0];
         endCol = range[1].match(/[A-Z]+/gi)[0];
         
+        debugger;
         //str.charCodeAt(n)
         //String.fromCharCode();
+        return "";
     }
     
     //Modified from function at http://en.wikipedia.org/wiki/Hexavigesimal
@@ -1046,7 +1048,7 @@
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":
-                            console.log(tokenString);
+                            outstr = breakOutRanges(tokenString, "+");
                             debugger;
                             //TODO loop through and add ranges together
                             break;
