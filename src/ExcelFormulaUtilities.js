@@ -16,6 +16,7 @@
     if (typeof window === 'undefined') {
       window = root;
     }
+
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
     core = window.excelFormulaUtilities.core,
         formatStr = window.excelFormulaUtilities.string.formatStr,
@@ -634,6 +635,7 @@
         
         //str.charCodeAt(n)
         //String.fromCharCode();
+        return "";
     }
     
     //Modified from function at http://en.wikipedia.org/wiki/Hexavigesimal
@@ -772,10 +774,14 @@
         default:
 
             break;
+<<<<<<< HEAD
 
         }
 
 
+=======
+        }
+>>>>>>> rangeHandler
         return tokenString;
     };
 
@@ -1021,10 +1027,17 @@
                     switch (currentFunctionOnStack.argumentNumber) {
                     case 0:
                         outstr = "?";
+<<<<<<< HEAD
                         break;
                     case 1:
                         outstr = ":";
                         break;
+=======
+                        break;
+                    case 1:
+                        outstr = ":";
+                        break;
+>>>>>>> rangeHandler
                     }
                     break;
                 case "sum":
@@ -1049,7 +1062,12 @@
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":
+<<<<<<< HEAD
                             console.log(tokenString);
+=======
+                            outstr = breakOutRanges(tokenString, "+");
+							
+>>>>>>> rangeHandler
                             debugger;
                             //TODO loop through and add ranges together
                             break;
@@ -1114,4 +1132,8 @@
     }
 
     excelFormulaUtilities.getTokens = getTokens;
+<<<<<<< HEAD
 }());
+=======
+}());
+>>>>>>> rangeHandler
