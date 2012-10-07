@@ -16,19 +16,35 @@ LICENSE =  fs.readFileSync './license.include', 'utf8'
 #Requires: 
 #  (mac, linux, cygwin(windows), minGW(windows)), node, npm, coffee-script, docco, and the google closure compiler.
 task 'build', 'Building', ->
-	exec "java -jar #{COMPILER_PATH} --compilation_level SIMPLE_OPTIMIZATIONS --js ./src/core.js --js ./src/ExcelFormulaUtilities.js  --js_output_file ./excelFormulaUtilities-#{VERSION}.min.js" , (err, stdout, stderr) ->
+	# Join all the files together
+    CORE_PATH = './src/core.js'
+    EXCEL_FORMULA_UTILITIES_PATH = './src/ExcelFormulaUtilities.js'
+    LICENSE_PATH = './license.include'
+    DEV_BUILD_PATH = "./excelFormulaUtilities-#{VERSION}.js"
+    PROD_BUILD_PATH = "./excelFormulaUtilities-#{VERSION}.min.js"
+    
+    fileLicense = fs.readFileSync(LICENSE_PATH, 'utf8').toString().replace('#{VERSION}', "#{VERSION}").replace('#{YEAR}', (new Date()).getFullYear())
+    jsFileCore = fs.readFileSync CORE_PATH, 'utf8'
+    jsFileExcelFormulaUtilities = fs.readFileSync EXCEL_FORMULA_UTILITIES_PATH, 'utf8'
+    
+    jsCode = jsFileCore + "\n" + jsFileExcelFormulaUtilities
+    
+    # Write the js file
+    fs.writeFile DEV_BUILD_PATH, jsCode, 'utf8', (err)->
+        console.log "Saved script to #{DEV_BUILD_PATH}"
+    
+    #  Minify
+    exec "java -jar #{COMPILER_PATH} --compilation_level SIMPLE_OPTIMIZATIONS --js ./src/core.js --js ./src/ExcelFormulaUtilities.js  --js_output_file ./excelFormulaUtilities-#{VERSION}.min.js" , (err, stdout, stderr) ->
 		throw err if err
+		cnosole.log stdout + stderr
+    
+    
+    
+    exec 'node_modules/.bin/docco ./src/*.js', (err, stdout, stderr) ->
+    	throw err if err
 		console.log stdout + stderr
-		#after it's been compiled stick the license at the top
-		exec "sed -i -e '1r ./license.include' -e '1{h; D;}' -e '2{p}' ./excelFormulaUtilities-#{VERSION}.min.js", (err, stdout, stderr) ->
-			throw err if err
-			console.log stdout + stderr
-	exec 'node_modules/.bin/docco ./src/*.js', (err, stdout, stderr) ->
-		throw err if err
-		console.log stdout + stderr
-	exec "cat ./src/core.js ./src/ExcelFormulaUtilities.js > ./excelFormulaUtilities-#{VERSION}.js" , (err, stdout, stderr) ->
-		throw err if err
-		console.log stdout + stderr
+    
+    
 
 #Build for cloud9IDE
 #-------------------
