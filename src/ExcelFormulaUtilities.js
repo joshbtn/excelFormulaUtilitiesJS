@@ -633,7 +633,6 @@
         endRow = range[1].match(/[0-9]+/gi)[0];
         endCol = range[1].match(/[A-Z]+/gi)[0];
         
-        debugger;
         //str.charCodeAt(n)
         //String.fromCharCode();
         return "";
@@ -775,7 +774,14 @@
         default:
 
             break;
+<<<<<<< HEAD
+
         }
+
+
+=======
+        }
+>>>>>>> rangeHandler
         return tokenString;
     };
 
@@ -1021,10 +1027,17 @@
                     switch (currentFunctionOnStack.argumentNumber) {
                     case 0:
                         outstr = "?";
+<<<<<<< HEAD
                         break;
                     case 1:
                         outstr = ":";
                         break;
+=======
+                        break;
+                    case 1:
+                        outstr = ":";
+                        break;
+>>>>>>> rangeHandler
                     }
                     break;
                 case "sum":
@@ -1049,8 +1062,12 @@
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":
+<<<<<<< HEAD
+                            console.log(tokenString);
+=======
                             outstr = breakOutRanges(tokenString, "+");
 							
+>>>>>>> rangeHandler
                             debugger;
                             //TODO loop through and add ranges together
                             break;
@@ -1115,4 +1132,8 @@
     }
 
     excelFormulaUtilities.getTokens = getTokens;
+<<<<<<< HEAD
 }());
+=======
+}());
+>>>>>>> rangeHandler
