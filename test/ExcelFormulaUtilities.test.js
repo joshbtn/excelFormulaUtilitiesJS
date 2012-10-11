@@ -18,6 +18,10 @@ test("formatFormula", function() {
   inputFormula = 'IF(A1="yes", "yes", "no")'
   excpected = '=IF(\n\tA1 = "yes",\n\t,"yes",\n\t"no"\n)';
   equal(excelFormulaUtilities.formatFormula(inputFormula), excpected, "advanced example.");
+  
+  inputFormula = 'AC6+AD6+(IF(H6="Yes",1,IF(J6="Yes",1,0)))+IF(X6="Yes",1,0)'
+  excpected = '=AC6 + AD6 + \n(IF\n\t(\n\t\tH6 = "Yes",\n\t\t1,\n\t\tIF\n\t\t(\n\t\t\tJ6 = "Yes",\n\t\t\t1,\n\t\t\t0\n\t\t)\n\t)\n) +\nIF\n(\n\tX6 = "Yes",\n\t1,\n\t0\n)';
+  equal(excelFormulaUtilities.formatFormula(inputFormula), excpected, "Encapsulation spacing.");
  
 });
 
@@ -77,4 +81,8 @@ test("formula2JavaScript", function() {
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
 	excpected = '(FOO_BAR==="foo bar"?"THIS WORKED":"THIS ISN\'T WORKING")';
 	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
+    
+    inputFormula = 'SUM(A1:C3)';
+	excpected = '(A1+A2+A3+B1+B2+B3+C1+C2+C3)';
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
 });
