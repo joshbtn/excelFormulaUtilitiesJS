@@ -34,8 +34,9 @@ task 'build', 'Building', ->
     #  Minify
     exec "java -jar #{COMPILER_PATH} --compilation_level SIMPLE_OPTIMIZATIONS --js ./src/core.js --js ./src/ExcelFormulaUtilities.js  --js_output_file ./excelFormulaUtilities-#{VERSION}.min.js" , (err, stdout, stderr) ->
         throw err if err
-        cnosole.log stdout + stderr
-        
+        console.log stdout + stderr
+    
+    # Generate Docco Docs    
     exec "node #{DOCCO_PATH} ./src/*.js", (err, stdout, stderr) ->
         throw err if err
         console.log stdout + stderr

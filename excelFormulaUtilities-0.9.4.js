@@ -172,6 +172,7 @@
 
 	
 }());
+
 /*
  * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
@@ -807,7 +808,6 @@
         endRow = range[1].match(/[0-9]+/gi)[0];
         endCol = range[1].match(/[A-Z]+/gi)[0];
         
-        debugger;
         //str.charCodeAt(n)
         //String.fromCharCode();
         return "";
@@ -1223,6 +1223,7 @@
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":
+
                             outstr = breakOutRanges(tokenString, "+");
 							
                             debugger;
@@ -1289,4 +1290,6 @@
     }
 
     excelFormulaUtilities.getTokens = getTokens;
+
 }());
+
