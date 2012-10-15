@@ -1002,9 +1002,9 @@
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
         var isFirstToken = true,
             defaultOptions = {
-                tmplFunctionStart: '{{autoindent}}{{token}}\n{{autoindent}}(\n',
+                tmplFunctionStart: '\n{{autoindent}}{{token}}(\n',
                 tmplFunctionStop: '\n{{autoindent}}{{token}})',
-                tmplOperandError: '{{token}}',
+                tmplOperandError: ' {{token}}',
                 tmplOperandRange: '{{autoindent}}{{token}}',
                 tmplOperandLogical: ' {{token}}{{autolinebreak}}',
                 tmplOperandNumber: '{{autoindent}}{{token}}',
@@ -1020,8 +1020,10 @@
                 tmplIndentSpace: ' ',
                 autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
                 newLine: '\n',
-                trim: true,
-                customTokenRender: null
+                //trim: true,
+                customTokenRender: null,
+                prefix: "=",
+                postfix: ""
             };
 
         if (options) {
@@ -1087,8 +1089,10 @@
             isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
             isFirstToken = false;
         }
-
-        return options.trim ? trim(outputFormula) : outputFormula;
+        
+        outputFormula = options.prefix + trim(outputFormula) + options.postfix;
+        
+        return outputFormula;
     };
     /**
      * This function calls {@link excelFormulaUtilities.parser.formatFormula}
