@@ -1,4 +1,5 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Online Excel Formula Beautifier</title>
@@ -6,44 +7,53 @@
   <meta name="description" content="Quickly beautify your excel formulas online or convert your Excel Formula to JavaScript">
   <meta name="author" content="Josh Bennett">
   
-  <meta name="msvalidate.01" content="F075E5FA6F0F18E505A8BED664939F6A" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <link rel="stylesheet" type="text/css" href="style/css/defaults.css" />
-  <link rel="stylesheet" type="text/css" href="style/css/grid.css" />
-  <link rel="stylesheet" type="text/css" href="style/css/forms.css" />
-  <link rel="stylesheet" type="text/css" href="style/css/gh-buttons.css" />
-  <link rel="stylesheet" type="text/css" href="style/css/screen.css" />
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/screen.css" />
   
-    <!--[if gte IE 9]>
-    <style type="text/css">
-        .gradient {
-            filter: none;
-        }
-    </style>
-    <![endif]-->
 </head>
 
 <body>
-    <!-- Fork Button -->
-    <!--a href="http://github.com/joshatjben/excelFormulaUtilitiesJS" class="external_link"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a-->
 
     <!-- Main Content -->
-	<div id="container" class="span-12 colborder">
-		<header class="span-18 last">
-			<h1>Excel Formula Beautifier</h1>
+	<div id="container" class="container-fluid">
+		<header class="row">
+			<div class="span12">
+				<h1>Excel Formula Beautifier</h1>
+			</div>
 		</header>
 
-		<div id="main" role="main" class="span-12 last">
-            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert an excel formula to JavaScript (or C#). It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
-			<div id="inputArea">
-				<label for="formula_input">Enter your formula here. The leading = is optional.</label><br />
-				<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
-			</div>
-			<div class="formula">
-				<!--h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2-->
-				<code id="fomatFormula_2_out"></code>
+		<div id="main" role="main" class="row-fluid">
+            <div class="span8">
+	            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert an excel formula to JavaScript (or C#). It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
+				<div id="inputArea" class="">
+					<label for="formula_input">Enter your formula here. The leading = is optional.</label>
+					<input type="text" id="formula_input" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
+				</div>
+				<div class="formula">
+					<code id="fomatFormula_2_out"></code>
+				</div>
 			</div>
 			
+			<div id="sideContent" class="span4 ">
+	            <div class="">
+	            	<label class="" for="mode">Mode: </label>
+	                <select id="mode" class="" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
+	                    <option value="beautify">Beautify</option>
+	                    <option value="js">Formula to JavaScript</option> 
+	                </select>
+	            </div>
+		        
+		        <hr />
+		        <p>Have some feedback or feature requests?  I'd love to hear it.</p>
+		        <p>
+		            <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS/issues?sort=comments&direction=desc&state=open" class="btn">Feedback</a>
+		            <a href="http://github.com/joshatjben/excelFormulaUtilitiesJS" class="external_link btn">Fork Me on GitHub</a>
+		        </p>
+		    </div>
 		</div>
 		
 		<footer>
@@ -52,30 +62,15 @@
 	</div>
     
     <!-- Side Content -->
-    <div id="sideContent" class="span-6 last">
-        <p>
-            <label class="span-2" for="mode">Mode: </label> 
-            <div class="span-4 last">
-                <select id="mode" class="span-4 last" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
-                    <option value="beautify">Beautify</option>
-                    <option value="js">Formula to JavaScript</option> 
-                </select>
-            </div>
-        </p>
-        <hr />
-        <p>Have some feedback or feature requests?  I'd love to hear it.</p>
-        <p>
-            <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS/issues?sort=comments&direction=desc&state=open" class="button">Feedback</a>
-            <a href="http://github.com/joshatjben/excelFormulaUtilitiesJS" class="external_link button">Fork Me on GitHub</a>
-        </p>
-    </div>
+    
 	
 	<script>//<![CDATA[
-        var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-27681518-1"]),_gaq.push(["_setDomainName","excelformulabeautifier.com"]),_gaq.push(["_trackPageview"]),function(){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"==document.location.protocol?"https://ssl":"http://www")+".google-analytics.com/ga.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)}()
+        //var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-27681518-1"]),_gaq.push(["_setDomainName","excelformulabeautifier.com"]),_gaq.push(["_trackPageview"]),function(){var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"==document.location.protocol?"https://ssl":"http://www")+".google-analytics.com/ga.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)}()
     //]]></script>
     
     <script src="js/page.js"></script>
     <script src="https://raw.github.com/joshatjben/excelFormulaUtilitiesJS/master/excelFormulaUtilities-0.9.4.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<script src="js/beautifier.js"></script>
 
   </body>

@@ -1,0 +1,16 @@
+html, body{font-size:100%; font-family:font-family: 'Open Sans', sans-serif;}
+
+footer{display:none;}
+
+/*-----------FORMULA STYLES------------*/
+.function{
+	color:#069;
+}
+.function_start, .function_stop{
+	color:#ff0000;
+}
+.tabbed{border-left:dotted 1px #a0a0a0}
+.quote_mark, .text{color:#0000ff}
+/*-----------FORMULA STYLES------------*/
+
+label{margin: 0.5em 0;}
