@@ -1,8 +1,9 @@
-html, body{font-size:100%; font-family:font-family: 'Open Sans', sans-serif;}
+html, body{ font-family:font-family: 'Open Sans', sans-serif;}
 
 footer{display:none;}
 
 /*-----------FORMULA STYLES------------*/
+.formula{font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;}
 .function{
 	color:#069;
 }
