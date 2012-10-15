@@ -1104,7 +1104,7 @@
      */
     var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula) {
         var options = {
-            tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><br />{{autoindent}}<span class="function_start">(</span><br />',
+            tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><span class="function_start">(</span><br />',
             tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
             tmplOperandError: '{{token}}',
             tmplOperandRange: '{{autoindent}}{{token}}',
