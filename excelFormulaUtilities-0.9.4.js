@@ -1022,7 +1022,7 @@
                 newLine: '\n',
                 //trim: true,
                 customTokenRender: null,
-                prefix: "=",
+                prefix: "",
                 postfix: ""
             };
 
@@ -1123,6 +1123,7 @@
             newLine: '<br />',
             autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
             trim: true,
+            prefix: "=",
             customTokenRender: null
         };
 
