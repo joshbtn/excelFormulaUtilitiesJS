@@ -943,7 +943,7 @@
             tmplFunctionStopArray: '',
             tmplSubexpressionStart: '{{autoindent}}(',
             tmplSubexpressionStop: ' )',
-            tmplIndentTab: '<span class="tabs">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+            tmplIndentTab: '<span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
             tmplIndentSpace: '&nbsp;',
             newLine: '<br />',
             autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
