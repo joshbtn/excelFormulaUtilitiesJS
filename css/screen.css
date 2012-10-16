@@ -13,10 +13,19 @@ header img{vertical-align: middle; float:left;}
 
 header .title{float:left;}
 
-header .hidden-phone .title{margin:1.63em 0 0 0;}
-header .visible-phone .title{margin:0.55em 0 0 0;}
-header .visible-phone h1{font-size:1.61em; line-height:0.91em;}
-header .visible-phone p{font-size:0.75em; line-height:1.61em;  }
+/*Non Phone*/
+@media(min-width:767px){
+	header .title{margin:1.55em 0 0 0;}
+}
+/*Phone*/
+@media(max-width:767px){
+	header .title{margin:0.55em 0 0 0;}
+	header img{width:50px; height: 52px;}
+	header h1{font-size:1.31em; line-height:0.91em;}
+	header p{font-size:0.61em; line-height:1.61em;  }
+}
+
+
 
 /*-----------FORMULA STYLES------------*/
 .formula{
