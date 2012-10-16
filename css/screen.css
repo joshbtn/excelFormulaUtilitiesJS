@@ -1,20 +1,22 @@
-html, body{ font-family:font-family: 'Open Sans', sans-serif; margin-top:0.61em;}
+html, body{ font-family: 'Open Sans', sans-serif; margin-top:0.61em;}
+h1, h2, h3, h4, h5, h6 {font-family: 'Open Sans', sans-serif;}
 footer{display:none;}
 textarea{border:solid 1px #e4e4e4}
 select{border:none; background:#e4e4e4}
 h1{font-weight:normal; }
 
 /*-----------HEADER STYLES-------------*/
-header{margin-bottom:.61em;}
-header p{display:block; line-height:0.61em; }
-header h1{display:block; vertical-align: middle; line-height:1em;}
-header img{vertical-align: middle; float:left; line-height:0;}
+header{margin-bottom:.61em; color:#696969}
+header p{display:block; margin:0; padding: 0}
+header h1{display:block; vertical-align: middle; margin:0; padding:0}
+header img{vertical-align: middle; float:left;}
 
 header .title{float:left;}
 
-header .hidden-phone .title{margin-top:1.61em;}
-header .visible-phone h1{font-size:1.61em; }
-header .visible-phone p{font-size:0.75em; margin-top:0.75em; line-height:0.31em}
+header .hidden-phone .title{margin:1.63em 0 0 0;}
+header .visible-phone .title{margin:0.55em 0 0 0;}
+header .visible-phone h1{font-size:1.61em; line-height:0.91em;}
+header .visible-phone p{font-size:0.75em; line-height:1.61em;  }
 
 /*-----------FORMULA STYLES------------*/
 .formula{
