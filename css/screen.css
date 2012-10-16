@@ -1,9 +1,28 @@
-html, body{ font-family:font-family: 'Open Sans', sans-serif;}
-
+html, body{ font-family:font-family: 'Open Sans', sans-serif; margin-top:0.61em;}
 footer{display:none;}
+textarea{border:solid 1px #e4e4e4}
+select{border:none; background:#e4e4e4}
+h1{font-weight:normal; }
+
+/*-----------HEADER STYLES-------------*/
+header{margin-bottom:.61em;}
+header p{display:block; line-height:0.61em; }
+header h1{display:block; vertical-align: middle; line-height:1em;}
+header img{vertical-align: middle; float:left; line-height:0;}
+
+header .title{float:left;}
+
+header .hidden-phone .title{margin-top:1.61em;}
+header .visible-phone h1{font-size:1.61em; }
+header .visible-phone p{font-size:0.75em; margin-top:0.75em; line-height:0.31em}
 
 /*-----------FORMULA STYLES------------*/
-.formula{font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;}
+.formula{
+	font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+	background-color:#f5fffa;
+	border:solid 1px #e4e4e4;
+	padding: 1.428em;
+}
 .function{
 	color:#069;
 }

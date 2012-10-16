@@ -17,43 +17,62 @@
 </head>
 
 <body>
-
     <!-- Main Content -->
     <header class="container">
-    	<div class="row">
-			<h1 class="span12">Excel Formula Beautifier</h1>
+    	<div class="row hidden-phone">
+    		<div class="span12">
+    			<img class="" src="img/logo.png" height="100" width="104" alt="Logo" />
+				<div class="title">
+					<p>Online Excel Formula Tools.  Beautify and Convert Excel Formulas.</p>
+					<h1>Excel Formula Beautifier</h1>
+				</div>
+			</div>
+		</div>
+		<div class="row visible-phone">
+    		<div class="span1">
+    			<img class="" src="img/logo.png" height="50" width="52" alt="Logo" />
+    			<div class="title">
+    				<p>Online Excel Formula Tools.  Beautify and Convert Excel Formulas.</p>
+    				<h1>Excel Formula Beautifier</h1>
+    			</div>
+			</div>
+			
 		</div>
 	</header>
 	
 	<div id="container" class="container">
 		<div class="row">
-            <div class="span8">
+            <div class="span12">
 	            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert an excel formula to JavaScript (or C#). It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
 				<div id="inputArea" class="row">
 					<div class="span8">
 						<div class="row">
-							<label for="formula_input" class="span8">Enter your formula here. The leading = is optional.</label>
-						</div>
-						<div class="row">
 							<div class="span8">
-								<input type="text" id="formula_input" class="input-xxlarge" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" />
+								<!-- input type="text" id="formula_input" class="input-xxlarge" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" /-->
+								<textarea rows="1" id="formula_input" class="span8" 
+									onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()"></textarea>
 							</div>
 						</div>
 					</div>
+					<div class="span4">
+		            	<!-- label class="" for="mode">Mode: </label -->
+		                <select id="mode" class="" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
+		                    <option value="beautify">Beautify</option>
+		                    <option value="js">Formula to JavaScript</option> 
+		                </select>
+		            </div>
 				</div>
+				
 				<div class="formula">
 					<div id="fomatFormula_2_out" clas=""></div>
 				</div>
 			</div>
 			
-			<div id="sideContent" class="span4 ">
-	            <div class="">
-	            	<label class="" for="mode">Mode: </label>
-	                <select id="mode" class="" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
-	                    <option value="beautify">Beautify</option>
-	                    <option value="js">Formula to JavaScript</option> 
-	                </select>
-	            </div>
+		</div>
+		
+		<div class="row">
+			<div id="sideContent" class="span12 ">
+	            
 		        
 		        <hr />
 		        <p>Have some feedback or feature requests?  I'd love to hear it.</p>
