@@ -11,16 +11,16 @@ test("Test formatFormula ()", function() {
 
 test("formatFormula", function() {
   var inputFormula = 'IF("foo" = "foo", "foo", "bar")';
-  var excpected = '=IF(\n\t"foo" = "foo",\n\t"foo",\n\t"bar"\n)';
+  var excpected = 'IF(\n\t"foo" = "foo",\n\t"foo",\n\t"bar"\n)';
   
   equal(window.excelFormulaUtilities.formatFormula(inputFormula), excpected, "Simple formating example.");
   
-  inputFormula = 'IF(A1="yes", "yes", "no")'
-  excpected = '=IF(\n\tA1 = "yes",\n\t"yes",\n\t"no"\n)';
+  inputFormula = 'IF(A1="yes", "yes", "no")';
+  excpected = 'IF(\n\tA1 = "yes",\n\t"yes",\n\t"no"\n)';
   equal(excelFormulaUtilities.formatFormula(inputFormula), excpected, "advanced example.");
   
   inputFormula = '(AC6+AD6+IF(H6="Yes",1,IF(J6="Yes",1,0)))+IF(X6="Yes",1,0)'
-  excpected = '';
+  excpected = '(\n\tAC6 + AD6 +\n\tIF(\n\t\tH6 = \"Yes\",\n\t\t1,\n\t\tIF(\n\t\t\tJ6 = \"Yes\",\n\t\t\t1,\n\t\t\t0\n\t\t)\n\t)\n) +\nIF(\n\tX6 = \"Yes\",\n\t1,\n\t0\n)';
   equal(excelFormulaUtilities.formatFormula(inputFormula), excpected, "Encapsulation spacing.");
  
 });

@@ -12,7 +12,8 @@
  * http://jquery.org/license
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
- */ (function () {
+ */ 
+(function () {
     if (typeof window === 'undefined') {
       window = root;
     }
