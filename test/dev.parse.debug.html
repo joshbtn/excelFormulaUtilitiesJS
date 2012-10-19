@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">        
+        <title>Parse Debug</title>
+    </head>
+    <body>
+    	<input type="text" id="txtInput" />
+    	
+    	<div id="results">
+			
+    	</div>
+    	
+    	<script src="jquery/jQuery.js"></script>    
+        <script src="../src/core.js"></script>
+        <script src="../src/ExcelFormulaUtilities.js"></script>
+        <script type="text/javascript">
+        /*<![CDATA[*/
+        	jQuery(function(){
+        		var $input = $('#txtInput')
+        			,$results = $('#results');
+        		
+        		
+        		
+        		$input.bind('keyup', function(){
+        			
+        			window.excelFormulaUtilities.parseFormula('txtInput', 'results')
+        		});
+        	})
+		/*]]>*/
+        </script>
+        
+		
+    </body>
+</html>
