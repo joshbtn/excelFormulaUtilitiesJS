@@ -868,6 +868,8 @@
     function applyTokenTemplate(token, options, indent, lineBreak, override) {
 
         var indt = indent;
+        
+        var lastToken = typeof arguments[5] === undefined || arguments[5] === null ? null : arguments[5];
 
         var replaceTokenTmpl = function (inStr) {
             return inStr.replace(/\{\{token\}\}/gi, "{0}").replace(/\{\{autoindent\}\}/gi, "{1}").replace(/\{\{autolinebreak\}\}/gi, "{2}");
@@ -938,7 +940,11 @@
             tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
             break;
         case "argument":
-            tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+        	if(lastToken.type !== "argument"){
+        		tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+            } else  {
+            	tokenString = formatStr(replaceTokenTmpl("{{autoindent}}"+options.tmplArgument), tokenString, indt, lineBreak);
+            }
             break;
         case "subexpression":
             if (token.subtype.toString() === "start") {
@@ -1063,7 +1069,9 @@
             }
             return false;
         };
-
+        
+        var lastToken = null;
+        
         while (tokens.moveNext()) {
 
             var token = tokens.current();
@@ -1080,7 +1088,7 @@
                 indt = autoIndent ? indent() : options.tmplIndentSpace,
                 lineBreak = autoBreak ? options.newLine : "";
 
-            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender);
+            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender, lastToken);
 
             if (token.subtype.toString() === TOK_SUBTYPE_START) {
                 indentCount += 1;
@@ -1089,6 +1097,8 @@
 
             isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
             isFirstToken = false;
+            
+            lastToken = token;
         }
         
         outputFormula = options.prefix + trim(outputFormula) + options.postfix;
