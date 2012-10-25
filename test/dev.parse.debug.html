@@ -9,7 +9,7 @@
     </head>
     <body>
     	<input type="text" id="txtInput" />
-    	
+    	<button id="parse">parse</button>
     	<div id="results">
 			
     	</div>
@@ -21,13 +21,12 @@
         /*<![CDATA[*/
         	jQuery(function(){
         		var $input = $('#txtInput')
+        			,$parse = $('#parse')
         			,$results = $('#results');
         		
-        		
-        		
-        		$input.bind('keyup', function(){
-        			
+        		$parse.bind('click', function(){
         			window.excelFormulaUtilities.parseFormula('txtInput', 'results')
+        			return false;
         		});
         	})
 		/*]]>*/

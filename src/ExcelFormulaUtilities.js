@@ -828,7 +828,7 @@
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
         var isFirstToken = true,
             defaultOptions = {
-                tmplFunctionStart: '\n{{autoindent}}{{token}}(\n',
+                tmplFunctionStart: '{{autoindent}}{{token}}(\n',
                 tmplFunctionStop: '\n{{autoindent}}{{token}})',
                 tmplOperandError: ' {{token}}',
                 tmplOperandRange: '{{autoindent}}{{token}}',
@@ -840,8 +840,8 @@
                 tmplFunctionStartArrayRow: '{',
                 tmplFunctionStopArrayRow: '}',
                 tmplFunctionStopArray: '',
-                tmplSubexpressionStart: '{{autoindent}}(',
-                tmplSubexpressionStop: ' )',
+                tmplSubexpressionStart: '{{autoindent}}(\n',
+                tmplSubexpressionStop: '\n)',
                 tmplIndentTab: '\t',
                 tmplIndentSpace: ' ',
                 autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
