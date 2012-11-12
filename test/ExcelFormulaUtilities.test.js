@@ -81,4 +81,8 @@ test("formula2JavaScript", function() {
     inputFormula = 'SUM(A1:C3)';
 	excpected = '(A1+A2+A3+B1+B2+B3+C1+C2+C3)';
 	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+    
+    inputFormula = 'SUM(A1:B3)';
+    excpected = '[A1,B1,A2,B2,A3,B3]';
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Make sure the sum of ranges break out, for non sum function");
 });
