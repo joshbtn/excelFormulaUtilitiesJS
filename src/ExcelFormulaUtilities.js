@@ -1086,7 +1086,6 @@
                         case "sum":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                debugger;
                                 outstr = breakOutRanges(tokenString, "+");
                             } else {
                                 outStr = tokenString;
@@ -1101,7 +1100,7 @@
                             } else {
                                 outstr = tokenString;
                             }
-                            
+                            debugger;
                             break;
                         }
                         
@@ -1112,7 +1111,9 @@
                 }
 
             default:
-                outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                if( outstr === "" ){
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                }
                 useTemplate = true;
                 break;
             }

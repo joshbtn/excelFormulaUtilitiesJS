@@ -796,22 +796,42 @@
     function breakOutRanges(rangeStr, delimStr){
         
         //Quick Check to see if if rangeStr is a valid range
-        if ( (/\w{1,4}\d+:\w{1,4}\d+/gi).test("A1:B2") ){
+        if ( !RegExp("[a-z]+[0-9]+:[a-z]+[0-9]+","gi").test(rangeStr) ){
             throw "This is not a valid range: " + rangeStr;
         }
         
         //Make the rangeStr lowercase to deal with looping.
-        ranges = rangeStr.split(":");
+        var range = rangeStr.split(":"),
         
-        startRow = range[0].match(/[0-9]+/gi)[0];
-        startCol = range[0].match(/[A-Z]+/gi)[0];
+            startRow = range[0].match(/[0-9]+/gi)[0],
+            startCol = range[0].match(/[A-Z]+/gi)[0],
         
-        endRow = range[1].match(/[0-9]+/gi)[0];
-        endCol = range[1].match(/[A-Z]+/gi)[0];
+            endRow = range[1].match(/[0-9]+/gi)[0],
+            endCol = range[1].match(/[A-Z]+/gi)[0],
+            
+            // Total rows and cols
+            totalRows = endRow - startRow + 1,
+            totalCols = fromBase26(endCol) - fromBase26(startCol) + 1,
+            
+            // Loop vars
+            curCol = 0,
+            curRow = 1,
+            curCell = "",
+            
+            //Return String
+            retStr = "";
+            
+        for(; curRow <= totalRows; curRow+=1){
+            for(; curCol < totalCols; curCol+=1){
+                // Get the current cell id
+                curCell = toBase26(curCol) + curRow ;
+                retStr += curCell + (curRow===totalRows && curCol===totalCols-1 ? "" : delimStr);
+            }
+            curCol=0;
+        }
         
-        //str.charCodeAt(n)
-        //String.fromCharCode();
-        return "";
+        return retStr;
+        
     }
     
     //Modified from function at http://en.wikipedia.org/wiki/Hexavigesimal
@@ -1239,15 +1259,23 @@
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":
-
-                            outstr = breakOutRanges(tokenString, "+");
-							
-                            debugger;
-                            //TODO loop through and add ranges together
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "+");
+                            } else {
+                                outStr = tokenString;
+                            }
+                            
                             break;
                         // By Default return an array containing all cell names in array
                         default:
-                            //TODO create array for ranges
+                            // Create array for ranges
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = "[" + breakOutRanges(tokenString, ",") +"]";
+                            } else {
+                                outstr = tokenString;
+                            }
+                            debugger;
                             break;
                         }
                         
@@ -1258,7 +1286,9 @@
                 }
 
             default:
-                outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                if( outstr === "" ){
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                }
                 useTemplate = true;
                 break;
             }
