@@ -1027,6 +1027,9 @@
      * @returns {string}
      */
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
+        //Quick fix for trailing space after = sign
+        formula = formula.replace(/^\s*=\s+/gi, "=");
+        
         var isFirstToken = true,
             defaultOptions = {
                 tmplFunctionStart: '{{autoindent}}{{token}}(\n',
@@ -1169,7 +1172,7 @@
      * @returns {string}
      */
     var formula2CSharp = excelFormulaUtilities.formula2CSharp = function (formula) {
-
+        
         //Custom callback to format as c#
         var functionStack = [];
 
@@ -1275,7 +1278,7 @@
                             } else {
                                 outstr = tokenString;
                             }
-                            debugger;
+                            //debugger;
                             break;
                         }
                         

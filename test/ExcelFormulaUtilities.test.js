@@ -86,3 +86,11 @@ test("formula2JavaScript", function() {
     excpected = '[A1,B1,A2,B2,A3,B3]';
 	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), excpected, "Make sure the sum of ranges break out, for non sum function");
 });
+
+QUnit.module("Regression");
+
+test("space after =", function() {
+    inputFormula = '= A1 + B2';
+    excpected = 'A1 + B2';
+	equal(excelFormulaUtilities.formatFormula(inputFormula), excpected, "space after =");
+});
