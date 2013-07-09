@@ -1001,8 +1001,7 @@ and infix-operator subtypes, pull &quot;@&quot; from in front of function names<
               <p>Pass a range such as A1:B2 along with a 
 delimiter to get back a full list of ranges.</p>
 <p>Example:
-   breakOutRanges(&quot;A1:B2&quot;, &quot;+&quot;); //Returns A1+A2+B1+B2
-TODO finish this function.</p>
+   breakOutRanges(&quot;A1:B2&quot;, &quot;+&quot;); //Returns A1+A2+B1+B2</p>
 
             </div>
             
@@ -1040,11 +1039,13 @@ TODO finish this function.</p>
             
             <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> range = rangeStr.split(<span class="string">":"</span>),
         
-            startRow = range[<span class="number">0</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>],
+            startRow = parseInt(range[<span class="number">0</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>]),
             startCol = range[<span class="number">0</span>].match(<span class="regexp">/[A-Z]+/gi</span>)[<span class="number">0</span>],
+            startColDec = fromBase26(startCol)
         
-            endRow = range[<span class="number">1</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>],
-            endCol = range[<span class="number">1</span>].match(<span class="regexp">/[A-Z]+/gi</span>)[<span class="number">0</span>],</pre></div></div>
+            endRow =  parseInt(range[<span class="number">1</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>]),
+            endCol = range[<span class="number">1</span>].match(<span class="regexp">/[A-Z]+/gi</span>)[<span class="number">0</span>],
+            endColDec = fromBase26(endCol),</pre></div></div>
             
         </li>
         
@@ -1076,7 +1077,7 @@ TODO finish this function.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>            curCol = <span class="number">0</span>,
-            curRow = <span class="number">1</span>,
+            curRow = <span class="number">1</span> ,
             curCell = <span class="string">""</span>,</pre></div></div>
             
         </li>
@@ -1093,7 +1094,7 @@ TODO finish this function.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>            retStr = <span class="string">""</span>;
-            
+        
         <span class="keyword">for</span>(; curRow &lt;= totalRows; curRow+=<span class="number">1</span>){
             <span class="keyword">for</span>(; curCol &lt; totalCols; curCol+=<span class="number">1</span>){</pre></div></div>
             
@@ -1110,7 +1111,7 @@ TODO finish this function.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                curCell = toBase26(curCol) + curRow ;
+            <div class="content"><div class='highlight'><pre>                curCell = toBase26(startColDec + curCol) + <span class="string">""</span> + (startRow+curRow-<span class="number">1</span>) ;
                 retStr += curCell + (curRow===totalRows &amp;&amp; curCol===totalCols-<span class="number">1</span> ? <span class="string">""</span> : delimStr);
             }
             curCol=<span class="number">0</span>;
@@ -1133,7 +1134,7 @@ TODO finish this function.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">toBase26</span><span class="params">( value )</span> {</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> toBase26 = excelFormulaUtilities.toBase26 = <span class="keyword">function</span>( value ) {
        
        value = Math.abs(value);
        
@@ -1198,25 +1199,25 @@ Pass in the base 26 string, get back integer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">fromBase26</span><span class="params">(number)</span> {</span>
+            <div class="content"><div class='highlight'><pre>   <span class="keyword">var</span> fromBase26 = excelFormulaUtilities.fromBase26 = <span class="function"><span class="keyword">function</span> <span class="params">(number)</span> {</span>
         number = number.toUpperCase();
         
         <span class="keyword">var</span> s = <span class="number">0</span>
-            ,i = <span class="number">1</span>;
-        
+            ,i = <span class="number">0</span>
+            ,dec = <span class="number">0</span>;
+
         <span class="keyword">if</span> (
             number !== <span class="literal">null</span> 
             &amp;&amp; <span class="keyword">typeof</span> number !== <span class="string">"undefined"</span> 
             &amp;&amp; number.length &gt; <span class="number">0</span>
         ) {
-            s = (number.charCodeAt(<span class="number">0</span>) - <span class="string">"A"</span>.charCodeAt(<span class="number">0</span>));
             <span class="keyword">for</span> (; i &lt; number.length; i++) {
-                s = s === <span class="number">0</span> ? <span class="number">26</span> : s * <span class="number">26</span>;
-                s += (number.charCodeAt(i) - (<span class="string">"A"</span>.charCodeAt(<span class="number">0</span>) ));
+                s = number.charCodeAt(number.length - i - <span class="number">1</span>) - <span class="string">"A"</span>.charCodeAt(<span class="number">0</span>);
+                dec += (Math.pow(<span class="number">26</span>, i)) * (s+<span class="number">1</span>);
             }
         }
         
-        <span class="keyword">return</span> s;
+        <span class="keyword">return</span> dec - <span class="number">1</span>;
     }
     
     <span class="function"><span class="keyword">function</span> <span class="title">applyTokenTemplate</span><span class="params">(token, options, indent, lineBreak, override)</span> {</span>

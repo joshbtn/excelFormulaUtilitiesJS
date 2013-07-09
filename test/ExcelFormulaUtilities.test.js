@@ -2,15 +2,38 @@ QUnit.module("base26");
 
 test("fromBase26", function(){
     var input = 'AAA';
-    var expected = '676';
+    var expected = '702';
     
-    equal(excelFormulaUtilities.fromBase26(input), expected, "AAA = 676");
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
     
-    input = 'AH';
-    expected = '33';
-    equal(excelFormulaUtilities.fromBase26(input), expected, "AA = 32");
+    input = 'BAA';
+    expected = '1378';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'ZZ';
+    expected = '701';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'A';
+    expected = '0';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'Z';
+    expected = '25';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'AA';
+    expected = '26';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'AC';
+    expected = '28';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+    input = 'BA';
+    expected = '52';
+    equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
 });
-
 
 
 QUnit.module("parser");
@@ -99,12 +122,20 @@ test("formula2JavaScript", function() {
     
     inputFormula = 'SUM(A1:C3)';
 	expected = '(A1+B1+C1+A2+B2+C2+A3+B3+C3)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(A1:C3) -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+    
+    inputFormula = 'SUM(AA1:BA3)';
+    expected = '(A1+B1+C1+A2+B2+C2+A3+B3+C3)';
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(A1:C3) -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     
     inputFormula = 'SUM(AG39:AG49)';
     expected = '(AG39+AG40+AG41+AG42+AG43+AG44+AG45+AG46+AG47+AG48+AG49)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Test for @sblommers comment on issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(AG39:AG49) -- Test for @sblommers comment on issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+    
+    inputFormula = 'SUM(AA1:BB2)';
+    expected = '(AG39+AG40+AG41+AG42+AG43+AG44+AG45+AG46+AG47+AG48+AG49)';
+    equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(AG39:BG49) -- Test for issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     inputFormula = '=foo(A1:B3)';
     expected = 'foo([A1,B1,A2,B2,A3,B3])';
