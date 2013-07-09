@@ -106,36 +106,36 @@ test("formula2CSharp", function() {
 test("formula2JavaScript", function() {
 	var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
 		expected = '("foo"==="foo"?"foo":"bar")';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Simple if example.");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Simple if example.");
   
 	inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
 	expected = '((true?"foo":"bar")==="foo"?"foo":"bar")';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Nested If Test.");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Nested If Test.");
 	
 	inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
 	expected = '((Math.Max(1,-10)>0?"foo":"bar")==="foo"?"foo":"bar")';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Nested If Test with a nested function.");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Nested If Test with a nested function.");
 	
 	inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
 	expected = '(FOO_BAR==="foo bar"?"THIS WORKED":"THIS ISN\'T WORKING")';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
     
     inputFormula = 'SUM(A1:C3)';
 	expected = '(A1+B1+C1+A2+B2+C2+A3+B3+C3)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(A1:C3) -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     inputFormula = 'SUM(AA1:BA3)';
-    expected = '(A1+B1+C1+A2+B2+C2+A3+B3+C3)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(A1:C3) -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+    expected = '(AA1+AB1+AC1+AD1+AE1+AF1+AG1+AH1+AI1+AJ1+AK1+AL1+AM1+AN1+AO1+AP1+AQ1+AR1+AS1+AT1+AU1+AV1+AW1+AX1+AY1+AZ1+BA1+AA2+AB2+AC2+AD2+AE2+AF2+AG2+AH2+AI2+AJ2+AK2+AL2+AM2+AN2+AO2+AP2+AQ2+AR2+AS2+AT2+AU2+AV2+AW2+AX2+AY2+AZ2+BA2+AA3+AB3+AC3+AD3+AE3+AF3+AG3+AH3+AI3+AJ3+AK3+AL3+AM3+AN3+AO3+AP3+AQ3+AR3+AS3+AT3+AU3+AV3+AW3+AX3+AY3+AZ3+BA3)';
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     
     inputFormula = 'SUM(AG39:AG49)';
     expected = '(AG39+AG40+AG41+AG42+AG43+AG44+AG45+AG46+AG47+AG48+AG49)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(AG39:AG49) -- Test for @sblommers comment on issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Test for @sblommers comment on issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     inputFormula = 'SUM(AA1:BB2)';
-    expected = '(AG39+AG40+AG41+AG42+AG43+AG44+AG45+AG46+AG47+AG48+AG49)';
-    equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "=SUM(AG39:BG49) -- Test for issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+    expected = '(AA1+AB1+AC1+AD1+AE1+AF1+AG1+AH1+AI1+AJ1+AK1+AL1+AM1+AN1+AO1+AP1+AQ1+AR1+AS1+AT1+AU1+AV1+AW1+AX1+AY1+AZ1+BA1+BB1+AA2+AB2+AC2+AD2+AE2+AF2+AG2+AH2+AI2+AJ2+AK2+AL2+AM2+AN2+AO2+AP2+AQ2+AR2+AS2+AT2+AU2+AV2+AW2+AX2+AY2+AZ2+BA2+BB2)';
+    equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Test for issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
     
     inputFormula = '=foo(A1:B3)';
     expected = 'foo([A1,B1,A2,B2,A3,B3])';
