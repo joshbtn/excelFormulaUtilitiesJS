@@ -37,6 +37,6 @@ task 'build', 'Building', ->
         console.log stdout + stderr
     
     # Generate Docco Docs    
-    exec "node #{DOCCO_PATH} ./src/*.js", (err, stdout, stderr) ->
+    exec "docco ./src/*.js", (err, stdout, stderr) ->
         throw err if err
         console.log stdout + stderr

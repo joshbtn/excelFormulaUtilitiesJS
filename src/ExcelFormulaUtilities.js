@@ -660,7 +660,7 @@
     }
     
     //Modified from function at http://en.wikipedia.org/wiki/Hexavigesimal
-    function toBase26( value ) {
+    excelFormulaUtilities.toBase26 = function toBase26( value ) {
        
        value = Math.abs(value);
        
@@ -689,7 +689,7 @@
    
    // This was Modified from a function at http://en.wikipedia.org/wiki/Hexavigesimal
    // Pass in the base 26 string, get back integer
-    function fromBase26(number) {
+   excelFormulaUtilities.fromBase26 = function fromBase26(number) {
         number = number.toUpperCase();
         
         var s = 0
