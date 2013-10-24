@@ -10,7 +10,7 @@
     //Check and setup name spaces.
 	window.excelFormulaBeautifier = window.excelFormulaBeautifier || {};
     window.excelFormulaBeautifier.examples = window.excelFormulaBeautifier.examples || {};
-	
+
 	//Configuration
     //-------------------------------
 	var config = {
@@ -27,7 +27,10 @@
 		DEFAULT_FORMULA: ''
 	},
 	
-
+	timer = null,
+	lastMode = "beautify",
+	_gaq = window._gaq || null,
+	
     //Beautifier Page functionality
     //-------------------------------
 	beautifier = window.excelFormulaBeautifier.examples.beautifier = 
@@ -41,8 +44,15 @@
 				formulaBody: null,
                 mode: "beautify",
                 changeMode: function(mode){
+                    lastMode = mode;
                     window.excelFormulaBeautifier.examples.beautifier.mode = mode;
                     window.excelFormulaBeautifier.examples.beautifier.update.call(window.excelFormulaBeautifier.examples.beautifier);
+                    if(typeof _gaq !== 'undefined' && _gaq !== null )
+                        _gaq.push(['_trackEvent', 'Change Mode', 'Select', mode]);
+                },
+                formulaAreaClicked: function(){
+                    if(typeof _gaq !== 'undefined' && _gaq !== null )
+                        _gaq.push(['_trackEvent', 'Formula Input', 'Clicked', lastMode]);
                 },
 				update: function () {
 					this.formula = this.input.value;
@@ -66,6 +76,13 @@
 					}catch(exception){
 						//Do nothing, This should throw an error when the formula is improperly formed, which shouldn't blow things up.
 					}
+					
+					clearTimeout(timer)
+					timer = setTimeout(function(){
+    					if(typeof _gaq !== 'undefined' && _gaq !== null )
+                            _gaq.push(['_trackEvent', 'Formula Input', 'Updated', lastMode]);
+					},
+					1000);
 				}
 			};
 		}());
