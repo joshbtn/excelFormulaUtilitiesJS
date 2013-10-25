@@ -29,8 +29,7 @@
 	
 	timer = null,
 	lastMode = "beautify",
-	_gaq = window._gaq || null,
-	
+
     //Beautifier Page functionality
     //-------------------------------
 	beautifier = window.excelFormulaBeautifier.examples.beautifier = 
