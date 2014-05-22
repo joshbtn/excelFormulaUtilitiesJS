@@ -56,7 +56,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="comment">/*
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
  * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
  *
@@ -71,179 +71,178 @@
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */</span> 
-(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-    <span class="keyword">if</span> (<span class="keyword">typeof</span> window === <span class="string">'undefined'</span>) {
-      window = root;
-    }
-
-    <span class="keyword">var</span> excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-    core = window.excelFormulaUtilities.core,
-        formatStr = window.excelFormulaUtilities.string.formatStr,
-        trim = window.excelFormulaUtilities.string.trim,
+(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(root)</span> {</span>
+    <span class="hljs-keyword">var</span> excelFormulaUtilities = root.excelFormulaUtilities = root.excelFormulaUtilities || {},
+    core = root.excelFormulaUtilities.core,
+        formatStr = root.excelFormulaUtilities.string.formatStr,
+        trim = root.excelFormulaUtilities.string.trim,
 
         types = {},
-        TOK_TYPE_NOOP = types.TOK_TYPE_NOOP = <span class="string">"noop"</span>,
-        TOK_TYPE_OPERAND = types.TOK_TYPE_OPERAND = <span class="string">"operand"</span>,
-        TOK_TYPE_FUNCTION = types.TOK_TYPE_FUNCTION = <span class="string">"function"</span>,
-        TOK_TYPE_SUBEXPR = types.TOK_TYPE_SUBEXPR = <span class="string">"subexpression"</span>,
-        TOK_TYPE_ARGUMENT = types.TOK_TYPE_ARGUMENT = <span class="string">"argument"</span>,
-        TOK_TYPE_OP_PRE = types.TOK_TYPE_OP_PRE = <span class="string">"operator-prefix"</span>,
-        TOK_TYPE_OP_IN = types.TOK_TYPE_OP_IN = <span class="string">"operator-infix"</span>,
-        TOK_TYPE_OP_POST = types.TOK_TYPE_OP_POST = <span class="string">"operator-postfix"</span>,
-        TOK_TYPE_WSPACE = types.TOK_TYPE_WSPACE = <span class="string">"white-space"</span>,
-        TOK_TYPE_UNKNOWN = types.TOK_TYPE_UNKNOWN = <span class="string">"unknown"</span>,
+        TOK_TYPE_NOOP = types.TOK_TYPE_NOOP = <span class="hljs-string">"noop"</span>,
+        TOK_TYPE_OPERAND = types.TOK_TYPE_OPERAND = <span class="hljs-string">"operand"</span>,
+        TOK_TYPE_FUNCTION = types.TOK_TYPE_FUNCTION = <span class="hljs-string">"function"</span>,
+        TOK_TYPE_SUBEXPR = types.TOK_TYPE_SUBEXPR = <span class="hljs-string">"subexpression"</span>,
+        TOK_TYPE_ARGUMENT = types.TOK_TYPE_ARGUMENT = <span class="hljs-string">"argument"</span>,
+        TOK_TYPE_OP_PRE = types.TOK_TYPE_OP_PRE = <span class="hljs-string">"operator-prefix"</span>,
+        TOK_TYPE_OP_IN = types.TOK_TYPE_OP_IN = <span class="hljs-string">"operator-infix"</span>,
+        TOK_TYPE_OP_POST = types.TOK_TYPE_OP_POST = <span class="hljs-string">"operator-postfix"</span>,
+        TOK_TYPE_WSPACE = types.TOK_TYPE_WSPACE = <span class="hljs-string">"white-space"</span>,
+        TOK_TYPE_UNKNOWN = types.TOK_TYPE_UNKNOWN = <span class="hljs-string">"unknown"</span>,
 
-        TOK_SUBTYPE_START = types.TOK_SUBTYPE_START = <span class="string">"start"</span>,
-        TOK_SUBTYPE_STOP = types.TOK_SUBTYPE_STOP = <span class="string">"stop"</span>,
+        TOK_SUBTYPE_START = types.TOK_SUBTYPE_START = <span class="hljs-string">"start"</span>,
+        TOK_SUBTYPE_STOP = types.TOK_SUBTYPE_STOP = <span class="hljs-string">"stop"</span>,
 
-        TOK_SUBTYPE_TEXT = types.TOK_SUBTYPE_TEXT = <span class="string">"text"</span>,
-        TOK_SUBTYPE_NUMBER = types.TOK_SUBTYPE_NUMBER = <span class="string">"number"</span>,
-        TOK_SUBTYPE_LOGICAL = types.TOK_SUBTYPE_LOGICAL = <span class="string">"logical"</span>,
-        TOK_SUBTYPE_ERROR = types.TOK_SUBTYPE_ERROR = <span class="string">"error"</span>,
-        TOK_SUBTYPE_RANGE = types.TOK_SUBTYPE_RANGE = <span class="string">"range"</span>,
+        TOK_SUBTYPE_TEXT = types.TOK_SUBTYPE_TEXT = <span class="hljs-string">"text"</span>,
+        TOK_SUBTYPE_NUMBER = types.TOK_SUBTYPE_NUMBER = <span class="hljs-string">"number"</span>,
+        TOK_SUBTYPE_LOGICAL = types.TOK_SUBTYPE_LOGICAL = <span class="hljs-string">"logical"</span>,
+        TOK_SUBTYPE_ERROR = types.TOK_SUBTYPE_ERROR = <span class="hljs-string">"error"</span>,
+        TOK_SUBTYPE_RANGE = types.TOK_SUBTYPE_RANGE = <span class="hljs-string">"range"</span>,
 
-        TOK_SUBTYPE_MATH = types.TOK_SUBTYPE_MATH = <span class="string">"math"</span>,
-        TOK_SUBTYPE_CONCAT = types.TOK_SUBTYPE_CONCAT = <span class="string">"concatenate"</span>,
-        TOK_SUBTYPE_INTERSECT = types.TOK_SUBTYPE_INTERSECT = <span class="string">"intersect"</span>,
-        TOK_SUBTYPE_UNION = types.TOK_SUBTYPE_UNION = <span class="string">"union"</span>;
-
-    <span class="comment">/**
+        TOK_SUBTYPE_MATH = types.TOK_SUBTYPE_MATH = <span class="hljs-string">"math"</span>,
+        TOK_SUBTYPE_CONCAT = types.TOK_SUBTYPE_CONCAT = <span class="hljs-string">"concatenate"</span>,
+        TOK_SUBTYPE_INTERSECT = types.TOK_SUBTYPE_INTERSECT = <span class="hljs-string">"intersect"</span>,
+        TOK_SUBTYPE_UNION = types.TOK_SUBTYPE_UNION = <span class="hljs-string">"union"</span>;
+    
+    root.excelFormulaUtilities.isEu = <span class="hljs-keyword">typeof</span> root.excelFormulaUtilities.isEu === <span class="hljs-string">'boolean'</span> ? root.excelFormulaUtilities.isEu : <span class="hljs-literal">false</span>;
+    
+    
+    <span class="hljs-comment">/**
      * @class
      */</span>
 
-    <span class="function"><span class="keyword">function</span> <span class="title">F_token</span><span class="params">(value, type, subtype)</span> {</span>
-        <span class="keyword">this</span>.value = value;
-        <span class="keyword">this</span>.type = type;
-        <span class="keyword">this</span>.subtype = subtype;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">F_token</span><span class="hljs-params">(value, type, subtype)</span> {</span>
+        <span class="hljs-keyword">this</span>.value = value;
+        <span class="hljs-keyword">this</span>.type = type;
+        <span class="hljs-keyword">this</span>.subtype = subtype;
     }
 
-    <span class="comment">/**
+    <span class="hljs-comment">/**
      * @class
      */</span>
 
-    <span class="function"><span class="keyword">function</span> <span class="title">F_tokens</span><span class="params">()</span> {</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">F_tokens</span><span class="hljs-params">()</span> {</span>
 
-        <span class="keyword">this</span>.items = [];
+        <span class="hljs-keyword">this</span>.items = [];
 
-        <span class="keyword">this</span>.add = <span class="function"><span class="keyword">function</span> <span class="params">(value, type, subtype)</span> {</span>
-            <span class="keyword">if</span> (!subtype) {
-                subtype = <span class="string">""</span>;
+        <span class="hljs-keyword">this</span>.add = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(value, type, subtype)</span> {</span>
+            <span class="hljs-keyword">if</span> (!subtype) {
+                subtype = <span class="hljs-string">""</span>;
             }
-            <span class="keyword">var</span> token = <span class="keyword">new</span> F_token(value, type, subtype);
-            <span class="keyword">this</span>.addRef(token);
-            <span class="keyword">return</span> token;
+            <span class="hljs-keyword">var</span> token = <span class="hljs-keyword">new</span> F_token(value, type, subtype);
+            <span class="hljs-keyword">this</span>.addRef(token);
+            <span class="hljs-keyword">return</span> token;
         };
-        <span class="keyword">this</span>.addRef = <span class="function"><span class="keyword">function</span> <span class="params">(token)</span> {</span>
-            <span class="keyword">this</span>.items.push(token);
+        <span class="hljs-keyword">this</span>.addRef = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(token)</span> {</span>
+            <span class="hljs-keyword">this</span>.items.push(token);
         };
 
-        <span class="keyword">this</span>.index = -<span class="number">1</span>;
-        <span class="keyword">this</span>.reset = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">this</span>.index = -<span class="number">1</span>;
+        <span class="hljs-keyword">this</span>.index = -<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">this</span>.reset = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">this</span>.index = -<span class="hljs-number">1</span>;
         };
-        <span class="keyword">this</span>.BOF = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> (<span class="keyword">this</span>.index &lt;= <span class="number">0</span>);
+        <span class="hljs-keyword">this</span>.BOF = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.index &lt;= <span class="hljs-number">0</span>);
         };
-        <span class="keyword">this</span>.EOF = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> (<span class="keyword">this</span>.index &gt;= (<span class="keyword">this</span>.items.length - <span class="number">1</span>));
+        <span class="hljs-keyword">this</span>.EOF = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.index &gt;= (<span class="hljs-keyword">this</span>.items.length - <span class="hljs-number">1</span>));
         };
-        <span class="keyword">this</span>.moveNext = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">if</span> (<span class="keyword">this</span>.EOF()) {
-                <span class="keyword">return</span> <span class="literal">false</span>;
+        <span class="hljs-keyword">this</span>.moveNext = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.EOF()) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
             }
-            <span class="keyword">this</span>.index += <span class="number">1</span>;
-            <span class="keyword">return</span> <span class="literal">true</span>;
+            <span class="hljs-keyword">this</span>.index += <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         };
-        <span class="keyword">this</span>.current = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">if</span> (<span class="keyword">this</span>.index === -<span class="number">1</span>) {
-                <span class="keyword">return</span> <span class="literal">null</span>;
+        <span class="hljs-keyword">this</span>.current = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.index === -<span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             }
-            <span class="keyword">return</span> (<span class="keyword">this</span>.items[<span class="keyword">this</span>.index]);
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.items[<span class="hljs-keyword">this</span>.index]);
         };
-        <span class="keyword">this</span>.next = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">if</span> (<span class="keyword">this</span>.EOF()) {
-                <span class="keyword">return</span> <span class="literal">null</span>;
+        <span class="hljs-keyword">this</span>.next = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.EOF()) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             }
-            <span class="keyword">return</span> (<span class="keyword">this</span>.items[<span class="keyword">this</span>.index + <span class="number">1</span>]);
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.items[<span class="hljs-keyword">this</span>.index + <span class="hljs-number">1</span>]);
         };
-        <span class="keyword">this</span>.previous = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">if</span> (<span class="keyword">this</span>.index &lt; <span class="number">1</span>) {
-                <span class="keyword">return</span> <span class="literal">null</span>;
+        <span class="hljs-keyword">this</span>.previous = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.index &lt; <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             }
-            <span class="keyword">return</span> (<span class="keyword">this</span>.items[<span class="keyword">this</span>.index - <span class="number">1</span>]);
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">this</span>.items[<span class="hljs-keyword">this</span>.index - <span class="hljs-number">1</span>]);
         };
 
     }
 
-    <span class="function"><span class="keyword">function</span> <span class="title">F_tokenStack</span><span class="params">()</span> {</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">F_tokenStack</span><span class="hljs-params">()</span> {</span>
 
-        <span class="keyword">this</span>.items = [];
+        <span class="hljs-keyword">this</span>.items = [];
 
-        <span class="keyword">this</span>.push = <span class="function"><span class="keyword">function</span> <span class="params">(token)</span> {</span>
-            <span class="keyword">this</span>.items.push(token);
+        <span class="hljs-keyword">this</span>.push = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(token)</span> {</span>
+            <span class="hljs-keyword">this</span>.items.push(token);
         };
-        <span class="keyword">this</span>.pop = <span class="function"><span class="keyword">function</span> <span class="params">(name)</span> {</span>
-            <span class="keyword">var</span> token = <span class="keyword">this</span>.items.pop();
-            <span class="keyword">return</span> (<span class="keyword">new</span> F_token(name || <span class="string">""</span>, token.type, TOK_SUBTYPE_STOP));
+        <span class="hljs-keyword">this</span>.pop = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(name)</span> {</span>
+            <span class="hljs-keyword">var</span> token = <span class="hljs-keyword">this</span>.items.pop();
+            <span class="hljs-keyword">return</span> (<span class="hljs-keyword">new</span> F_token(name || <span class="hljs-string">""</span>, token.type, TOK_SUBTYPE_STOP));
         };
 
-        <span class="keyword">this</span>.token = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> ((<span class="keyword">this</span>.items.length &gt; <span class="number">0</span>) ? <span class="keyword">this</span>.items[<span class="keyword">this</span>.items.length - <span class="number">1</span>] : <span class="literal">null</span>);
+        <span class="hljs-keyword">this</span>.token = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> ((<span class="hljs-keyword">this</span>.items.length &gt; <span class="hljs-number">0</span>) ? <span class="hljs-keyword">this</span>.items[<span class="hljs-keyword">this</span>.items.length - <span class="hljs-number">1</span>] : <span class="hljs-literal">null</span>);
         };
-        <span class="keyword">this</span>.value = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> ((<span class="keyword">this</span>.token()) ? <span class="keyword">this</span>.token().value.toString() : <span class="string">""</span>);
+        <span class="hljs-keyword">this</span>.value = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> ((<span class="hljs-keyword">this</span>.token()) ? <span class="hljs-keyword">this</span>.token().value.toString() : <span class="hljs-string">""</span>);
         };
-        <span class="keyword">this</span>.type = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> ((<span class="keyword">this</span>.token()) ? <span class="keyword">this</span>.token().type.toString() : <span class="string">""</span>);
+        <span class="hljs-keyword">this</span>.type = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> ((<span class="hljs-keyword">this</span>.token()) ? <span class="hljs-keyword">this</span>.token().type.toString() : <span class="hljs-string">""</span>);
         };
-        <span class="keyword">this</span>.subtype = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">return</span> ((<span class="keyword">this</span>.token()) ? <span class="keyword">this</span>.token().subtype.toString() : <span class="string">""</span>);
+        <span class="hljs-keyword">this</span>.subtype = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">return</span> ((<span class="hljs-keyword">this</span>.token()) ? <span class="hljs-keyword">this</span>.token().subtype.toString() : <span class="hljs-string">""</span>);
         };
 
     }
 
-    <span class="function"><span class="keyword">function</span> <span class="title">getTokens</span><span class="params">(formula)</span> {</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTokens</span><span class="hljs-params">(formula)</span> {</span>
 
-        <span class="keyword">var</span> tokens = <span class="keyword">new</span> F_tokens(),
-            tokenStack = <span class="keyword">new</span> F_tokenStack(),
+        <span class="hljs-keyword">var</span> tokens = <span class="hljs-keyword">new</span> F_tokens(),
+            tokenStack = <span class="hljs-keyword">new</span> F_tokenStack(),
 
-            offset = <span class="number">0</span>,
+            offset = <span class="hljs-number">0</span>,
 
-            currentChar = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-                <span class="keyword">return</span> formula.substr(offset, <span class="number">1</span>);
+            currentChar = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">return</span> formula.substr(offset, <span class="hljs-number">1</span>);
             },
-            doubleChar = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-                <span class="keyword">return</span> formula.substr(offset, <span class="number">2</span>);
+            doubleChar = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">return</span> formula.substr(offset, <span class="hljs-number">2</span>);
             },
-            nextChar = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-                <span class="keyword">return</span> formula.substr(offset + <span class="number">1</span>, <span class="number">1</span>);
+            nextChar = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">return</span> formula.substr(offset + <span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
             },
-            EOF = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-                <span class="keyword">return</span> (offset &gt;= formula.length);
+            EOF = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+                <span class="hljs-keyword">return</span> (offset &gt;= formula.length);
             },
 
-            token = <span class="string">""</span>,
+            token = <span class="hljs-string">""</span>,
 
-            inString = <span class="literal">false</span>,
-            inPath = <span class="literal">false</span>,
-            inRange = <span class="literal">false</span>,
-            inError = <span class="literal">false</span>,
-            regexSN = <span class="regexp">/^[1-9]{1}(\.[0-9]+)?E{1}$/</span>;
+            inString = <span class="hljs-literal">false</span>,
+            inPath = <span class="hljs-literal">false</span>,
+            inRange = <span class="hljs-literal">false</span>,
+            inError = <span class="hljs-literal">false</span>,
+            regexSN = <span class="hljs-regexp">/^[1-9]{1}(\.[0-9]+)?E{1}$/</span>;
 
-        <span class="keyword">while</span> (formula.length &gt; <span class="number">0</span>) {
-            <span class="keyword">if</span> (formula.substr(<span class="number">0</span>, <span class="number">1</span>) === <span class="string">" "</span>) {
-                formula = formula.substr(<span class="number">1</span>);
-            } <span class="keyword">else</span> {
-                <span class="keyword">if</span> (formula.substr(<span class="number">0</span>, <span class="number">1</span>) === <span class="string">"="</span>) {
-                    formula = formula.substr(<span class="number">1</span>);
+        <span class="hljs-keyword">while</span> (formula.length &gt; <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">if</span> (formula.substr(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) === <span class="hljs-string">" "</span>) {
+                formula = formula.substr(<span class="hljs-number">1</span>);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">if</span> (formula.substr(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) === <span class="hljs-string">"="</span>) {
+                    formula = formula.substr(<span class="hljs-number">1</span>);
                 }
-                <span class="keyword">break</span>;
+                <span class="hljs-keyword">break</span>;
             }
         }
 
 
 
-        <span class="keyword">while</span> (!EOF()) {</pre></div></div>
+        <span class="hljs-keyword">while</span> (!EOF()) {</pre></div></div>
             
         </li>
         
@@ -261,21 +260,21 @@ end marks token</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (inString) {
-                <span class="keyword">if</span> (currentChar() === <span class="string">"\""</span>) {
-                    <span class="keyword">if</span> (nextChar() === <span class="string">"\""</span>) {
-                        token += <span class="string">"\""</span>;
-                        offset += <span class="number">1</span>;
-                    } <span class="keyword">else</span> {
-                        inString = <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (inString) {
+                <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"\""</span>) {
+                    <span class="hljs-keyword">if</span> (nextChar() === <span class="hljs-string">"\""</span>) {
+                        token += <span class="hljs-string">"\""</span>;
+                        offset += <span class="hljs-number">1</span>;
+                    } <span class="hljs-keyword">else</span> {
+                        inString = <span class="hljs-literal">false</span>;
                         tokens.add(token, TOK_TYPE_OPERAND, TOK_SUBTYPE_TEXT);
-                        token = <span class="string">""</span>;
+                        token = <span class="hljs-string">""</span>;
                     }
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token += currentChar();
                 }
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -293,19 +292,19 @@ end does not mark a token</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (inPath) {
-                <span class="keyword">if</span> (currentChar() === <span class="string">"'"</span>) {
-                    <span class="keyword">if</span> (nextChar() === <span class="string">"'"</span>) {
-                        token += <span class="string">"'"</span>;
-                        offset += <span class="number">1</span>;
-                    } <span class="keyword">else</span> {
-                        inPath = <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (inPath) {
+                <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"'"</span>) {
+                    <span class="hljs-keyword">if</span> (nextChar() === <span class="hljs-string">"'"</span>) {
+                        token += <span class="hljs-string">"'"</span>;
+                        offset += <span class="hljs-number">1</span>;
+                    } <span class="hljs-keyword">else</span> {
+                        inPath = <span class="hljs-literal">false</span>;
                     }
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token += currentChar();
                 }
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -318,18 +317,18 @@ end does not mark a token</p>
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>bracked strings (range offset or linked workbook name)
-no embeds (changed to &quot;()&quot; by Excel)
+no embeds (changed to “()” by Excel)
 end does not mark a token</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (inRange) {
-                <span class="keyword">if</span> (currentChar() === <span class="string">"]"</span>) {
-                    inRange = <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (inRange) {
+                <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"]"</span>) {
+                    inRange = <span class="hljs-literal">false</span>;
                 }
                 token += currentChar();
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -346,15 +345,15 @@ end marks a token, determined from absolute list of values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (inError) {
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (inError) {
                 token += currentChar();
-                offset += <span class="number">1</span>;
-                <span class="keyword">if</span> ((<span class="string">",#NULL!,#DIV/0!,#VALUE!,#REF!,#NAME?,#NUM!,#N/A,"</span>).indexOf(<span class="string">","</span> + token + <span class="string">","</span>) !== -<span class="number">1</span>) {
-                    inError = <span class="literal">false</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">if</span> ((<span class="hljs-string">",#NULL!,#DIV/0!,#VALUE!,#REF!,#NAME?,#NUM!,#N/A,"</span>).indexOf(<span class="hljs-string">","</span> + token + <span class="hljs-string">","</span>) !== -<span class="hljs-number">1</span>) {
+                    inError = <span class="hljs-literal">false</span>;
                     tokens.add(token, TOK_TYPE_OPERAND, TOK_SUBTYPE_ERROR);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -370,12 +369,12 @@ end marks a token, determined from absolute list of values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> ((<span class="string">"+-"</span>).indexOf(currentChar()) !== -<span class="number">1</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">1</span>) {
-                    <span class="keyword">if</span> (token.match(regexSN)) {
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> ((<span class="hljs-string">"+-"</span>).indexOf(currentChar()) !== -<span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">1</span>) {
+                    <span class="hljs-keyword">if</span> (token.match(regexSN)) {
                         token += currentChar();
-                        offset += <span class="number">1</span>;
-                        <span class="keyword">continue</span>;
+                        offset += <span class="hljs-number">1</span>;
+                        <span class="hljs-keyword">continue</span>;
                     }
                 }
             }</pre></div></div>
@@ -394,8 +393,8 @@ establish state-dependent character evaluations</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">"\""</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"\""</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -411,15 +410,15 @@ establish state-dependent character evaluations</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    tokens.add(token, TOK_TYPE_UNKNOWN);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                inString = <span class="literal">true</span>;
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                inString = <span class="hljs-literal">true</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> (currentChar() === <span class="string">"'"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {</pre></div></div>
+            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"'"</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -435,22 +434,22 @@ establish state-dependent character evaluations</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    tokens.add(token, TOK_TYPE_UNKNOWN);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                inPath = <span class="literal">true</span>;
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                inPath = <span class="hljs-literal">true</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> (currentChar() === <span class="string">"["</span>) {
-                inRange = <span class="literal">true</span>;
+            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"["</span>) {
+                inRange = <span class="hljs-literal">true</span>;
                 token += currentChar();
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> (currentChar() === <span class="string">"#"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {</pre></div></div>
+            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"#"</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -466,12 +465,12 @@ establish state-dependent character evaluations</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    tokens.add(token, TOK_TYPE_UNKNOWN);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                inError = <span class="literal">true</span>;
+                inError = <span class="hljs-literal">true</span>;
                 token += currentChar();
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -487,8 +486,8 @@ establish state-dependent character evaluations</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">"{"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"{"</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -504,36 +503,16 @@ establish state-dependent character evaluations</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                    tokens.add(token, TOK_TYPE_UNKNOWN);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                tokenStack.push(tokens.add(<span class="string">"ARRAY"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                tokenStack.push(tokens.add(<span class="string">"ARRAYROW"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                tokenStack.push(tokens.add(<span class="hljs-string">"ARRAY"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                tokenStack.push(tokens.add(<span class="hljs-string">"ARRAYROW"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> (currentChar() === <span class="string">";"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
-                }
-                tokens.addRef(tokenStack.pop());
-                tokens.add(<span class="string">","</span>, TOK_TYPE_ARGUMENT);
-                tokenStack.push(tokens.add(<span class="string">"ARRAYROW"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
-            }
-
-            <span class="keyword">if</span> (currentChar() === <span class="string">"}"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
-                }
-                tokens.addRef(tokenStack.pop(<span class="string">"ARRAYROWSTOP"</span>));
-                tokens.addRef(tokenStack.pop(<span class="string">"ARRAYSTOP"</span>));
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
-            }</pre></div></div>
+            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">";"</span> ) {
+                <span class="hljs-keyword">if</span>(root.excelFormulaUtilities.isEu){</pre></div></div>
             
         </li>
         
@@ -544,22 +523,22 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>trim white-space</p>
+              <p>If is EU then handle ; as list seperators</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">" "</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
-                }
-                tokens.add(<span class="string">""</span>, TOK_TYPE_WSPACE);
-                offset += <span class="number">1</span>;
-                <span class="keyword">while</span> ((currentChar() === <span class="string">" "</span>) &amp;&amp; (!EOF())) {
-                    offset += <span class="number">1</span>;
-                }
-                <span class="keyword">continue</span>;
-            }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = <span class="hljs-string">""</span>;
+                    }
+                    <span class="hljs-keyword">if</span> (tokenStack.type() !== TOK_TYPE_FUNCTION) {
+                        tokens.add(currentChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_UNION);
+                    } <span class="hljs-keyword">else</span> {
+                        tokens.add(currentChar(), TOK_TYPE_ARGUMENT);
+                    }
+                    offset += <span class="hljs-number">1</span>;
+                    <span class="hljs-keyword">continue</span>;
+                } <span class="hljs-keyword">else</span> {</pre></div></div>
             
         </li>
         
@@ -570,18 +549,31 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>multi-character comparators</p>
+              <p>Else if not Eu handle ; as array row seperator</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> ((<span class="string">",&gt;=,&lt;=,&lt;&gt;,"</span>).indexOf(<span class="string">","</span> + doubleChar() + <span class="string">","</span>) !== -<span class="number">1</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = <span class="hljs-string">""</span>;
+                    }
+                    tokens.addRef(tokenStack.pop());
+                    tokens.add(<span class="hljs-string">","</span>, TOK_TYPE_ARGUMENT);
+                    tokenStack.push(tokens.add(<span class="hljs-string">"ARRAYROW"</span>, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                    offset += <span class="hljs-number">1</span>;
+                    <span class="hljs-keyword">continue</span>;
                 }
-                tokens.add(doubleChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_LOGICAL);
-                offset += <span class="number">2</span>;
-                <span class="keyword">continue</span>;
+            }
+
+            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"}"</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                    tokens.add(token, TOK_TYPE_OPERAND);
+                    token = <span class="hljs-string">""</span>;
+                }
+                tokens.addRef(tokenStack.pop(<span class="hljs-string">"ARRAYROWSTOP"</span>));
+                tokens.addRef(tokenStack.pop(<span class="hljs-string">"ARRAYSTOP"</span>));
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -593,18 +585,21 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>standard infix operators</p>
+              <p>trim white-space</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> ((<span class="string">"+-*/^&amp;=&gt;&lt;"</span>).indexOf(currentChar()) !== -<span class="number">1</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">" "</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
                     tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                tokens.add(currentChar(), TOK_TYPE_OP_IN);
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                tokens.add(<span class="hljs-string">""</span>, TOK_TYPE_WSPACE);
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">while</span> ((currentChar() === <span class="hljs-string">" "</span>) &amp;&amp; (!EOF())) {
+                    offset += <span class="hljs-number">1</span>;
+                }
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -616,18 +611,18 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>standard postfix operators</p>
+              <p>multi-character comparators</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> ((<span class="string">"%"</span>).indexOf(currentChar()) !== -<span class="number">1</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> ((<span class="hljs-string">",&gt;=,&lt;=,&lt;&gt;,"</span>).indexOf(<span class="hljs-string">","</span> + doubleChar() + <span class="hljs-string">","</span>) !== -<span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
                     tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                tokens.add(currentChar(), TOK_TYPE_OP_POST);
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                tokens.add(doubleChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_LOGICAL);
+                offset += <span class="hljs-number">2</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -639,19 +634,18 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>start subexpression or function</p>
+              <p>standard infix operators</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">"("</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokenStack.push(tokens.add(token, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                    token = <span class="string">""</span>;
-                } <span class="keyword">else</span> {
-                    tokenStack.push(tokens.add(<span class="string">""</span>, TOK_TYPE_SUBEXPR, TOK_SUBTYPE_START));
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> ((<span class="hljs-string">"+-*/^&amp;=&gt;&lt;"</span>).indexOf(currentChar()) !== -<span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                    tokens.add(token, TOK_TYPE_OPERAND);
+                    token = <span class="hljs-string">""</span>;
                 }
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                tokens.add(currentChar(), TOK_TYPE_OP_IN);
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -663,22 +657,18 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>function, subexpression, array parameters</p>
+              <p>standard postfix operators</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">","</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> ((<span class="hljs-string">"%"</span>).indexOf(currentChar()) !== -<span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
                     tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
+                    token = <span class="hljs-string">""</span>;
                 }
-                <span class="keyword">if</span> (tokenStack.type() !== TOK_TYPE_FUNCTION) {
-                    tokens.add(currentChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_UNION);
-                } <span class="keyword">else</span> {
-                    tokens.add(currentChar(), TOK_TYPE_ARGUMENT);
-                }
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                tokens.add(currentChar(), TOK_TYPE_OP_POST);
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -690,18 +680,19 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>stop subexpression</p>
+              <p>start subexpression or function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (currentChar() === <span class="string">")"</span>) {
-                <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = <span class="string">""</span>;
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">"("</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                    tokenStack.push(tokens.add(token, TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                    token = <span class="hljs-string">""</span>;
+                } <span class="hljs-keyword">else</span> {
+                    tokenStack.push(tokens.add(<span class="hljs-string">""</span>, TOK_TYPE_SUBEXPR, TOK_SUBTYPE_START));
                 }
-                tokens.addRef(tokenStack.pop());
-                offset += <span class="number">1</span>;
-                <span class="keyword">continue</span>;
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
             }</pre></div></div>
             
         </li>
@@ -713,14 +704,23 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>token accumulation</p>
+              <p>function, subexpression, array parameters</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            token += currentChar();
-            offset += <span class="number">1</span>;
-
-        }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">","</span> &amp;&amp; !root.excelFormulaUtilities.isEu) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                    tokens.add(token, TOK_TYPE_OPERAND);
+                    token = <span class="hljs-string">""</span>;
+                }
+                <span class="hljs-keyword">if</span> (tokenStack.type() !== TOK_TYPE_FUNCTION) {
+                    tokens.add(currentChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_UNION);
+                } <span class="hljs-keyword">else</span> {
+                    tokens.add(currentChar(), TOK_TYPE_ARGUMENT);
+                }
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
+            }</pre></div></div>
             
         </li>
         
@@ -731,13 +731,19 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>dump remaining accumulation</p>
+              <p>stop subexpression</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (token.length &gt; <span class="number">0</span>) {
-            tokens.add(token, TOK_TYPE_OPERAND);
-        }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (currentChar() === <span class="hljs-string">")"</span>) {
+                <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+                    tokens.add(token, TOK_TYPE_OPERAND);
+                    token = <span class="hljs-string">""</span>;
+                }
+                tokens.addRef(tokenStack.pop());
+                offset += <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">continue</span>;
+            }</pre></div></div>
             
         </li>
         
@@ -748,18 +754,14 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>move all tokens to a new collection, excluding all unnecessary white-space tokens</p>
+              <p>token accumulation</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> tokens2 = <span class="keyword">new</span> F_tokens();
+            <div class="content"><div class='highlight'><pre>            token += currentChar();
+            offset += <span class="hljs-number">1</span>;
 
-        <span class="keyword">while</span> (tokens.moveNext()) {
-
-            token = tokens.current();
-
-            <span class="keyword">if</span> (token.type.toString() === TOK_TYPE_WSPACE) {
-                <span class="keyword">var</span> doAddToken = (tokens.BOF()) || (tokens.EOF());</pre></div></div>
+        }</pre></div></div>
             
         </li>
         
@@ -770,11 +772,13 @@ establish state-dependent character evaluations</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>if ((tokens.BOF()) || (tokens.EOF())) {}</p>
+              <p>dump remaining accumulation</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                doAddToken = doAddToken &amp;&amp; (((tokens.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens.previous().type.toString() === TOK_TYPE_OPERAND));</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (token.length &gt; <span class="hljs-number">0</span>) {
+            tokens.add(token, TOK_TYPE_OPERAND);
+        }</pre></div></div>
             
         </li>
         
@@ -784,6 +788,43 @@ establish state-dependent character evaluations</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>move all tokens to a new collection, excluding all unnecessary white-space tokens</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> tokens2 = <span class="hljs-keyword">new</span> F_tokens();
+
+        <span class="hljs-keyword">while</span> (tokens.moveNext()) {
+
+            token = tokens.current();
+
+            <span class="hljs-keyword">if</span> (token.type.toString() === TOK_TYPE_WSPACE) {
+                <span class="hljs-keyword">var</span> doAddToken = (tokens.BOF()) || (tokens.EOF());</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>if ((tokens.BOF()) || (tokens.EOF())) {}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                doAddToken = doAddToken &amp;&amp; (((tokens.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens.previous().type.toString() === TOK_TYPE_OPERAND));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>else if (!(
       ((tokens.previous().type === TOK_TYPE_FUNCTION) &amp;&amp; (tokens.previous().subtype == TOK_SUBTYPE_STOP)) 
@@ -798,11 +839,11 @@ establish state-dependent character evaluations</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>else if (!(
 ((tokens.next().type == TOK_TYPE_FUNCTION) &amp;&amp; (tokens.next().subtype == TOK_SUBTYPE_START)) 
@@ -813,10 +854,10 @@ else { tokens2.add(token.value, TOK_TYPE_OP_IN, TOK_SUBTYPE_INTERSECT)};</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                <span class="keyword">if</span> (doAddToken) {
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (doAddToken) {
                     tokens2.add(token.value.toString(), TOK_TYPE_OP_IN, TOK_SUBTYPE_INTERSECT);
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
             tokens2.addRef(token);
@@ -826,73 +867,73 @@ else { tokens2.add(token.value, TOK_TYPE_OP_IN, TOK_SUBTYPE_INTERSECT)};</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>switch infix &quot;-&quot; operator to prefix when appropriate, switch infix &quot;+&quot; operator to noop when appropriate, identify operand 
-and infix-operator subtypes, pull &quot;@&quot; from in front of function names</p>
+              <p>switch infix “-“ operator to prefix when appropriate, switch infix “+” operator to noop when appropriate, identify operand 
+and infix-operator subtypes, pull “@” from in front of function names</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">while</span> (tokens2.moveNext()) {
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">while</span> (tokens2.moveNext()) {
 
             token = tokens2.current();
 
-            <span class="keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.value.toString() === <span class="string">"-"</span>)) {
-                <span class="keyword">if</span> (tokens2.BOF()) {
+            <span class="hljs-keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.value.toString() === <span class="hljs-string">"-"</span>)) {
+                <span class="hljs-keyword">if</span> (tokens2.BOF()) {
                     token.type = TOK_TYPE_OP_PRE.toString();
-                } <span class="keyword">else</span> <span class="keyword">if</span> (((tokens2.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens2.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens2.previous().type.toString() === TOK_TYPE_OP_POST) || (tokens2.previous().type.toString() === TOK_TYPE_OPERAND)) {
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (((tokens2.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens2.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens2.previous().type.toString() === TOK_TYPE_OP_POST) || (tokens2.previous().type.toString() === TOK_TYPE_OPERAND)) {
                     token.subtype = TOK_SUBTYPE_MATH.toString();
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token.type = TOK_TYPE_OP_PRE.toString();
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.value.toString() === <span class="string">"+"</span>)) {
-                <span class="keyword">if</span> (tokens2.BOF()) {
+            <span class="hljs-keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.value.toString() === <span class="hljs-string">"+"</span>)) {
+                <span class="hljs-keyword">if</span> (tokens2.BOF()) {
                     token.type = TOK_TYPE_NOOP.toString();
-                } <span class="keyword">else</span> <span class="keyword">if</span> (((tokens2.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens2.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens2.previous().type.toString() === TOK_TYPE_OP_POST) || (tokens2.previous().type.toString() === TOK_TYPE_OPERAND)) {
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (((tokens2.previous().type.toString() === TOK_TYPE_FUNCTION) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens2.previous().type.toString() === TOK_TYPE_SUBEXPR) &amp;&amp; (tokens2.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens2.previous().type.toString() === TOK_TYPE_OP_POST) || (tokens2.previous().type.toString() === TOK_TYPE_OPERAND)) {
                     token.subtype = TOK_SUBTYPE_MATH.toString();
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token.type = TOK_TYPE_NOOP.toString();
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.subtype.length === <span class="number">0</span>)) {
-                <span class="keyword">if</span> ((<span class="string">"&lt;&gt;="</span>).indexOf(token.value.substr(<span class="number">0</span>, <span class="number">1</span>)) !== -<span class="number">1</span>) {
+            <span class="hljs-keyword">if</span> ((token.type.toString() === TOK_TYPE_OP_IN) &amp;&amp; (token.subtype.length === <span class="hljs-number">0</span>)) {
+                <span class="hljs-keyword">if</span> ((<span class="hljs-string">"&lt;&gt;="</span>).indexOf(token.value.substr(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)) !== -<span class="hljs-number">1</span>) {
                     token.subtype = TOK_SUBTYPE_LOGICAL.toString();
-                } <span class="keyword">else</span> <span class="keyword">if</span> (token.value.toString() === <span class="string">"&amp;"</span>) {
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (token.value.toString() === <span class="hljs-string">"&amp;"</span>) {
                     token.subtype = TOK_SUBTYPE_CONCAT.toString();
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token.subtype = TOK_SUBTYPE_MATH.toString();
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> ((token.type.toString() === TOK_TYPE_OPERAND) &amp;&amp; (token.subtype.length === <span class="number">0</span>)) {
-                <span class="keyword">if</span> (isNaN(parseFloat(token.value))) {
-                    <span class="keyword">if</span> ((token.value.toString() === <span class="string">'TRUE'</span>) || (token.value.toString() === <span class="string">'FALSE'</span>)) {
+            <span class="hljs-keyword">if</span> ((token.type.toString() === TOK_TYPE_OPERAND) &amp;&amp; (token.subtype.length === <span class="hljs-number">0</span>)) {
+                <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(<span class="hljs-built_in">parseFloat</span>(token.value))) {
+                    <span class="hljs-keyword">if</span> ((token.value.toString() === <span class="hljs-string">'TRUE'</span>) || (token.value.toString() === <span class="hljs-string">'FALSE'</span>)) {
                         token.subtype = TOK_SUBTYPE_LOGICAL.toString();
-                    } <span class="keyword">else</span> {
+                    } <span class="hljs-keyword">else</span> {
                         token.subtype = TOK_SUBTYPE_RANGE.toString();
                     }
-                } <span class="keyword">else</span> {
+                } <span class="hljs-keyword">else</span> {
                     token.subtype = TOK_SUBTYPE_NUMBER.toString();
                 }
 
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
-            <span class="keyword">if</span> (token.type.toString() === TOK_TYPE_FUNCTION) {
-                <span class="keyword">if</span> (token.value.substr(<span class="number">0</span>, <span class="number">1</span>) === <span class="string">"@"</span>) {
-                    token.value = token.value.substr(<span class="number">1</span>).toString();
+            <span class="hljs-keyword">if</span> (token.type.toString() === TOK_TYPE_FUNCTION) {
+                <span class="hljs-keyword">if</span> (token.value.substr(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) === <span class="hljs-string">"@"</span>) {
+                    token.value = token.value.substr(<span class="hljs-number">1</span>).toString();
                 }
-                <span class="keyword">continue</span>;
+                <span class="hljs-keyword">continue</span>;
             }
 
         }
@@ -902,85 +943,85 @@ and infix-operator subtypes, pull &quot;@&quot; from in front of function names<
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>move all tokens to a new collection, excluding all noops</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        tokens = <span class="keyword">new</span> F_tokens();
+            <div class="content"><div class='highlight'><pre>        tokens = <span class="hljs-keyword">new</span> F_tokens();
 
-        <span class="keyword">while</span> (tokens2.moveNext()) {
-            <span class="keyword">if</span> (tokens2.current().type.toString() !== TOK_TYPE_NOOP) {
+        <span class="hljs-keyword">while</span> (tokens2.moveNext()) {
+            <span class="hljs-keyword">if</span> (tokens2.current().type.toString() !== TOK_TYPE_NOOP) {
                 tokens.addRef(tokens2.current());
             }
         }
 
         tokens.reset();
 
-        <span class="keyword">return</span> tokens;
+        <span class="hljs-keyword">return</span> tokens;
     }
 
 
-    <span class="keyword">var</span> parseFormula = excelFormulaUtilities.parseFormula = <span class="function"><span class="keyword">function</span> <span class="params">(inputID, outputID)</span> {</span>
+    <span class="hljs-keyword">var</span> parseFormula = excelFormulaUtilities.parseFormula = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inputID, outputID)</span> {</span>
 
 
-        <span class="keyword">var</span> indentCount = <span class="number">0</span>;
+        <span class="hljs-keyword">var</span> indentCount = <span class="hljs-number">0</span>;
 
-        <span class="keyword">var</span> indent = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">var</span> s = <span class="string">"|"</span>,
-                i = <span class="number">0</span>;
-            <span class="keyword">for</span> (; i &lt; indentCount; i += <span class="number">1</span>) {
-                s += <span class="string">"&amp;nbsp;&amp;nbsp;&amp;nbsp;|"</span>;
+        <span class="hljs-keyword">var</span> indent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">var</span> s = <span class="hljs-string">"|"</span>,
+                i = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">for</span> (; i &lt; indentCount; i += <span class="hljs-number">1</span>) {
+                s += <span class="hljs-string">"&amp;nbsp;&amp;nbsp;&amp;nbsp;|"</span>;
             }
-            <span class="keyword">return</span> s;
+            <span class="hljs-keyword">return</span> s;
         };
 
-        <span class="keyword">var</span> formulaControl = document.getElementById(inputID);
-        <span class="keyword">var</span> formula = formulaControl.value;
+        <span class="hljs-keyword">var</span> formulaControl = document.getElementById(inputID);
+        <span class="hljs-keyword">var</span> formula = formulaControl.value;
 
-        <span class="keyword">var</span> tokens = getTokens(formula);
+        <span class="hljs-keyword">var</span> tokens = getTokens(formula);
 
-        <span class="keyword">var</span> tokensHtml = <span class="string">""</span>;
+        <span class="hljs-keyword">var</span> tokensHtml = <span class="hljs-string">""</span>;
 
-        tokensHtml += <span class="string">"&lt;table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;tr&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;td class='token' style='font-weight: bold; width: 50px'&gt;index&lt;/td&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;td class='token' style='font-weight: bold; width: 125px'&gt;type&lt;/td&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;td class='token' style='font-weight: bold; width: 125px'&gt;subtype&lt;/td&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;td class='token' style='font-weight: bold; width: 150px'&gt;token&lt;/td&gt;"</span>;
-        tokensHtml += <span class="string">"&lt;td class='token' style='font-weight: bold; width: 300px'&gt;token tree&lt;/td&gt;&lt;/tr&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;table cellspacing='0' style='border-top: 1px #cecece solid; margin-top: 5px; margin-bottom: 5px'&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;tr&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;td class='token' style='font-weight: bold; width: 50px'&gt;index&lt;/td&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;td class='token' style='font-weight: bold; width: 125px'&gt;type&lt;/td&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;td class='token' style='font-weight: bold; width: 125px'&gt;subtype&lt;/td&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;td class='token' style='font-weight: bold; width: 150px'&gt;token&lt;/td&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;td class='token' style='font-weight: bold; width: 300px'&gt;token tree&lt;/td&gt;&lt;/tr&gt;"</span>;
 
-        <span class="keyword">while</span> (tokens.moveNext()) {
+        <span class="hljs-keyword">while</span> (tokens.moveNext()) {
 
-            <span class="keyword">var</span> token = tokens.current();
+            <span class="hljs-keyword">var</span> token = tokens.current();
 
-            <span class="keyword">if</span> (token.subtype === TOK_SUBTYPE_STOP) {
-                indentCount -= ((indentCount &gt; <span class="number">0</span>) ? <span class="number">1</span> : <span class="number">0</span>);
+            <span class="hljs-keyword">if</span> (token.subtype === TOK_SUBTYPE_STOP) {
+                indentCount -= ((indentCount &gt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);
             }
 
-            tokensHtml += <span class="string">"&lt;tr&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;tr&gt;"</span>;
 
-            tokensHtml += <span class="string">"&lt;td class='token'&gt;"</span> + (tokens.index + <span class="number">1</span>) + <span class="string">"&lt;/td&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;td class='token'&gt;"</span> + (tokens.index + <span class="hljs-number">1</span>) + <span class="hljs-string">"&lt;/td&gt;"</span>;
 
-            tokensHtml += <span class="string">"&lt;td class='token'&gt;"</span> + token.type + <span class="string">"&lt;/td&gt;"</span>;
-            tokensHtml += <span class="string">"&lt;td class='token'&gt;"</span> + ((token.subtype.length === <span class="number">0</span>) ? <span class="string">"&amp;nbsp;"</span> : token.subtype.toString()) + <span class="string">"&lt;/td&gt;"</span>;
-            tokensHtml += <span class="string">"&lt;td class='token'&gt;"</span> + ((token.value.length === <span class="number">0</span>) ? <span class="string">"&amp;nbsp;"</span> : token.value).split(<span class="string">" "</span>).join(<span class="string">"&amp;nbsp;"</span>) + <span class="string">"&lt;/td&gt;"</span>;
-            tokensHtml += <span class="string">"&lt;td class='token'&gt;"</span> + indent() + ((token.value.length === <span class="number">0</span>) ? <span class="string">"&amp;nbsp;"</span> : token.value).split(<span class="string">" "</span>).join(<span class="string">"&amp;nbsp;"</span>) + <span class="string">"&lt;/td&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;td class='token'&gt;"</span> + token.type + <span class="hljs-string">"&lt;/td&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;td class='token'&gt;"</span> + ((token.subtype.length === <span class="hljs-number">0</span>) ? <span class="hljs-string">"&amp;nbsp;"</span> : token.subtype.toString()) + <span class="hljs-string">"&lt;/td&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;td class='token'&gt;"</span> + ((token.value.length === <span class="hljs-number">0</span>) ? <span class="hljs-string">"&amp;nbsp;"</span> : token.value).split(<span class="hljs-string">" "</span>).join(<span class="hljs-string">"&amp;nbsp;"</span>) + <span class="hljs-string">"&lt;/td&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;td class='token'&gt;"</span> + indent() + ((token.value.length === <span class="hljs-number">0</span>) ? <span class="hljs-string">"&amp;nbsp;"</span> : token.value).split(<span class="hljs-string">" "</span>).join(<span class="hljs-string">"&amp;nbsp;"</span>) + <span class="hljs-string">"&lt;/td&gt;"</span>;
 
-            tokensHtml += <span class="string">"&lt;/tr&gt;"</span>;
+            tokensHtml += <span class="hljs-string">"&lt;/tr&gt;"</span>;
 
-            <span class="keyword">if</span> (token.subtype === TOK_SUBTYPE_START) {
-                indentCount += <span class="number">1</span>;
+            <span class="hljs-keyword">if</span> (token.subtype === TOK_SUBTYPE_START) {
+                indentCount += <span class="hljs-number">1</span>;
             }
 
         }
 
-        tokensHtml += <span class="string">"&lt;/table&gt;"</span>;
+        tokensHtml += <span class="hljs-string">"&lt;/table&gt;"</span>;
 
         document.getElementById(outputID).innerHTML = tokensHtml;
 
@@ -992,60 +1033,20 @@ and infix-operator subtypes, pull &quot;@&quot; from in front of function names<
         </li>
         
         
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>Pass a range such as A1:B2 along with a 
-delimiter to get back a full list of ranges.</p>
-<p>Example:
-   breakOutRanges(&quot;A1:B2&quot;, &quot;+&quot;); //Returns A1+A2+B1+B2</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">breakOutRanges</span><span class="params">(rangeStr, delimStr)</span>{</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>Quick Check to see if if rangeStr is a valid range</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> ( !RegExp(<span class="string">"[a-z]+[0-9]+:[a-z]+[0-9]+"</span>,<span class="string">"gi"</span>).test(rangeStr) ){
-            <span class="keyword">throw</span> <span class="string">"This is not a valid range: "</span> + rangeStr;
-        }</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Make the rangeStr lowercase to deal with looping.</p>
+              <p>Pass a range such as A1:B2 along with a 
+delimiter to get back a full list of ranges.</p>
+<p>Example:
+   breakOutRanges(“A1:B2”, “+”); //Returns A1+A2+B1+B2</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> range = rangeStr.split(<span class="string">":"</span>),
-        
-            startRow = parseInt(range[<span class="number">0</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>]),
-            startCol = range[<span class="number">0</span>].match(<span class="regexp">/[A-Z]+/gi</span>)[<span class="number">0</span>],
-            startColDec = fromBase26(startCol)
-        
-            endRow =  parseInt(range[<span class="number">1</span>].match(<span class="regexp">/[0-9]+/gi</span>)[<span class="number">0</span>]),
-            endCol = range[<span class="number">1</span>].match(<span class="regexp">/[A-Z]+/gi</span>)[<span class="number">0</span>],
-            endColDec = fromBase26(endCol),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">breakOutRanges</span><span class="hljs-params">(rangeStr, delimStr)</span>{</span></pre></div></div>
             
         </li>
         
@@ -1056,12 +1057,13 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Total rows and cols</p>
+              <p>Quick Check to see if if rangeStr is a valid range</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            totalRows = endRow - startRow + <span class="number">1</span>,
-            totalCols = fromBase26(endCol) - fromBase26(startCol) + <span class="number">1</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> ( !<span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"[a-z]+[0-9]+:[a-z]+[0-9]+"</span>,<span class="hljs-string">"gi"</span>).test(rangeStr) ){
+            <span class="hljs-keyword">throw</span> <span class="hljs-string">"This is not a valid range: "</span> + rangeStr;
+        }</pre></div></div>
             
         </li>
         
@@ -1072,13 +1074,19 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <p>Loop vars</p>
+              <p>Make the rangeStr lowercase to deal with looping.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            curCol = <span class="number">0</span>,
-            curRow = <span class="number">1</span> ,
-            curCell = <span class="string">""</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> range = rangeStr.split(<span class="hljs-string">":"</span>),
+        
+            startRow = <span class="hljs-built_in">parseInt</span>(range[<span class="hljs-number">0</span>].match(<span class="hljs-regexp">/[0-9]+/gi</span>)[<span class="hljs-number">0</span>]),
+            startCol = range[<span class="hljs-number">0</span>].match(<span class="hljs-regexp">/[A-Z]+/gi</span>)[<span class="hljs-number">0</span>],
+            startColDec = fromBase26(startCol)
+        
+            endRow =  <span class="hljs-built_in">parseInt</span>(range[<span class="hljs-number">1</span>].match(<span class="hljs-regexp">/[0-9]+/gi</span>)[<span class="hljs-number">0</span>]),
+            endCol = range[<span class="hljs-number">1</span>].match(<span class="hljs-regexp">/[A-Z]+/gi</span>)[<span class="hljs-number">0</span>],
+            endColDec = fromBase26(endCol),</pre></div></div>
             
         </li>
         
@@ -1089,14 +1097,12 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p>Return String</p>
+              <p>Total rows and cols</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            retStr = <span class="string">""</span>;
-        
-        <span class="keyword">for</span>(; curRow &lt;= totalRows; curRow+=<span class="number">1</span>){
-            <span class="keyword">for</span>(; curCol &lt; totalCols; curCol+=<span class="number">1</span>){</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            totalRows = endRow - startRow + <span class="hljs-number">1</span>,
+            totalCols = fromBase26(endCol) - fromBase26(startCol) + <span class="hljs-number">1</span>,</pre></div></div>
             
         </li>
         
@@ -1107,19 +1113,13 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>Get the current cell id</p>
+              <p>Loop vars</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                curCell = toBase26(startColDec + curCol) + <span class="string">""</span> + (startRow+curRow-<span class="number">1</span>) ;
-                retStr += curCell + (curRow===totalRows &amp;&amp; curCol===totalCols-<span class="number">1</span> ? <span class="string">""</span> : delimStr);
-            }
-            curCol=<span class="number">0</span>;
-        }
-        
-        <span class="keyword">return</span> retStr;
-        
-    }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            curCol = <span class="hljs-number">0</span>,
+            curRow = <span class="hljs-number">1</span> ,
+            curCell = <span class="hljs-string">""</span>,</pre></div></div>
             
         </li>
         
@@ -1130,17 +1130,14 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <p>Modified from function at <a href="http://en.wikipedia.org/wiki/Hexavigesimal">http://en.wikipedia.org/wiki/Hexavigesimal</a></p>
+              <p>Return String</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> toBase26 = excelFormulaUtilities.toBase26 = <span class="keyword">function</span>( value ) {
-       
-       value = Math.abs(value);
-       
-       <span class="keyword">var</span> converted = <span class="string">""</span>
-            ,iteration = <span class="literal">false</span>
-            ,remainder;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            retStr = <span class="hljs-string">""</span>;
+        
+        <span class="hljs-keyword">for</span>(; curRow &lt;= totalRows; curRow+=<span class="hljs-number">1</span>){
+            <span class="hljs-keyword">for</span>(; curCol &lt; totalCols; curCol+=<span class="hljs-number">1</span>){</pre></div></div>
             
         </li>
         
@@ -1151,13 +1148,19 @@ delimiter to get back a full list of ranges.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <p>Repeatedly divide the numerb by 26 and convert the
-remainder into the appropriate letter.</p>
+              <p>Get the current cell id</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>       <span class="keyword">do</span> {
-           remainder = value % <span class="number">26</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                curCell = toBase26(startColDec + curCol) + <span class="hljs-string">""</span> + (startRow+curRow-<span class="hljs-number">1</span>) ;
+                retStr += curCell + (curRow===totalRows &amp;&amp; curCol===totalCols-<span class="hljs-number">1</span> ? <span class="hljs-string">""</span> : delimStr);
+            }
+            curCol=<span class="hljs-number">0</span>;
+        }
+        
+        <span class="hljs-keyword">return</span> retStr;
+        
+    }</pre></div></div>
             
         </li>
         
@@ -1168,22 +1171,17 @@ remainder into the appropriate letter.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>Compensate for the last letter of the series being corrected on 2 or more iterations.</p>
+              <p>Modified from function at <a href="http://en.wikipedia.org/wiki/Hexavigesimal">http://en.wikipedia.org/wiki/Hexavigesimal</a></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>           <span class="keyword">if</span> (iteration &amp;&amp; value &lt; <span class="number">25</span>) {
-               remainder--;
-           }
-            
-           converted = String.fromCharCode((remainder + <span class="string">'A'</span>.charCodeAt(<span class="number">0</span>))) + converted;
-           value = Math.floor((value - remainder) / <span class="number">26</span>);
-
-           iteration = <span class="literal">true</span>;
-       } <span class="keyword">while</span> (value &gt; <span class="number">0</span>);
-
-       <span class="keyword">return</span> converted;
-   }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> toBase26 = excelFormulaUtilities.toBase26 = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">( value )</span> {</span>
+       
+       value = <span class="hljs-built_in">Math</span>.abs(value);
+       
+       <span class="hljs-keyword">var</span> converted = <span class="hljs-string">""</span>
+            ,iteration = <span class="hljs-literal">false</span>
+            ,remainder;</pre></div></div>
             
         </li>
         
@@ -1194,63 +1192,13 @@ remainder into the appropriate letter.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
-              <p>This was Modified from a function at <a href="http://en.wikipedia.org/wiki/Hexavigesimal">http://en.wikipedia.org/wiki/Hexavigesimal</a>
-Pass in the base 26 string, get back integer</p>
+              <p>Repeatedly divide the numerb by 26 and convert the
+remainder into the appropriate letter.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>   <span class="keyword">var</span> fromBase26 = excelFormulaUtilities.fromBase26 = <span class="function"><span class="keyword">function</span> <span class="params">(number)</span> {</span>
-        number = number.toUpperCase();
-        
-        <span class="keyword">var</span> s = <span class="number">0</span>
-            ,i = <span class="number">0</span>
-            ,dec = <span class="number">0</span>;
-
-        <span class="keyword">if</span> (
-            number !== <span class="literal">null</span> 
-            &amp;&amp; <span class="keyword">typeof</span> number !== <span class="string">"undefined"</span> 
-            &amp;&amp; number.length &gt; <span class="number">0</span>
-        ) {
-            <span class="keyword">for</span> (; i &lt; number.length; i++) {
-                s = number.charCodeAt(number.length - i - <span class="number">1</span>) - <span class="string">"A"</span>.charCodeAt(<span class="number">0</span>);
-                dec += (Math.pow(<span class="number">26</span>, i)) * (s+<span class="number">1</span>);
-            }
-        }
-        
-        <span class="keyword">return</span> dec - <span class="number">1</span>;
-    }
-    
-    <span class="function"><span class="keyword">function</span> <span class="title">applyTokenTemplate</span><span class="params">(token, options, indent, lineBreak, override)</span> {</span>
-
-        <span class="keyword">var</span> indt = indent;
-        
-        <span class="keyword">var</span> lastToken = <span class="keyword">typeof</span> arguments[<span class="number">5</span>] === <span class="literal">undefined</span> || arguments[<span class="number">5</span>] === <span class="literal">null</span> ? <span class="literal">null</span> : arguments[<span class="number">5</span>];
-
-        <span class="keyword">var</span> replaceTokenTmpl = <span class="function"><span class="keyword">function</span> <span class="params">(inStr)</span> {</span>
-            <span class="keyword">return</span> inStr.replace(<span class="regexp">/\{\{token\}\}/gi</span>, <span class="string">"{0}"</span>).replace(<span class="regexp">/\{\{autoindent\}\}/gi</span>, <span class="string">"{1}"</span>).replace(<span class="regexp">/\{\{autolinebreak\}\}/gi</span>, <span class="string">"{2}"</span>);
-        };
-
-        <span class="keyword">var</span> tokenString = <span class="string">""</span>;
-
-        <span class="keyword">if</span> (token.subtype === <span class="string">"text"</span> || token.type === <span class="string">"text"</span>) {
-            tokenString = token.value.toString();
-        } <span class="keyword">else</span> {
-            tokenString = ((token.value.length === <span class="number">0</span>) ? <span class="string">" "</span> : token.value.toString()).split(<span class="string">" "</span>).join(<span class="string">""</span>).toString();
-        }
-
-        <span class="keyword">if</span> (<span class="keyword">typeof</span> override === <span class="string">'function'</span>) {
-            <span class="keyword">var</span> returnVal = override(tokenString, token, indent, lineBreak);
-
-            tokenString = returnVal.tokenString;
-
-            <span class="keyword">if</span> (!returnVal.useTemplate) {
-                <span class="keyword">return</span> tokenString;
-            }
-        }
-
-        <span class="keyword">switch</span> (token.type) {
-
-        <span class="keyword">case</span> <span class="string">"function"</span>:</pre></div></div>
+            <div class="content"><div class='highlight'><pre>       <span class="hljs-keyword">do</span> {
+           remainder = value % <span class="hljs-number">26</span>;</pre></div></div>
             
         </li>
         
@@ -1261,27 +1209,22 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
-              <p>-----------------FUNCTION------------------</p>
+              <p>Compensate for the last letter of the series being corrected on 2 or more iterations.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">switch</span> (token.value) {
-            <span class="keyword">case</span> <span class="string">"ARRAY"</span>:
-                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="string">"ARRAYROW"</span>:
-                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">default</span>:
-                <span class="keyword">if</span> (token.subtype.toString() === <span class="string">"start"</span>) {
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
-                } <span class="keyword">else</span> {
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
-                }
-                <span class="keyword">break</span>;
-            }
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"operand"</span>:</pre></div></div>
+            <div class="content"><div class='highlight'><pre>           <span class="hljs-keyword">if</span> (iteration &amp;&amp; value &lt; <span class="hljs-number">25</span>) {
+               remainder--;
+           }
+            
+           converted = <span class="hljs-built_in">String</span>.fromCharCode((remainder + <span class="hljs-string">'A'</span>.charCodeAt(<span class="hljs-number">0</span>))) + converted;
+           value = <span class="hljs-built_in">Math</span>.floor((value - remainder) / <span class="hljs-number">26</span>);
+
+           iteration = <span class="hljs-literal">true</span>;
+       } <span class="hljs-keyword">while</span> (value &gt; <span class="hljs-number">0</span>);
+
+       <span class="hljs-keyword">return</span> converted;
+   }</pre></div></div>
             
         </li>
         
@@ -1292,56 +1235,154 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
-              <p>-----------------OPERAND------------------</p>
+              <p>This was Modified from a function at <a href="http://en.wikipedia.org/wiki/Hexavigesimal">http://en.wikipedia.org/wiki/Hexavigesimal</a>
+Pass in the base 26 string, get back integer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="keyword">switch</span> (token.subtype.toString()) {
-            <span class="keyword">case</span> <span class="string">"error"</span>:
+            <div class="content"><div class='highlight'><pre>   <span class="hljs-keyword">var</span> fromBase26 = excelFormulaUtilities.fromBase26 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(number)</span> {</span>
+        number = number.toUpperCase();
+        
+        <span class="hljs-keyword">var</span> s = <span class="hljs-number">0</span>
+            ,i = <span class="hljs-number">0</span>
+            ,dec = <span class="hljs-number">0</span>;
+
+        <span class="hljs-keyword">if</span> (
+            number !== <span class="hljs-literal">null</span> 
+            &amp;&amp; <span class="hljs-keyword">typeof</span> number !== <span class="hljs-string">"undefined"</span> 
+            &amp;&amp; number.length &gt; <span class="hljs-number">0</span>
+        ) {
+            <span class="hljs-keyword">for</span> (; i &lt; number.length; i++) {
+                s = number.charCodeAt(number.length - i - <span class="hljs-number">1</span>) - <span class="hljs-string">"A"</span>.charCodeAt(<span class="hljs-number">0</span>);
+                dec += (<span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">26</span>, i)) * (s+<span class="hljs-number">1</span>);
+            }
+        }
+        
+        <span class="hljs-keyword">return</span> dec - <span class="hljs-number">1</span>;
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">applyTokenTemplate</span><span class="hljs-params">(token, options, indent, lineBreak, override)</span> {</span>
+
+        <span class="hljs-keyword">var</span> indt = indent;
+        
+        <span class="hljs-keyword">var</span> lastToken = <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">arguments</span>[<span class="hljs-number">5</span>] === <span class="hljs-literal">undefined</span> || <span class="hljs-built_in">arguments</span>[<span class="hljs-number">5</span>] === <span class="hljs-literal">null</span> ? <span class="hljs-literal">null</span> : <span class="hljs-built_in">arguments</span>[<span class="hljs-number">5</span>];
+
+        <span class="hljs-keyword">var</span> replaceTokenTmpl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inStr)</span> {</span>
+            <span class="hljs-keyword">return</span> inStr.replace(<span class="hljs-regexp">/\{\{token\}\}/gi</span>, <span class="hljs-string">"{0}"</span>).replace(<span class="hljs-regexp">/\{\{autoindent\}\}/gi</span>, <span class="hljs-string">"{1}"</span>).replace(<span class="hljs-regexp">/\{\{autolinebreak\}\}/gi</span>, <span class="hljs-string">"{2}"</span>);
+        };
+
+        <span class="hljs-keyword">var</span> tokenString = <span class="hljs-string">""</span>;
+
+        <span class="hljs-keyword">if</span> (token.subtype === <span class="hljs-string">"text"</span> || token.type === <span class="hljs-string">"text"</span>) {
+            tokenString = token.value.toString();
+        } <span class="hljs-keyword">else</span> {
+            tokenString = ((token.value.length === <span class="hljs-number">0</span>) ? <span class="hljs-string">" "</span> : token.value.toString()).split(<span class="hljs-string">" "</span>).join(<span class="hljs-string">""</span>).toString();
+        }
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> override === <span class="hljs-string">'function'</span>) {
+            <span class="hljs-keyword">var</span> returnVal = override(tokenString, token, indent, lineBreak);
+
+            tokenString = returnVal.tokenString;
+
+            <span class="hljs-keyword">if</span> (!returnVal.useTemplate) {
+                <span class="hljs-keyword">return</span> tokenString;
+            }
+        }
+
+        <span class="hljs-keyword">switch</span> (token.type) {
+
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"function"</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>————————-FUNCTION—————————</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">switch</span> (token.value) {
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"ARRAY"</span>:
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"ARRAYROW"</span>:
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">default</span>:
+                <span class="hljs-keyword">if</span> (token.subtype.toString() === <span class="hljs-string">"start"</span>) {
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
+                } <span class="hljs-keyword">else</span> {
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
+                }
+                <span class="hljs-keyword">break</span>;
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"operand"</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>————————-OPERAND—————————</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">switch</span> (token.subtype.toString()) {
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"error"</span>:
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="string">"range"</span>:
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"range"</span>:
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="string">"number"</span>:
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"number"</span>:
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="string">"text"</span>:
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"text"</span>:
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="string">"argument"</span>:
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"argument"</span>:
                 tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
-                <span class="keyword">break</span>;
-            <span class="keyword">default</span>:
-                <span class="keyword">break</span>;
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">default</span>:
+                <span class="hljs-keyword">break</span>;
             }
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"operator-infix"</span>:
-        <span class="keyword">case</span> <span class="string">"logical"</span>:
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"operator-infix"</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"logical"</span>:
             tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"argument"</span>:
-        	<span class="keyword">if</span>(lastToken.type !== <span class="string">"argument"</span>){
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"argument"</span>:
+        	<span class="hljs-keyword">if</span>(lastToken.type !== <span class="hljs-string">"argument"</span>){
         		tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
-            } <span class="keyword">else</span>  {
-            	tokenString = formatStr(replaceTokenTmpl(<span class="string">"{{autoindent}}"</span>+options.tmplArgument), tokenString, indt, lineBreak);
+            } <span class="hljs-keyword">else</span>  {
+            	tokenString = formatStr(replaceTokenTmpl(<span class="hljs-string">"{{autoindent}}"</span>+options.tmplArgument), tokenString, indt, lineBreak);
             }
-            <span class="keyword">break</span>;
-        <span class="keyword">case</span> <span class="string">"subexpression"</span>:
-            <span class="keyword">if</span> (token.subtype.toString() === <span class="string">"start"</span>) {
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"subexpression"</span>:
+            <span class="hljs-keyword">if</span> (token.subtype.toString() === <span class="hljs-string">"start"</span>) {
                 tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStart), tokenString, indt, lineBreak);
-            } <span class="keyword">else</span> {
+            } <span class="hljs-keyword">else</span> {
                 tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStop), tokenString, indt, lineBreak);
             }
-            <span class="keyword">break</span>;
-        <span class="keyword">default</span>:
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
 
-            <span class="keyword">break</span>;
+            <span class="hljs-keyword">break</span>;
         }
-        <span class="keyword">return</span> tokenString;
+        <span class="hljs-keyword">return</span> tokenString;
     };
 
-    <span class="comment">/**
+    <span class="hljs-comment">/**
      *
      * @memberof excelFormulaUtilities.parser
      * @function
@@ -1387,85 +1428,7 @@ Pass in the base 26 string, get back integer</p>
      *&lt;/pre&gt;
      * @returns {string}
      */</span>
-    <span class="keyword">var</span> formatFormula = excelFormulaUtilities.formatFormula = <span class="function"><span class="keyword">function</span> <span class="params">(formula, options)</span> {</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-41">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
-              </div>
-              <p>Quick fix for trailing space after = sign</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        formula = formula.replace(<span class="regexp">/^\s*=\s+/gi</span>, <span class="string">"="</span>);
-        
-        <span class="keyword">var</span> isFirstToken = <span class="literal">true</span>,
-            defaultOptions = {
-                tmplFunctionStart: <span class="string">'{{autoindent}}{{token}}(\n'</span>,
-                tmplFunctionStop: <span class="string">'\n{{autoindent}}{{token}})'</span>,
-                tmplOperandError: <span class="string">' {{token}}'</span>,
-                tmplOperandRange: <span class="string">'{{autoindent}}{{token}}'</span>,
-                tmplOperandLogical: <span class="string">' {{token}}{{autolinebreak}}'</span>,
-                tmplOperandNumber: <span class="string">'{{autoindent}}{{token}}'</span>,
-                tmplOperandText: <span class="string">'{{autoindent}}"{{token}}"'</span>,
-                tmplArgument: <span class="string">'{{token}}\n'</span>,
-                tmplFunctionStartArray: <span class="string">''</span>,
-                tmplFunctionStartArrayRow: <span class="string">'{'</span>,
-                tmplFunctionStopArrayRow: <span class="string">'}'</span>,
-                tmplFunctionStopArray: <span class="string">''</span>,
-                tmplSubexpressionStart: <span class="string">'{{autoindent}}(\n'</span>,
-                tmplSubexpressionStop: <span class="string">'\n)'</span>,
-                tmplIndentTab: <span class="string">'\t'</span>,
-                tmplIndentSpace: <span class="string">' '</span>,
-                autoLineBreak: <span class="string">'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN '</span>,
-                newLine: <span class="string">'\n'</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-42">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
-              </div>
-              <p>trim: true,</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                customTokenRender: <span class="literal">null</span>,
-                prefix: <span class="string">""</span>,
-                postfix: <span class="string">""</span>
-            };
-
-        <span class="keyword">if</span> (options) {
-            options = core.extend(<span class="literal">true</span>, defaultOptions, options);
-        } <span class="keyword">else</span> {
-            options = defaultOptions;
-        }
-
-        <span class="keyword">var</span> indentCount = <span class="number">0</span>;
-
-        <span class="keyword">var</span> indent = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-            <span class="keyword">var</span> s = <span class="string">""</span>,
-                i = <span class="number">0</span>;
-
-            <span class="keyword">for</span> (; i &lt; indentCount; i += <span class="number">1</span>) {
-                s += options.tmplIndentTab;
-            }
-            <span class="keyword">return</span> s;
-        };
-
-        <span class="keyword">var</span> tokens = getTokens(formula);
-
-        <span class="keyword">var</span> outputFormula = <span class="string">""</span>;
-
-        <span class="keyword">var</span> autoBreakArray = options.autoLineBreak.replace(<span class="regexp">/\s/gi</span>, <span class="string">""</span>).split(<span class="string">"|"</span>);</pre></div></div>
+    <span class="hljs-keyword">var</span> formatFormula = excelFormulaUtilities.formatFormula = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(formula, options)</span> {</span></pre></div></div>
             
         </li>
         
@@ -1476,101 +1439,32 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <p>Tokens</p>
+              <p>Quick fix for trailing space after = sign</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> isNewLine = <span class="literal">true</span>;
-
-        <span class="keyword">var</span> testAutoBreak = <span class="function"><span class="keyword">function</span> <span class="params">(nextToken)</span> {</span>
-            <span class="keyword">var</span> i = <span class="number">0</span>;
-            <span class="keyword">for</span> (; i &lt; autoBreakArray.length; i += <span class="number">1</span>) {
-                <span class="keyword">if</span> (nextToken !== <span class="literal">null</span> &amp;&amp; <span class="keyword">typeof</span> nextToken !== <span class="string">'undefined'</span> &amp;&amp; (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
-                    <span class="keyword">return</span> <span class="literal">true</span>;
-                }
-            }
-            <span class="keyword">return</span> <span class="literal">false</span>;
-        };
+            <div class="content"><div class='highlight'><pre>        formula = formula.replace(<span class="hljs-regexp">/^\s*=\s+/gi</span>, <span class="hljs-string">"="</span>);
         
-        <span class="keyword">var</span> lastToken = <span class="literal">null</span>;
-        
-        <span class="keyword">while</span> (tokens.moveNext()) {
-
-            <span class="keyword">var</span> token = tokens.current();
-            <span class="keyword">var</span> nextToken = tokens.next();
-
-            <span class="keyword">if</span> (token.subtype.toString() === TOK_SUBTYPE_STOP) {
-                indentCount -= ((indentCount &gt; <span class="number">0</span>) ? <span class="number">1</span> : <span class="number">0</span>);
-            }
-
-            <span class="keyword">var</span> matchBeginNewline = <span class="keyword">new</span> RegExp(<span class="string">'^'</span> + options.newLine, <span class="string">''</span>),
-                matchEndNewLine = <span class="keyword">new</span> RegExp(options.newLine + <span class="string">'$'</span>, <span class="string">''</span>),
-                autoBreak = testAutoBreak(nextToken),
-                autoIndent = isNewLine,
-                indt = autoIndent ? indent() : options.tmplIndentSpace,
-                lineBreak = autoBreak ? options.newLine : <span class="string">""</span>;
-
-            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender, lastToken);
-
-            <span class="keyword">if</span> (token.subtype.toString() === TOK_SUBTYPE_START) {
-                indentCount += <span class="number">1</span>;
-
-            }
-
-            isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
-            isFirstToken = <span class="literal">false</span>;
-            
-            lastToken = token;
-        }
-        
-        outputFormula = options.prefix + trim(outputFormula) + options.postfix;
-        
-        <span class="keyword">return</span> outputFormula;
-    };
-    <span class="comment">/**
-     * This function calls {@link excelFormulaUtilities.parser.formatFormula}
-     *
-     * @memberof excelFormulaUtilities.parser
-     * @function
-     * @param {string} formula
-     * @param {object} options optional param
-     */</span>
-    <span class="keyword">var</span> formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = <span class="function"><span class="keyword">function</span> <span class="params">(formula)</span> {</span>
-        <span class="keyword">var</span> options = {
-            tmplFunctionStart: <span class="string">'{{autoindent}}&lt;span class="function"&gt;{{token}}&lt;/span&gt;&lt;span class="function_start"&gt;(&lt;/span&gt;&lt;br /&gt;'</span>,
-            tmplFunctionStop: <span class="string">'&lt;br /&gt;{{autoindent}}{{token}}&lt;span class="function_stop"&gt;)&lt;/span&gt;'</span>,
-            tmplOperandError: <span class="string">'{{token}}'</span>,
-            tmplOperandRange: <span class="string">'{{autoindent}}{{token}}'</span>,
-            tmplOperandLogical: <span class="string">' {{token}}{{autolinebreak}}'</span>,
-            tmplOperandNumber: <span class="string">'{{autoindent}}{{token}}'</span>,
-            tmplOperandText: <span class="string">'{{autoindent}}&lt;span class="quote_mark"&gt;"&lt;/span&gt;&lt;span class="text"&gt;{{token}}&lt;/span&gt;&lt;span class="quote_mark"&gt;"&lt;/span&gt;'</span>,
-            tmplArgument: <span class="string">'{{token}}&lt;br /&gt;'</span>,
-            tmplFunctionStartArray: <span class="string">''</span>,
-            tmplFunctionStartArrayRow: <span class="string">'{'</span>,
-            tmplFunctionStopArrayRow: <span class="string">'}'</span>,
-            tmplFunctionStopArray: <span class="string">''</span>,
-            tmplSubexpressionStart: <span class="string">'{{autoindent}}('</span>,
-            tmplSubexpressionStop: <span class="string">' )'</span>,
-            tmplIndentTab: <span class="string">'&lt;span class="tabbed"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;'</span>,
-            tmplIndentSpace: <span class="string">'&amp;nbsp;'</span>,
-            newLine: <span class="string">'&lt;br /&gt;'</span>,
-            autoLineBreak: <span class="string">'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN '</span>,
-            trim: <span class="literal">true</span>,
-            prefix: <span class="string">"="</span>,
-            customTokenRender: <span class="literal">null</span>
-        };
-
-        <span class="keyword">return</span> formatFormula(formula, options);
-    }
-
-    <span class="comment">/**
-     *
-     * @memberof excelFormulaUtilities.convert
-     * @function
-     * @param {string} formula
-     * @returns {string}
-     */</span>
-    <span class="keyword">var</span> formula2CSharp = excelFormulaUtilities.formula2CSharp = <span class="function"><span class="keyword">function</span> <span class="params">(formula)</span> {</span></pre></div></div>
+        <span class="hljs-keyword">var</span> isFirstToken = <span class="hljs-literal">true</span>,
+            defaultOptions = {
+                tmplFunctionStart: <span class="hljs-string">'{{autoindent}}{{token}}(\n'</span>,
+                tmplFunctionStop: <span class="hljs-string">'\n{{autoindent}}{{token}})'</span>,
+                tmplOperandError: <span class="hljs-string">' {{token}}'</span>,
+                tmplOperandRange: <span class="hljs-string">'{{autoindent}}{{token}}'</span>,
+                tmplOperandLogical: <span class="hljs-string">' {{token}}{{autolinebreak}}'</span>,
+                tmplOperandNumber: <span class="hljs-string">'{{autoindent}}{{token}}'</span>,
+                tmplOperandText: <span class="hljs-string">'{{autoindent}}"{{token}}"'</span>,
+                tmplArgument: <span class="hljs-string">'{{token}}\n'</span>,
+                tmplFunctionStartArray: <span class="hljs-string">''</span>,
+                tmplFunctionStartArrayRow: <span class="hljs-string">'{'</span>,
+                tmplFunctionStopArrayRow: <span class="hljs-string">'}'</span>,
+                tmplFunctionStopArray: <span class="hljs-string">''</span>,
+                tmplSubexpressionStart: <span class="hljs-string">'{{autoindent}}(\n'</span>,
+                tmplSubexpressionStop: <span class="hljs-string">'\n)'</span>,
+                tmplIndentTab: <span class="hljs-string">'\t'</span>,
+                tmplIndentSpace: <span class="hljs-string">' '</span>,
+                autoLineBreak: <span class="hljs-string">'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN '</span>,
+                newLine: <span class="hljs-string">'\n'</span>,</pre></div></div>
             
         </li>
         
@@ -1581,96 +1475,38 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
-              <p>Custom callback to format as c#</p>
+              <p>trim: true,</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> functionStack = [];
+            <div class="content"><div class='highlight'><pre>                customTokenRender: <span class="hljs-literal">null</span>,
+                prefix: <span class="hljs-string">""</span>,
+                postfix: <span class="hljs-string">""</span>
+            };
 
-        <span class="keyword">var</span> tokRender = <span class="function"><span class="keyword">function</span> <span class="params">(tokenStr, token, indent, linbreak)</span> {</span>
-            <span class="keyword">var</span> outstr = <span class="string">""</span>,
-                <span class="comment">/*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/</span>
-                tokenString = tokenStr,
-                directConversionMap = {
-                    <span class="string">"="</span>: <span class="string">"=="</span>,
-                    <span class="string">"&lt;&gt;"</span>: <span class="string">"!="</span>,
-                    <span class="string">"MIN"</span>: <span class="string">"Math.Min"</span>,
-                    <span class="string">"MAX"</span>: <span class="string">"Math.Max"</span>,
-                    <span class="string">"ABS"</span>: <span class="string">"Math.ABS"</span>,
-                    <span class="string">"SUM"</span>: <span class="string">""</span>,
-                    <span class="string">"IF"</span>: <span class="string">""</span>,
-                    <span class="string">"&amp;"</span>: <span class="string">"+"</span>
-                },
-                currentFunctionOnStack = functionStack[functionStack.length - <span class="number">1</span>],
-                useTemplate = <span class="literal">false</span>;
+        <span class="hljs-keyword">if</span> (options) {
+            options = core.extend(<span class="hljs-literal">true</span>, defaultOptions, options);
+        } <span class="hljs-keyword">else</span> {
+            options = defaultOptions;
+        }
 
-            <span class="keyword">switch</span> (token.type.toString()) {
+        <span class="hljs-keyword">var</span> indentCount = <span class="hljs-number">0</span>;
 
-            <span class="keyword">case</span> TOK_TYPE_FUNCTION:
+        <span class="hljs-keyword">var</span> indent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">var</span> s = <span class="hljs-string">""</span>,
+                i = <span class="hljs-number">0</span>;
 
-                <span class="keyword">switch</span> (token.subtype) {
+            <span class="hljs-keyword">for</span> (; i &lt; indentCount; i += <span class="hljs-number">1</span>) {
+                s += options.tmplIndentTab;
+            }
+            <span class="hljs-keyword">return</span> s;
+        };
 
-                <span class="keyword">case</span> TOK_SUBTYPE_START:
+        <span class="hljs-keyword">var</span> tokens = getTokens(formula);
 
-                    functionStack.push({
-                        name: tokenString,
-                        argumentNumber: <span class="number">0</span>
-                    });
-                    outstr = <span class="keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
-                    useTemplate = <span class="literal">true</span>;
+        <span class="hljs-keyword">var</span> outputFormula = <span class="hljs-string">""</span>;
 
-                    <span class="keyword">break</span>;
-
-                <span class="keyword">case</span> TOK_SUBTYPE_STOP:
-
-                    useTemplate = <span class="literal">true</span>;
-                    <span class="keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {
-                    <span class="keyword">case</span> <span class="string">"if"</span>:
-                        outstr = <span class="string">")"</span>;
-                        useTemplate = <span class="literal">false</span>;
-                        <span class="keyword">break</span>;
-                    <span class="keyword">default</span>:
-                        outstr = <span class="keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
-                        <span class="keyword">break</span>
-                    }
-                    functionStack.pop();
-                    <span class="keyword">break</span>;
-                }
-
-                <span class="keyword">break</span>;
-
-            <span class="keyword">case</span> TOK_TYPE_ARGUMENT:
-                <span class="keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {
-                <span class="keyword">case</span> <span class="string">"if"</span>:
-                    <span class="keyword">switch</span> (currentFunctionOnStack.argumentNumber) {
-                    <span class="keyword">case</span> <span class="number">0</span>:
-                        outstr = <span class="string">"?"</span>;
-                        <span class="keyword">break</span>;
-                    <span class="keyword">case</span> <span class="number">1</span>:
-                        outstr = <span class="string">":"</span>;
-                        <span class="keyword">break</span>;
-                    }
-                    <span class="keyword">break</span>;
-                <span class="keyword">case</span> <span class="string">"sum"</span>:
-                    outstr = <span class="string">"+"</span>;
-                    <span class="keyword">break</span>;
-                <span class="keyword">default</span>:
-                    outstr = <span class="keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
-                    useTemplate = <span class="literal">true</span>;
-                    <span class="keyword">break</span>;
-                }
-
-                currentFunctionOnStack.argumentNumber += <span class="number">1</span>;
-
-                <span class="keyword">break</span>;
-
-            <span class="keyword">case</span> TOK_TYPE_OPERAND:
-                
-                <span class="keyword">switch</span> (token.subtype) {
-                    
-                    <span class="keyword">case</span> TOK_SUBTYPE_RANGE:
-                        
-                        <span class="keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {</pre></div></div>
+        <span class="hljs-keyword">var</span> autoBreakArray = options.autoLineBreak.replace(<span class="hljs-regexp">/\s/gi</span>, <span class="hljs-string">""</span>).split(<span class="hljs-string">"|"</span>);</pre></div></div>
             
         </li>
         
@@ -1681,11 +1517,101 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
-              <p>If in the sum function break aout cell names and add</p>
+              <p>Tokens</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="keyword">case</span> <span class="string">"sum"</span>:</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> isNewLine = <span class="hljs-literal">true</span>;
+
+        <span class="hljs-keyword">var</span> testAutoBreak = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(nextToken)</span> {</span>
+            <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">for</span> (; i &lt; autoBreakArray.length; i += <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">if</span> (nextToken !== <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">typeof</span> nextToken !== <span class="hljs-string">'undefined'</span> &amp;&amp; (types[autoBreakArray[i]] === nextToken.type.toString() || types[autoBreakArray[i]] === nextToken.subtype.toString())) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        };
+        
+        <span class="hljs-keyword">var</span> lastToken = <span class="hljs-literal">null</span>;
+        
+        <span class="hljs-keyword">while</span> (tokens.moveNext()) {
+
+            <span class="hljs-keyword">var</span> token = tokens.current();
+            <span class="hljs-keyword">var</span> nextToken = tokens.next();
+
+            <span class="hljs-keyword">if</span> (token.subtype.toString() === TOK_SUBTYPE_STOP) {
+                indentCount -= ((indentCount &gt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);
+            }
+
+            <span class="hljs-keyword">var</span> matchBeginNewline = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + options.newLine, <span class="hljs-string">''</span>),
+                matchEndNewLine = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(options.newLine + <span class="hljs-string">'$'</span>, <span class="hljs-string">''</span>),
+                autoBreak = testAutoBreak(nextToken),
+                autoIndent = isNewLine,
+                indt = autoIndent ? indent() : options.tmplIndentSpace,
+                lineBreak = autoBreak ? options.newLine : <span class="hljs-string">""</span>;
+
+            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender, lastToken);
+
+            <span class="hljs-keyword">if</span> (token.subtype.toString() === TOK_SUBTYPE_START) {
+                indentCount += <span class="hljs-number">1</span>;
+
+            }
+
+            isNewLine = autoBreak || matchEndNewLine.test(outputFormula);
+            isFirstToken = <span class="hljs-literal">false</span>;
+            
+            lastToken = token;
+        }
+        
+        outputFormula = options.prefix + trim(outputFormula) + options.postfix;
+        
+        <span class="hljs-keyword">return</span> outputFormula;
+    };
+    <span class="hljs-comment">/**
+     * This function calls {@link excelFormulaUtilities.parser.formatFormula}
+     *
+     * @memberof excelFormulaUtilities.parser
+     * @function
+     * @param {string} formula
+     * @param {object} options optional param
+     */</span>
+    <span class="hljs-keyword">var</span> formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(formula)</span> {</span>
+        <span class="hljs-keyword">var</span> options = {
+            tmplFunctionStart: <span class="hljs-string">'{{autoindent}}&lt;span class="function"&gt;{{token}}&lt;/span&gt;&lt;span class="function_start"&gt;(&lt;/span&gt;&lt;br /&gt;'</span>,
+            tmplFunctionStop: <span class="hljs-string">'&lt;br /&gt;{{autoindent}}{{token}}&lt;span class="function_stop"&gt;)&lt;/span&gt;'</span>,
+            tmplOperandError: <span class="hljs-string">'{{token}}'</span>,
+            tmplOperandRange: <span class="hljs-string">'{{autoindent}}{{token}}'</span>,
+            tmplOperandLogical: <span class="hljs-string">' {{token}}{{autolinebreak}}'</span>,
+            tmplOperandNumber: <span class="hljs-string">'{{autoindent}}{{token}}'</span>,
+            tmplOperandText: <span class="hljs-string">'{{autoindent}}&lt;span class="quote_mark"&gt;"&lt;/span&gt;&lt;span class="text"&gt;{{token}}&lt;/span&gt;&lt;span class="quote_mark"&gt;"&lt;/span&gt;'</span>,
+            tmplArgument: <span class="hljs-string">'{{token}}&lt;br /&gt;'</span>,
+            tmplFunctionStartArray: <span class="hljs-string">''</span>,
+            tmplFunctionStartArrayRow: <span class="hljs-string">'{'</span>,
+            tmplFunctionStopArrayRow: <span class="hljs-string">'}'</span>,
+            tmplFunctionStopArray: <span class="hljs-string">''</span>,
+            tmplSubexpressionStart: <span class="hljs-string">'{{autoindent}}('</span>,
+            tmplSubexpressionStop: <span class="hljs-string">' )'</span>,
+            tmplIndentTab: <span class="hljs-string">'&lt;span class="tabbed"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;'</span>,
+            tmplIndentSpace: <span class="hljs-string">'&amp;nbsp;'</span>,
+            newLine: <span class="hljs-string">'&lt;br /&gt;'</span>,
+            autoLineBreak: <span class="hljs-string">'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN '</span>,
+            trim: <span class="hljs-literal">true</span>,
+            prefix: <span class="hljs-string">"="</span>,
+            customTokenRender: <span class="hljs-literal">null</span>
+        };
+
+        <span class="hljs-keyword">return</span> formatFormula(formula, options);
+    }
+
+    <span class="hljs-comment">/**
+     *
+     * @memberof excelFormulaUtilities.convert
+     * @function
+     * @param {string} formula
+     * @returns {string}
+     */</span>
+    <span class="hljs-keyword">var</span> formula2CSharp = excelFormulaUtilities.formula2CSharp = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(formula)</span> {</span></pre></div></div>
             
         </li>
         
@@ -1696,17 +1622,96 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
-              <p>TODO make sure this is working</p>
+              <p>Custom callback to format as c#</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            <span class="keyword">if</span>(RegExp(<span class="string">":"</span>,<span class="string">"gi"</span>).test(tokenString)){
-                                outstr = breakOutRanges(tokenString, <span class="string">"+"</span>);
-                            } <span class="keyword">else</span> {
-                                outStr = tokenString;
-                            }
-                            
-                            <span class="keyword">break</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> functionStack = [];
+
+        <span class="hljs-keyword">var</span> tokRender = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(tokenStr, token, indent, linbreak)</span> {</span>
+            <span class="hljs-keyword">var</span> outstr = <span class="hljs-string">""</span>,
+                <span class="hljs-comment">/*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/</span>
+                tokenString = tokenStr,
+                directConversionMap = {
+                    <span class="hljs-string">"="</span>: <span class="hljs-string">"=="</span>,
+                    <span class="hljs-string">"&lt;&gt;"</span>: <span class="hljs-string">"!="</span>,
+                    <span class="hljs-string">"MIN"</span>: <span class="hljs-string">"Math.Min"</span>,
+                    <span class="hljs-string">"MAX"</span>: <span class="hljs-string">"Math.Max"</span>,
+                    <span class="hljs-string">"ABS"</span>: <span class="hljs-string">"Math.ABS"</span>,
+                    <span class="hljs-string">"SUM"</span>: <span class="hljs-string">""</span>,
+                    <span class="hljs-string">"IF"</span>: <span class="hljs-string">""</span>,
+                    <span class="hljs-string">"&amp;"</span>: <span class="hljs-string">"+"</span>
+                },
+                currentFunctionOnStack = functionStack[functionStack.length - <span class="hljs-number">1</span>],
+                useTemplate = <span class="hljs-literal">false</span>;
+
+            <span class="hljs-keyword">switch</span> (token.type.toString()) {
+
+            <span class="hljs-keyword">case</span> TOK_TYPE_FUNCTION:
+
+                <span class="hljs-keyword">switch</span> (token.subtype) {
+
+                <span class="hljs-keyword">case</span> TOK_SUBTYPE_START:
+
+                    functionStack.push({
+                        name: tokenString,
+                        argumentNumber: <span class="hljs-number">0</span>
+                    });
+                    outstr = <span class="hljs-keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="hljs-string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = <span class="hljs-literal">true</span>;
+
+                    <span class="hljs-keyword">break</span>;
+
+                <span class="hljs-keyword">case</span> TOK_SUBTYPE_STOP:
+
+                    useTemplate = <span class="hljs-literal">true</span>;
+                    <span class="hljs-keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {
+                    <span class="hljs-keyword">case</span> <span class="hljs-string">"if"</span>:
+                        outstr = <span class="hljs-string">")"</span>;
+                        useTemplate = <span class="hljs-literal">false</span>;
+                        <span class="hljs-keyword">break</span>;
+                    <span class="hljs-keyword">default</span>:
+                        outstr = <span class="hljs-keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="hljs-string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                        <span class="hljs-keyword">break</span>
+                    }
+                    functionStack.pop();
+                    <span class="hljs-keyword">break</span>;
+                }
+
+                <span class="hljs-keyword">break</span>;
+
+            <span class="hljs-keyword">case</span> TOK_TYPE_ARGUMENT:
+                <span class="hljs-keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {
+                <span class="hljs-keyword">case</span> <span class="hljs-string">"if"</span>:
+                    <span class="hljs-keyword">switch</span> (currentFunctionOnStack.argumentNumber) {
+                    <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:
+                        outstr = <span class="hljs-string">"?"</span>;
+                        <span class="hljs-keyword">break</span>;
+                    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+                        outstr = <span class="hljs-string">":"</span>;
+                        <span class="hljs-keyword">break</span>;
+                    }
+                    <span class="hljs-keyword">break</span>;
+                <span class="hljs-keyword">case</span> <span class="hljs-string">"sum"</span>:
+                    outstr = <span class="hljs-string">"+"</span>;
+                    <span class="hljs-keyword">break</span>;
+                <span class="hljs-keyword">default</span>:
+                    outstr = <span class="hljs-keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="hljs-string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = <span class="hljs-literal">true</span>;
+                    <span class="hljs-keyword">break</span>;
+                }
+
+                currentFunctionOnStack.argumentNumber += <span class="hljs-number">1</span>;
+
+                <span class="hljs-keyword">break</span>;
+
+            <span class="hljs-keyword">case</span> TOK_TYPE_OPERAND:
+                
+                <span class="hljs-keyword">switch</span> (token.subtype) {
+                    
+                    <span class="hljs-keyword">case</span> TOK_SUBTYPE_RANGE:
+                        
+                        <span class="hljs-keyword">switch</span> (currentFunctionOnStack.name.toLowerCase()) {</pre></div></div>
             
         </li>
         
@@ -1717,11 +1722,11 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
-              <p>By Default return an array containing all cell names in array</p>
+              <p>If in the sum function break aout cell names and add</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="keyword">default</span>:</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">case</span> <span class="hljs-string">"sum"</span>:</pre></div></div>
             
         </li>
         
@@ -1732,15 +1737,17 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
-              <p>Create array for ranges</p>
+              <p>TODO make sure this is working</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            <span class="keyword">if</span>(RegExp(<span class="string">":"</span>,<span class="string">"gi"</span>).test(tokenString)){
-                                outstr = <span class="string">"["</span> + breakOutRanges(tokenString, <span class="string">","</span>) +<span class="string">"]"</span>;
-                            } <span class="keyword">else</span> {
-                                outstr = tokenString;
-                            }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span>(<span class="hljs-built_in">RegExp</span>(<span class="hljs-string">":"</span>,<span class="hljs-string">"gi"</span>).test(tokenString)){
+                                outstr = breakOutRanges(tokenString, <span class="hljs-string">"+"</span>);
+                            } <span class="hljs-keyword">else</span> {
+                                outStr = tokenString;
+                            }
+                            
+                            <span class="hljs-keyword">break</span>;</pre></div></div>
             
         </li>
         
@@ -1751,72 +1758,106 @@ Pass in the base 26 string, get back integer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
+              <p>By Default return an array containing all cell names in array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">default</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>Create array for ranges</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">if</span>(<span class="hljs-built_in">RegExp</span>(<span class="hljs-string">":"</span>,<span class="hljs-string">"gi"</span>).test(tokenString)){
+                                outstr = <span class="hljs-string">"["</span> + breakOutRanges(tokenString, <span class="hljs-string">","</span>) +<span class="hljs-string">"]"</span>;
+                            } <span class="hljs-keyword">else</span> {
+                                outstr = tokenString;
+                            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
               <p>debugger;</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                            <span class="keyword">break</span>;
+            <div class="content"><div class='highlight'><pre>                            <span class="hljs-keyword">break</span>;
                         }
                         
-                        <span class="keyword">break</span>;
+                        <span class="hljs-keyword">break</span>;
                     
-                    <span class="keyword">default</span>:
-                        <span class="keyword">break</span>;
+                    <span class="hljs-keyword">default</span>:
+                        <span class="hljs-keyword">break</span>;
                 }
 
-            <span class="keyword">default</span>:
-                <span class="keyword">if</span>( outstr === <span class="string">""</span> ){
-                    outstr = <span class="keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+            <span class="hljs-keyword">default</span>:
+                <span class="hljs-keyword">if</span>( outstr === <span class="hljs-string">""</span> ){
+                    outstr = <span class="hljs-keyword">typeof</span> directConversionMap[tokenString.toUpperCase()] === <span class="hljs-string">"string"</span> ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                 }
-                useTemplate = <span class="literal">true</span>;
-                <span class="keyword">break</span>;
+                useTemplate = <span class="hljs-literal">true</span>;
+                <span class="hljs-keyword">break</span>;
             }
 
-            <span class="keyword">return</span> {
+            <span class="hljs-keyword">return</span> {
                 tokenString: outstr,
                 useTemplate: useTemplate
             };
         };
 
-        <span class="keyword">var</span> cSharpOutput = formatFormula(
+        <span class="hljs-keyword">var</span> cSharpOutput = formatFormula(
         formula, {
-            tmplFunctionStart: <span class="string">'{{token}}('</span>,
-            tmplFunctionStop: <span class="string">'{{token}})'</span>,
-            tmplOperandError: <span class="string">'{{token}}'</span>,
-            tmplOperandRange: <span class="string">'{{token}}'</span>,
-            tmplOperandLogical: <span class="string">'{{token}}'</span>,
-            tmplOperandNumber: <span class="string">'{{token}}'</span>,
-            tmplOperandText: <span class="string">'"{{token}}"'</span>,
-            tmplArgument: <span class="string">'{{token}}'</span>,
-            tmplFunctionStartArray: <span class="string">""</span>,
-            tmplFunctionStartArrayRow: <span class="string">"{"</span>,
-            tmplFunctionStopArrayRow: <span class="string">"}"</span>,
-            tmplFunctionStopArray: <span class="string">""</span>,
-            tmplSubexpressionStart: <span class="string">"("</span>,
-            tmplSubexpressionStop: <span class="string">")"</span>,
-            tmplIndentTab: <span class="string">"\t"</span>,
-            tmplIndentSpace: <span class="string">" "</span>,
-            autoLineBreak: <span class="string">"TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"</span>,
-            trim: <span class="literal">true</span>,
+            tmplFunctionStart: <span class="hljs-string">'{{token}}('</span>,
+            tmplFunctionStop: <span class="hljs-string">'{{token}})'</span>,
+            tmplOperandError: <span class="hljs-string">'{{token}}'</span>,
+            tmplOperandRange: <span class="hljs-string">'{{token}}'</span>,
+            tmplOperandLogical: <span class="hljs-string">'{{token}}'</span>,
+            tmplOperandNumber: <span class="hljs-string">'{{token}}'</span>,
+            tmplOperandText: <span class="hljs-string">'"{{token}}"'</span>,
+            tmplArgument: <span class="hljs-string">'{{token}}'</span>,
+            tmplFunctionStartArray: <span class="hljs-string">""</span>,
+            tmplFunctionStartArrayRow: <span class="hljs-string">"{"</span>,
+            tmplFunctionStopArrayRow: <span class="hljs-string">"}"</span>,
+            tmplFunctionStopArray: <span class="hljs-string">""</span>,
+            tmplSubexpressionStart: <span class="hljs-string">"("</span>,
+            tmplSubexpressionStop: <span class="hljs-string">")"</span>,
+            tmplIndentTab: <span class="hljs-string">"\t"</span>,
+            tmplIndentSpace: <span class="hljs-string">" "</span>,
+            autoLineBreak: <span class="hljs-string">"TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"</span>,
+            trim: <span class="hljs-literal">true</span>,
             customTokenRender: tokRender
         });
-        <span class="keyword">return</span> cSharpOutput;
+        <span class="hljs-keyword">return</span> cSharpOutput;
     };
 
-    <span class="comment">/**
+    <span class="hljs-comment">/**
      * Both the csharp and javascript are the same when converted, this is just an alias for convert2CSharp. there are some subtle differences such as == vrs ===, this will be addressed in a later version.
      * @memberof excelFormulaUtilities.convert
      * @function
      * @param {string} formula
      * @returns {string}
      */</span>
-    <span class="keyword">var</span> formula2JavaScript = excelFormulaUtilities.formula2JavaScript = <span class="function"><span class="keyword">function</span> <span class="params">(formula)</span> {</span>
-        <span class="keyword">return</span> formula2CSharp(formula).replace(<span class="string">'=='</span>, <span class="string">'==='</span>);
+    <span class="hljs-keyword">var</span> formula2JavaScript = excelFormulaUtilities.formula2JavaScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(formula)</span> {</span>
+        <span class="hljs-keyword">return</span> formula2CSharp(formula).replace(<span class="hljs-string">'=='</span>, <span class="hljs-string">'==='</span>);
     }
 
     excelFormulaUtilities.getTokens = getTokens;
 
-}());</pre></div></div>
+}(window|| module.exports || {}));</pre></div></div>
             
         </li>
         

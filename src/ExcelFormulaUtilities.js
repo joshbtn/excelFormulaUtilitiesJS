@@ -13,15 +13,11 @@
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */ 
-(function () {
-    if (typeof window === 'undefined') {
-      window = root;
-    }
-
-    var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {},
-    core = window.excelFormulaUtilities.core,
-        formatStr = window.excelFormulaUtilities.string.formatStr,
-        trim = window.excelFormulaUtilities.string.trim,
+(function (root) {
+    var excelFormulaUtilities = root.excelFormulaUtilities = root.excelFormulaUtilities || {},
+    core = root.excelFormulaUtilities.core,
+        formatStr = root.excelFormulaUtilities.string.formatStr,
+        trim = root.excelFormulaUtilities.string.trim,
 
         types = {},
         TOK_TYPE_NOOP = types.TOK_TYPE_NOOP = "noop",
@@ -48,7 +44,10 @@
         TOK_SUBTYPE_CONCAT = types.TOK_SUBTYPE_CONCAT = "concatenate",
         TOK_SUBTYPE_INTERSECT = types.TOK_SUBTYPE_INTERSECT = "intersect",
         TOK_SUBTYPE_UNION = types.TOK_SUBTYPE_UNION = "union";
-
+    
+    root.excelFormulaUtilities.isEu = typeof root.excelFormulaUtilities.isEu === 'boolean' ? root.excelFormulaUtilities.isEu : false;
+    
+    
     /**
      * @class
      */
@@ -318,16 +317,32 @@
                 continue;
             }
 
-            if (currentChar() === ";") {
-                if (token.length > 0) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = "";
+            if (currentChar() === ";" ) {
+                if(root.excelFormulaUtilities.isEu){
+                    // If is EU then handle ; as list seperators
+                    if (token.length > 0) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = "";
+                    }
+                    if (tokenStack.type() !== TOK_TYPE_FUNCTION) {
+                        tokens.add(currentChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_UNION);
+                    } else {
+                        tokens.add(currentChar(), TOK_TYPE_ARGUMENT);
+                    }
+                    offset += 1;
+                    continue;
+                } else {
+                    // Else if not Eu handle ; as array row seperator
+                    if (token.length > 0) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = "";
+                    }
+                    tokens.addRef(tokenStack.pop());
+                    tokens.add(",", TOK_TYPE_ARGUMENT);
+                    tokenStack.push(tokens.add("ARRAYROW", TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                    offset += 1;
+                    continue;
                 }
-                tokens.addRef(tokenStack.pop());
-                tokens.add(",", TOK_TYPE_ARGUMENT);
-                tokenStack.push(tokens.add("ARRAYROW", TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                offset += 1;
-                continue;
             }
 
             if (currentChar() === "}") {
@@ -399,9 +414,9 @@
                 offset += 1;
                 continue;
             }
-
+            
             // function, subexpression, array parameters
-            if (currentChar() === ",") {
+            if (currentChar() === "," && !root.excelFormulaUtilities.isEu) {
                 if (token.length > 0) {
                     tokens.add(token, TOK_TYPE_OPERAND);
                     token = "";
@@ -1166,5 +1181,5 @@
 
     excelFormulaUtilities.getTokens = getTokens;
 
-}());
+}(window|| module.exports || {}));
 

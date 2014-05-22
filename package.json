@@ -6,6 +6,10 @@
   "homepage": "http://excelformulabeautifier.com/",
   "contributors": [
     {
+      "name": "Josh Bennett",
+      "url": "http://joshbennett.me"
+    },
+    {
       "name": "Adam Schmideg",
       "url": "http://adam.schmideg.net"
     }
@@ -22,19 +26,12 @@
     "test": "qunit -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js"
   },
   "main": "./src/main",
-  "dependencies": {
-    "docco": "~0.6.2",
-    "closure-compiler": "~0.2.0"
-  },
-  "devDependencies": {
-    "qunit": ">=1.12.0",
-    "coffee-script": ">=1.1.3",
-    "docco": ">=0.6.2",
-    "closure-compiler": ">=0.2.0"
-  },
-  "optionalDependencies": {},
   "engines": {
     "node": "*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "docco": "~0.6.3",
+    "closure-compiler": "~0.2.6"
+  }
 }

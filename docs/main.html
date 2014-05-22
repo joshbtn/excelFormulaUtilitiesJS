@@ -57,27 +57,27 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>() {
-  <span class="keyword">var</span> xl;
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> xl;
 
-  require(<span class="string">'./core'</span>);
+  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./core'</span>);
 
-  require(<span class="string">'./ExcelFormulaUtilities'</span>);
+  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./ExcelFormulaUtilities'</span>);
 
   xl = excelFormulaUtilities;
 
   module.exports = {
-    getTokens: <span class="keyword">function</span>(f) {
-      <span class="keyword">return</span> xl.getTokens(f).items;
+    getTokens: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> {</span>
+      <span class="hljs-keyword">return</span> xl.getTokens(f).items;
     },
-    formatFormula: <span class="keyword">function</span>(f, opts) {
-      <span class="keyword">return</span> xl.formatFormula(f, opts);
+    formatFormula: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f, opts)</span> {</span>
+      <span class="hljs-keyword">return</span> xl.formatFormula(f, opts);
     },
     toJavaScript: xl.formula2JavaScript,
     toCSharp: xl.formula2CSharp
   };
 
-}).call(<span class="keyword">this</span>);</pre></div></div>
+}).call(<span class="hljs-keyword">this</span>);</pre></div></div>
             
         </li>
         
