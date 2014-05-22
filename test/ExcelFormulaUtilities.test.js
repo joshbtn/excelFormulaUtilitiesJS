@@ -1,5 +1,7 @@
 QUnit.module("base26");
 
+window.excelFormulaUtilities.isEu = false;
+
 test("fromBase26", function(){
     var input = 'AAA';
     var expected = '702';
@@ -65,9 +67,11 @@ test("formatFormula", function() {
   expected = 'TEST(\n\t1,\n\t,\n\t,\n\t1\n)';
   equal(excelFormulaUtilities.formatFormula(inputFormula), expected, "multiple commas.");
   
+  window.excelFormulaUtilities.isEu = true;
   inputFormula = 'IF(A1="yes"; "yes"; "no")';
   expected = 'IF(\n\tA1 = "yes";\n\t"yes";\n\t"no"\n)';
   equal(excelFormulaUtilities.formatFormula(inputFormula), expected, "Test with ; instead of ,");
+  window.excelFormulaUtilities.isEu = false;
  
 });
 
@@ -136,6 +140,7 @@ test("formula2JavaScript", function() {
     inputFormula = 'SUM(AA1:BB2)';
     expected = '(AA1+AB1+AC1+AD1+AE1+AF1+AG1+AH1+AI1+AJ1+AK1+AL1+AM1+AN1+AO1+AP1+AQ1+AR1+AS1+AT1+AU1+AV1+AW1+AX1+AY1+AZ1+BA1+BB1+AA2+AB2+AC2+AD2+AE2+AF2+AG2+AH2+AI2+AJ2+AK2+AL2+AM2+AN2+AO2+AP2+AQ2+AR2+AS2+AT2+AU2+AV2+AW2+AX2+AY2+AZ2+BA2+BB2)';
     equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Test for issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
+
     
     inputFormula = '=FOO(A1:B3)';
     expected = 'foo([A1,B1,A2,B2,A3,B3])';
