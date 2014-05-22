@@ -48,7 +48,10 @@
         TOK_SUBTYPE_CONCAT = types.TOK_SUBTYPE_CONCAT = "concatenate",
         TOK_SUBTYPE_INTERSECT = types.TOK_SUBTYPE_INTERSECT = "intersect",
         TOK_SUBTYPE_UNION = types.TOK_SUBTYPE_UNION = "union";
-
+    
+    window.excelFormulaUtilities.isUs = typeof window.excelFormulaUtilities.isUs === 'boolean' ? window.excelFormulaUtilities.isUs : true;
+    
+    
     /**
      * @class
      */
@@ -318,16 +321,30 @@
                 continue;
             }
 
-            if (currentChar() === ";") {
-                if (token.length > 0) {
-                    tokens.add(token, TOK_TYPE_OPERAND);
-                    token = "";
+            if (currentChar() === ";" ) {
+                if(window.excelFormulaUtilities.isUS){
+                    if (token.length > 0) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = "";
+                    }
+                    tokens.addRef(tokenStack.pop());
+                    tokens.add(",", TOK_TYPE_ARGUMENT);
+                    tokenStack.push(tokens.add("ARRAYROW", TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
+                    offset += 1;
+                    continue;
+                } else {
+                    if (token.length > 0) {
+                        tokens.add(token, TOK_TYPE_OPERAND);
+                        token = "";
+                    }
+                    if (tokenStack.type() !== TOK_TYPE_FUNCTION) {
+                        tokens.add(currentChar(), TOK_TYPE_OP_IN, TOK_SUBTYPE_UNION);
+                    } else {
+                        tokens.add(currentChar(), TOK_TYPE_ARGUMENT);
+                    }
+                    offset += 1;
+                    continue;
                 }
-                tokens.addRef(tokenStack.pop());
-                tokens.add(",", TOK_TYPE_ARGUMENT);
-                tokenStack.push(tokens.add("ARRAYROW", TOK_TYPE_FUNCTION, TOK_SUBTYPE_START));
-                offset += 1;
-                continue;
             }
 
             if (currentChar() === "}") {
@@ -399,9 +416,9 @@
                 offset += 1;
                 continue;
             }
-
+            
             // function, subexpression, array parameters
-            if (currentChar() === ",") {
+            if (currentChar() === "," && window.excelFormulaUtilities.isUs) {
                 if (token.length > 0) {
                     tokens.add(token, TOK_TYPE_OPERAND);
                     token = "";
