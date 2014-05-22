@@ -6,8 +6,8 @@
   "homepage": "http://excelformulabeautifier.com/",
   "contributors": [
     {
-        "name": "Josh Bennett",
-        "url": "http://joshbennett.me"
+      "name": "Josh Bennett",
+      "url": "http://joshbennett.me"
     },
     {
       "name": "Adam Schmideg",
@@ -29,5 +29,9 @@
   "engines": {
     "node": "*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "docco": "~0.6.3",
+    "closure-compiler": "~0.2.6"
+  }
 }

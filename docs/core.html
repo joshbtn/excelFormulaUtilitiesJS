@@ -56,7 +56,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="comment">/*
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
  * excelFormulaUtilitiesJS
  * https://github.com/joshatjben/excelFormulaUtilitiesJS/
  *
@@ -72,16 +72,16 @@
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
  */</span>
  
-(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
 
-    <span class="keyword">if</span> (<span class="keyword">typeof</span> window === <span class="string">'undefined'</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> window === <span class="hljs-string">'undefined'</span>) {
       window = root;
     }
-    <span class="keyword">var</span> excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {};
-    <span class="keyword">var</span> core = window.excelFormulaUtilities.core = {};
+    <span class="hljs-keyword">var</span> excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {};
+    <span class="hljs-keyword">var</span> core = window.excelFormulaUtilities.core = {};
 	window.excelFormulaUtilities.string = window.excelFormulaUtilities.string || {};
 	
-	<span class="comment">/**
+	<span class="hljs-comment">/**
 	* Simple/quick string formater. This will take an input string and apply n number of arguments to it.
 	*
 	* &lt;b&gt;example:&lt;/b&gt;&lt;br /&gt;
@@ -97,23 +97,23 @@
 	* @function
     * @param {String} inStr 
     **/</span>
-	<span class="keyword">var</span> formatStr = window.excelFormulaUtilities.string.formatStr = <span class="keyword">function</span>(inStr) {
-			<span class="keyword">var</span> formattedStr = inStr;
-			<span class="keyword">var</span> argIndex = <span class="number">1</span>;
-			<span class="keyword">for</span> (; argIndex &lt; arguments.length; argIndex++) {
-				<span class="keyword">var</span> replaceIndex = (argIndex - <span class="number">1</span>);
-				<span class="keyword">var</span> replaceRegex = <span class="keyword">new</span> RegExp(<span class="string">"\\{{1}"</span> + replaceIndex.toString() + <span class="string">"{1}\\}{1}"</span>, <span class="string">"g"</span>);
-				formattedStr = formattedStr.replace(replaceRegex, arguments[argIndex]);
+	<span class="hljs-keyword">var</span> formatStr = window.excelFormulaUtilities.string.formatStr = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(inStr)</span> {</span>
+			<span class="hljs-keyword">var</span> formattedStr = inStr;
+			<span class="hljs-keyword">var</span> argIndex = <span class="hljs-number">1</span>;
+			<span class="hljs-keyword">for</span> (; argIndex &lt; <span class="hljs-built_in">arguments</span>.length; argIndex++) {
+				<span class="hljs-keyword">var</span> replaceIndex = (argIndex - <span class="hljs-number">1</span>);
+				<span class="hljs-keyword">var</span> replaceRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"\\{{1}"</span> + replaceIndex.toString() + <span class="hljs-string">"{1}\\}{1}"</span>, <span class="hljs-string">"g"</span>);
+				formattedStr = formattedStr.replace(replaceRegex, <span class="hljs-built_in">arguments</span>[argIndex]);
 			}
-			<span class="keyword">return</span> formattedStr;
+			<span class="hljs-keyword">return</span> formattedStr;
 		};
     
-    <span class="keyword">var</span> trim = window.excelFormulaUtilities.string.trim = <span class="keyword">function</span>(inStr){
-			<span class="keyword">return</span> inStr.replace(<span class="regexp">/^\s|\s$/</span>, <span class="string">""</span>);
+    <span class="hljs-keyword">var</span> trim = window.excelFormulaUtilities.string.trim = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(inStr)</span>{</span>
+			<span class="hljs-keyword">return</span> inStr.replace(<span class="hljs-regexp">/^\s|\s$/</span>, <span class="hljs-string">""</span>);
 		};
 	
-	<span class="keyword">var</span> trimHTML = window.excelFormulaUtilities.string.trim = <span class="keyword">function</span>(inStr){
-			<span class="keyword">return</span> inStr.replace(<span class="regexp">/^(?:\s|&amp;nbsp;|&lt;\s*br\s*\/*\s*&gt;)*|(?:\s|&amp;nbsp;|&lt;\s*br\s*\/*\s*&gt;)*$/</span>, <span class="string">""</span>);
+	<span class="hljs-keyword">var</span> trimHTML = window.excelFormulaUtilities.string.trim = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(inStr)</span>{</span>
+			<span class="hljs-keyword">return</span> inStr.replace(<span class="hljs-regexp">/^(?:\s|&amp;nbsp;|&lt;\s*br\s*\/*\s*&gt;)*|(?:\s|&amp;nbsp;|&lt;\s*br\s*\/*\s*&gt;)*$/</span>, <span class="hljs-string">""</span>);
 		};</pre></div></div>
             
         </li>
@@ -129,40 +129,40 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="comment">/**
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-comment">/**
 	* @param {object} obj
 	* @returns {boolean}
 	* @memberOf window.excelFormulaUtilities.core
 	*/</span>
-	<span class="keyword">var</span> isFunction = core.isFunction = <span class="function"><span class="keyword">function</span> <span class="params">(obj)</span> {</span>
-		<span class="keyword">return</span> (<span class="keyword">typeof</span> obj) === <span class="string">"function"</span>;
+	<span class="hljs-keyword">var</span> isFunction = core.isFunction = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> {</span>
+		<span class="hljs-keyword">return</span> (<span class="hljs-keyword">typeof</span> obj) === <span class="hljs-string">"function"</span>;
 	};
 
-	<span class="comment">/**
+	<span class="hljs-comment">/**
 	* @param {object} obj
 	* @returns {boolean}
 	* @memberOf window.excelFormulaUtilities.core
 	*/</span>
-	<span class="keyword">var</span> isArray = core.isArray = <span class="function"><span class="keyword">function</span> <span class="params">(obj)</span> {</span>
-		<span class="keyword">return</span> (<span class="keyword">typeof</span> obj) === <span class="string">"object"</span> &amp;&amp; obj.length;
+	<span class="hljs-keyword">var</span> isArray = core.isArray = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> {</span>
+		<span class="hljs-keyword">return</span> (<span class="hljs-keyword">typeof</span> obj) === <span class="hljs-string">"object"</span> &amp;&amp; obj.length;
 	};
 
-	<span class="comment">/**
+	<span class="hljs-comment">/**
 	* @param {object} obj
 	* @returns {boolean}
 	* @memberOf window.excelFormulaUtilities.core
 	*/</span>
-	<span class="keyword">var</span> isWindow = core.isWindow = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-		<span class="keyword">return</span> obj &amp;&amp; <span class="keyword">typeof</span> obj === <span class="string">"object"</span> &amp;&amp; <span class="string">"setInterval"</span> <span class="keyword">in</span> obj;
-	}; <span class="comment">/*----The functionality below has based off of the jQuery core library----*/</span>
+	<span class="hljs-keyword">var</span> isWindow = core.isWindow = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+		<span class="hljs-keyword">return</span> obj &amp;&amp; <span class="hljs-keyword">typeof</span> obj === <span class="hljs-string">"object"</span> &amp;&amp; <span class="hljs-string">"setInterval"</span> <span class="hljs-keyword">in</span> obj;
+	}; <span class="hljs-comment">/*----The functionality below has based off of the jQuery core library----*/</span>
 
-	<span class="comment">/**
+	<span class="hljs-comment">/**
 	* Check if the object is a plain object or not. This has been pulled from the jQuery core and modified slightly.
 	* @param {object} obj
 	* @returns {boolean} returns weather the object is a plain object or not.
 	* @memberOf window.excelFormulaUtilities.core
 	*/</span>
-	<span class="keyword">var</span> isPlainObject = core.isPlainObject = <span class="function"><span class="keyword">function</span> <span class="params">(obj)</span> {</span></pre></div></div>
+	<span class="hljs-keyword">var</span> isPlainObject = core.isPlainObject = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(obj)</span> {</span></pre></div></div>
             
         </li>
         
@@ -175,12 +175,12 @@
               </div>
               <p>Must be an Object.
 Because of IE, we also have to check the presence of the constructor property.
-Make sure that DOM nodes and window objects don&#39;t pass through, as well</p>
+Make sure that DOM nodes and window objects don’t pass through, as well</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (!obj || <span class="keyword">typeof</span> obj !== <span class="string">"object"</span> || obj.nodeType || isWindow(obj)) {
-			<span class="keyword">return</span> <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (!obj || <span class="hljs-keyword">typeof</span> obj !== <span class="hljs-string">"object"</span> || obj.nodeType || isWindow(obj)) {
+			<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 		}</pre></div></div>
             
         </li>
@@ -196,8 +196,8 @@ Make sure that DOM nodes and window objects don&#39;t pass through, as well</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (obj.constructor &amp;&amp; !hasOwnProperty.call(obj, <span class="string">"constructor"</span>) &amp;&amp; !hasOwnProperty.call(obj.constructor.prototype, <span class="string">"isPrototypeOf"</span>)) {
-			<span class="keyword">return</span> <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (obj.constructor &amp;&amp; !hasOwnProperty.call(obj, <span class="hljs-string">"constructor"</span>) &amp;&amp; !hasOwnProperty.call(obj.constructor.prototype, <span class="hljs-string">"isPrototypeOf"</span>)) {
+			<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 		}</pre></div></div>
             
         </li>
@@ -214,23 +214,23 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">var</span> key;
-		<span class="keyword">for</span> (key <span class="keyword">in</span> obj) { }
-		<span class="keyword">return</span> key === <span class="literal">undefined</span> || hasOwnProperty.call(obj, key);
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> key;
+		<span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> obj) { }
+		<span class="hljs-keyword">return</span> key === <span class="hljs-literal">undefined</span> || hasOwnProperty.call(obj, key);
 	};
 
-	<span class="comment">/**
+	<span class="hljs-comment">/**
 	* This has been pulled from the jQuery core and modified slightly. see http://api.jquery.com/jQuery.extend/
 	* @param {object} target
 	* @param {object} object add one or more object to extend the target.
 	* @returns {object} returns the extended object.
 	* @memberOf window.excelFormulaUtilities.core
 	*/</span>
-	<span class="keyword">var</span> extend = core.extend = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-		<span class="keyword">var</span> options, name, src, copy, copyIsArray, clone, target = arguments[<span class="number">0</span>] || {},
-		i = <span class="number">1</span>,
-		length = arguments.length,
-		deep = <span class="literal">false</span>;</pre></div></div>
+	<span class="hljs-keyword">var</span> extend = core.extend = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+		<span class="hljs-keyword">var</span> options, name, src, copy, copyIsArray, clone, target = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] || {},
+		i = <span class="hljs-number">1</span>,
+		length = <span class="hljs-built_in">arguments</span>.length,
+		deep = <span class="hljs-literal">false</span>;</pre></div></div>
             
         </li>
         
@@ -245,9 +245,9 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (<span class="keyword">typeof</span> target === <span class="string">"boolean"</span>) {
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> target === <span class="hljs-string">"boolean"</span>) {
 			deep = target;
-			target = arguments[<span class="number">1</span>] || {};</pre></div></div>
+			target = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>] || {};</pre></div></div>
             
         </li>
         
@@ -262,7 +262,7 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			i = <span class="number">2</span>;
+            <div class="content"><div class='highlight'><pre>			i = <span class="hljs-number">2</span>;
 		}</pre></div></div>
             
         </li>
@@ -278,7 +278,7 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (<span class="keyword">typeof</span> target !== <span class="string">"object"</span> &amp;&amp; !isFunction(target)) {
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> target !== <span class="hljs-string">"object"</span> &amp;&amp; !isFunction(target)) {
 			target = {};
 		}</pre></div></div>
             
@@ -295,11 +295,11 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">if</span> (length === i) {
-			target = <span class="keyword">this</span>;
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (length === i) {
+			target = <span class="hljs-keyword">this</span>;
 			--i;
 		}
-		<span class="keyword">for</span> (; i &lt; length; i++) {</pre></div></div>
+		<span class="hljs-keyword">for</span> (; i &lt; length; i++) {</pre></div></div>
             
         </li>
         
@@ -314,7 +314,7 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="keyword">if</span> ((options = arguments[i]) != <span class="literal">null</span>) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">if</span> ((options = <span class="hljs-built_in">arguments</span>[i]) != <span class="hljs-literal">null</span>) {</pre></div></div>
             
         </li>
         
@@ -329,7 +329,7 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>				<span class="keyword">for</span> (name <span class="keyword">in</span> options) {
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">for</span> (name <span class="hljs-keyword">in</span> options) {
 					src = target[name];
 					copy = options[name];</pre></div></div>
             
@@ -346,8 +346,8 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>					<span class="keyword">if</span> (target === copy) {
-						<span class="keyword">continue</span>;
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span> (target === copy) {
+						<span class="hljs-keyword">continue</span>;
 					}</pre></div></div>
             
         </li>
@@ -359,15 +359,15 @@ if last one is own, then all properties are own.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Recurse if we&#39;re merging plain objects or arrays</p>
+              <p>Recurse if we’re merging plain objects or arrays</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>					<span class="keyword">if</span> (deep &amp;&amp; copy &amp;&amp; (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-						<span class="keyword">if</span> (copyIsArray) {
-							copyIsArray = <span class="literal">false</span>;
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span> (deep &amp;&amp; copy &amp;&amp; (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+						<span class="hljs-keyword">if</span> (copyIsArray) {
+							copyIsArray = <span class="hljs-literal">false</span>;
 							clone = src &amp;&amp; isArray(src) ? src : [];
-						} <span class="keyword">else</span> {
+						} <span class="hljs-keyword">else</span> {
 							clone = src &amp;&amp; isPlainObject(src) ? src : {};
 						}</pre></div></div>
             
@@ -395,11 +395,11 @@ if last one is own, then all properties are own.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>Don&#39;t bring in undefined values</p>
+              <p>Don’t bring in undefined values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>					} <span class="keyword">else</span> <span class="keyword">if</span> (copy !== <span class="literal">undefined</span>) {
+            <div class="content"><div class='highlight'><pre>					} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (copy !== <span class="hljs-literal">undefined</span>) {
 						target[name] = copy;
 					}
 				}
@@ -419,8 +419,8 @@ if last one is own, then all properties are own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="keyword">return</span> target;
-	}; <span class="comment">/*----end of jquery functionality----*/</span>
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">return</span> target;
+	}; <span class="hljs-comment">/*----end of jquery functionality----*/</span>
 
 	
 }());</pre></div></div>

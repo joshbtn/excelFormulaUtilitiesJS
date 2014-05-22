@@ -5,7 +5,7 @@ fs = require 'fs'
 querystring = require 'querystring'
 
 #Globals
-VERSION = '0.9.42'
+VERSION = '0.9.43'
 YEAR = (new Date).getFullYear
 LICENSE =  fs.readFileSync './license.include', 'utf8'
 
