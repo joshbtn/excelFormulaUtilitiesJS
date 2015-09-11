@@ -63,15 +63,19 @@
                     
 					// Check to see which mode we're in, render appropriately
 					try{
-                        
+						
 						switch( this.mode ) {
                             case "beautify":
                                 this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula);
                                 break;
+                            case "minify":
+                            	this.formulaBody.innerHTML = this.formula.replace(/\s+/gi, ' ');
+                            	break;
                             case "js":
                                 this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2JavaScript(this.formula);
                                 break;
 						}
+						
 					}catch(exception){
 						//Do nothing, This should throw an error when the formula is improperly formed, which shouldn't blow things up.
 					}
