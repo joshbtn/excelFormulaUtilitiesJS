@@ -75,6 +75,13 @@ test("formatFormula", function() {
  
 });
 
+test("Issue #28", function() {
+    inputFormula = "'Data Sheet'!$D3";
+    expected = "'Data Sheet'!$D3";
+    equal(excelFormulaUtilities.formatFormula(inputFormula), expected, "Data sheet ref to stay intact.");
+    
+})
+
 /*test("formatFormulaHTML", function() {
   
 });*/

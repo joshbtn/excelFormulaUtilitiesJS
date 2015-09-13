@@ -274,6 +274,7 @@
                 continue;
             }
 
+            // TODO this is suspect for issue #28
             if (currentChar() === "'") {
                 if (token.length > 0) {
                     // not expected
