@@ -38,7 +38,7 @@ test("fromBase26", function(){
 });
 
 
-QUnit.module("parser");
+QUnit.module("ExcelFormulaUtilities")
 /*
 test("Test formatFormula ()", function() {
 	var inputFormula = "IF('foo' = 'foo', 'foo', 'bar')";
@@ -85,8 +85,6 @@ test("Issue #28", function() {
 /*test("formatFormulaHTML", function() {
   
 });*/
-
-QUnit.module("convert");
 
 test("formula2CSharp", function() {
 	var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
@@ -157,8 +155,6 @@ test("formula2JavaScript", function() {
 	expected = '=VLOOKUP (A1, [[1,11], [2, 20], [3, 34], [4, 45]], 2, 0)';
 	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "VLOOKUP(A1, {1,11 ; 2, 20 ; 3, 34 ; 4, 45}, 2, 0) - make sure arrays are converted properly");
 });
-
-QUnit.module("Regression");
 
 test("space after =", function() {
     inputFormula = '= A1 + B2';

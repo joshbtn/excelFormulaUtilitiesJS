@@ -221,6 +221,7 @@
                 } else {
                     token += currentChar();
                 }
+                // TODO may need to keep single quote in the token for issue 28
                 offset += 1;
                 continue;
             }
@@ -273,14 +274,14 @@
                 offset += 1;
                 continue;
             }
-
-            // TODO this is suspect for issue #28
+            
             if (currentChar() === "'") {
                 if (token.length > 0) {
                     // not expected
                     tokens.add(token, TOK_TYPE_UNKNOWN);
                     token = "";
                 }
+                //TODO May need to keep ' in the token for issue 28 to work.
                 inPath = true;
                 offset += 1;
                 continue;
@@ -741,6 +742,8 @@
 
         if (token.subtype === "text" || token.type === "text") {
             tokenString = token.value.toString();
+        } else if ( token.type === 'operand' && token.subtype === 'range') {
+            tokenString = token.value.toString() ;
         } else {
             tokenString = ((token.value.length === 0) ? " " : token.value.toString()).split(" ").join("").toString();
         }
@@ -870,7 +873,7 @@
      */
     var formatFormula = excelFormulaUtilities.formatFormula = function (formula, options) {
         //Quick fix for trailing space after = sign
-        formula = formula.replace(/^\s*=\s+/gi, "=");
+        formula = formula.replace(/^\s*=\s+/, "=");
         
         var isFirstToken = true,
             defaultOptions = {
@@ -952,7 +955,8 @@
                 autoIndent = isNewLine,
                 indt = autoIndent ? indent() : options.tmplIndentSpace,
                 lineBreak = autoBreak ? options.newLine : "";
-
+            
+            // TODO this strips out spaces which breaks part of issue 28.  'Data Sheet' gets changed to DataSheet
             outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender, lastToken);
 
             if (token.subtype.toString() === TOK_SUBTYPE_START) {
