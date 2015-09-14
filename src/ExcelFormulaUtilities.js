@@ -212,16 +212,18 @@
             // end does not mark a token
             if (inPath) {
                 if (currentChar() === "'") {
+                    
                     if (nextChar() === "'") {
                         token += "'";
                         offset += 1;
                     } else {
                         inPath = false;
+                        token += "'";
                     }
                 } else {
                     token += currentChar();
                 }
-                // TODO may need to keep single quote in the token for issue 28
+                
                 offset += 1;
                 continue;
             }
@@ -281,7 +283,7 @@
                     tokens.add(token, TOK_TYPE_UNKNOWN);
                     token = "";
                 }
-                //TODO May need to keep ' in the token for issue 28 to work.
+                token = "'"
                 inPath = true;
                 offset += 1;
                 continue;
