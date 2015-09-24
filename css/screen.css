@@ -36,7 +36,9 @@ header .title{float:left;}
 	background-color:#f5fffa;
 	border:solid 1px #e4e4e4;
 	padding: 1.428em;
+	overflow:auto;
 }
+#fomatFormula_2_out{display:inline;white-space: nowrap}
 .function{
 	color:#069;
 }
