@@ -170,11 +170,19 @@ test("space after =", function() {
 	equal(excelFormulaUtilities.formatFormula(inputFormula), expected, "space after =");
 });
 
-test("the tokens TRUE and FALSE should not break formatting - found in issue 26", function(){
+test("Logical operands TRUE and FALSE should not break formatting - found in issue 26", function(){
+    
+    /*
+    ISSUE:
+        subtype: "logical"
+        type: "operand"
+        value: "TRUE"
+    */
+    
     var inputFormula='=IF(True,TRUE,FALSE)',
-        expected = '=IF(\n\tTrue,\n\tTRUE,\n\tFALSE\n)',
+        expected = 'IF(\n\tTrue,\n\tTRUE,\n\tFALSE\n)',
         actual = excelFormulaUtilities.formatFormula(inputFormula);
         
     equal(actual, expected);
-        
+    
 })
