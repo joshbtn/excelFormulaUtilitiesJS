@@ -169,3 +169,12 @@ test("space after =", function() {
     expected = 'A1 + B2';
 	equal(excelFormulaUtilities.formatFormula(inputFormula), expected, "space after =");
 });
+
+test("the tokens TRUE and FALSE should not break formatting - found in issue 26", function(){
+    var inputFormula='=IF(True,TRUE,FALSE)',
+        expected = '=IF(\n\tTrue,\n\tTRUE,\n\tFALSE\n)',
+        actual = excelFormulaUtilities.formatFormula(inputFormula);
+        
+    equal(actual, expected);
+        
+})
