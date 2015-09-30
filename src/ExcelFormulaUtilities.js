@@ -789,6 +789,9 @@
             case "range":
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
                 break;
+            case "logical":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
+            break;
             case "number":
                 tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
                 break;
@@ -803,8 +806,10 @@
             }
             break;
         case "operator-infix":
+            tokenString = formatStr(replaceTokenTmpl(options.tmplOperandOperatorInfix), tokenString, indt, lineBreak);
+            break;
         case "logical":
-            tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
+            tokenString = formatStr(replaceTokenTmpl(options.tmplLogical), tokenString, indt, lineBreak);
             break;
         case "argument":
         	if(lastToken.type !== "argument"){
@@ -883,10 +888,12 @@
                 tmplFunctionStop: '\n{{autoindent}}{{token}})',
                 tmplOperandError: ' {{token}}',
                 tmplOperandRange: '{{autoindent}}{{token}}',
-                tmplOperandLogical: ' {{token}}{{autolinebreak}}',
+                tmplLogical: '{{token}}{{autolinebreak}}',
+                tmplOperandLogical: '{{autoindent}}{{token}}',
                 tmplOperandNumber: '{{autoindent}}{{token}}',
                 tmplOperandText: '{{autoindent}}"{{token}}"',
                 tmplArgument: '{{token}}\n',
+                tmplOperandOperatorInfix: ' {{token}}{{autolinebreak}}',
                 tmplFunctionStartArray: '',
                 tmplFunctionStartArrayRow: '{',
                 tmplFunctionStopArrayRow: '}',
@@ -1160,6 +1167,7 @@
             tmplOperandNumber: '{{token}}',
             tmplOperandText: '"{{token}}"',
             tmplArgument: '{{token}}',
+            tmplOperandOperatorInfix: '{{token}}',
             tmplFunctionStartArray: "",
             tmplFunctionStartArrayRow: "{",
             tmplFunctionStopArrayRow: "}",
