@@ -181,6 +181,12 @@ test("Logical operands TRUE and FALSE should not break formatting - found in iss
         expected = 'IF(\n\tTrue,\n\tTRUE,\n\tFALSE\n)',
         actual = excelFormulaUtilities.formatFormula(inputFormula);
         
-    equal(actual, expected);
+    equal(actual, expected, 'formatFormula');
+    
+    inputFormula='=IF(True,TRUE,FALSE)',
+        expected = '=<span class=\"function\">IF</span><span class=\"function_start\">(</span><br /><span class=\"tabbed\">&nbsp;&nbsp;&nbsp;&nbsp;</span>True,<br /><span class=\"tabbed\">&nbsp;&nbsp;&nbsp;&nbsp;</span>TRUE,<br /><span class=\"tabbed\">&nbsp;&nbsp;&nbsp;&nbsp;</span>FALSE<br /><span class=\"function_stop\">)</span>',
+        actual = excelFormulaUtilities.formatFormulaHTML(inputFormula);
+        
+    equal(actual, expected, "html formatting");
     
 })
