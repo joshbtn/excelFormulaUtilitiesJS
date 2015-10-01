@@ -159,9 +159,7 @@ test("formula2JavaScript", function() {
     expected = 'FOO([A1,B1,A2,B2,A3,B3])';
 	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "FOO(A1:B3) = Make sure the sum of ranges break out, for non sum function");
 	
-	inputFormula = '=VLOOKUP(A1, {1,11 ; 2, 20 ; 3, 34 ; 4, 45}, 2, 0)';
-	expected = '=VLOOKUP (A1, [[1,11], [2, 20], [3, 34], [4, 45]], 2, 0)';
-	equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, "VLOOKUP(A1, {1,11 ; 2, 20 ; 3, 34 ; 4, 45}, 2, 0) - make sure arrays are converted properly");
+	
 });
 
 test("space after =", function() {
