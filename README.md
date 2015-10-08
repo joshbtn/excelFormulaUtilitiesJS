@@ -6,6 +6,9 @@ Changes to the core js library live in the master branch.
 
 # Excel Formula Utilities for JavaScript
 
+##Install using npm
+npm install excel-formula
+
 ##Installation
   1. Save excelFormulaUtilities-[version].js(For dev) or excelFormulaUtilities-[version].js.min (For prod).
   2. Save excelFormulaUtilities.css if you'd like basic styling when outputting formulas to html.
