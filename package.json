@@ -31,7 +31,10 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "closure-compiler": "~0.2.6",
     "docco": "~0.6.3",
-    "closure-compiler": "~0.2.6"
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-uglify": "^1.4.1"
   }
 }
