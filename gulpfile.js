@@ -5,10 +5,12 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     del = require('del');
 
-gulp.task('build', function() {
-  return gulp.src('src/ExcelFormulaUtilities.js')
-    .pipe(concat('src/ExcelFormulaUtilities.js'))
-    .pipe(rename("excel-formula.js"))
-    .pipe(gulp.dest('lib'))
-    .pipe(notify({ message: 'Scripts task complete' }));
+gulp.task('minify', function() {
+  return gulp.src('src/*.js')
+      .pipe(concat('excel-formula.js'))
+      .pipe(gulp.dest('dist'))
+      .pipe(rename({suffix: '.min'}))
+      .pipe(uglify())
+      .pipe(gulp.dest('dist'))
+      .pipe(notify({ message: 'Scripts task complete' }));
 });
