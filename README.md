@@ -9,61 +9,31 @@ Changes to the core js library live in the master branch.
 ##Install using npm
 npm install excel-formula
 
-##Installation
-  1. Grab excel-formula.js from dist/*
-  
-Check out the examples below or if you'd like to use the beautifier online click here http://excelformulabeautifier.com/
+## Installation for web
+Grab the latest js files in the dist folder.
 
-##Basic usage
+## Basic usage for web
+    <script src="excel-formula.js" />
+    <script>
+        var formattedFormula = excelFormulaUtilities.formatFormula('IF(1+1=2,"true","false")');
+        alert(formattedFormula)
+    </script>
 
-This will return a formated formula in plain text.  
+## Basic Usage for Node
+    var formula = require('excel-formula');
+    var formattedFormula = formula.formatFormula('IF(1+1=2,"true","false")');
+    console.log(formatFormula);
 
-    excelFormulaUtilities.formatFormula('IF(1+1=2,"true","false")'); //Returns a string containing the formatted formula.
+## Node methods
+See basic usage above.
+    formula.getTokens (formula);
+    formula.formatFormula (formula, [opts])
+    formula.toJavaScript(formula)
+    formula.toCSharp(formula)
 
-##Example
-
-To see this example check out ./examples/basic_example1/index.html
-
-###The JavaScript
-	window.onload = function(){
-		//Beautify an Excel formula output to text
-        var formula_1 = 'SUM((A1:A10>=5)*(A1:A10<=10)*A1:A10)';
-		document.getElementById('fomatFormula_1').innerHTML = formula_1;
-		document.getElementById('fomatFormula_1_out').innerHTML = excelFormulaUtilities.formatFormula(formula_1);
-
-        //Beautify an Excel formula output to html.
-        var formula_2 = '=RIGHT(A2,LEN(A2)-FIND("*",SUBSTITUTE(A2," ","*",LEN(A2)-LEN(SUBSTITUTE(A2," ","")))))';
-		document.getElementById('fomatFormula_2').innerHTML = formula_2;
-		document.getElementById('fomatFormula_2_out').innerHTML = excelFormulaUtilities.formatFormulaHTML(formula_2);
-
-        //Convert an Excel formula to C#
-        var formula_3 = '=IF(A2:A3="YES","A2 equals yes", "A2 does not equal yes")';
-		document.getElementById('fomatFormula_3').innerHTML = formula_3;
-		document.getElementById('fomatFormula_3_out').innerHTML = excelFormulaUtilities.formula2CSharp(formula_3);
-
-        //Convert an Excel formula to JavaScript
-        var formula_4 = 'ADDRESS(ROW(DataRange2),COLUMN(DataRange2),4)&":"&ADDRESS(MAX((DataRange2<>"")*ROW(DataRange2)),COLUMN(DataRange2)+COLUMNS(DataRange2)-1,4)';
-		document.getElementById('fomatFormula_4').innerHTML = formula_4;
-		document.getElementById('fomatFormula_4_out').innerHTML = excelFormulaUtilities.formula2JavaScript(formula_4);
-	}
-
-###The HTML
-	<div class="formula">
-		<h2>excelFormulaUtilities.formatFormula( "<span id="fomatFormula_1"></span>" );</h2>
-		<pre id="fomatFormula_1_out"></pre>
-	</div>
-
-	<div class="formula">
-		<h2>excelFormulaUtilities.formatFormulaHTML( "<span id="fomatFormula_2"></span>" );</h2>
-		<pre id="fomatFormula_2_out"></pre>
-	</div>
-
-	<div class="formula">
-		<h2>excelFormulaUtilities.formula2CSharp( "<span id="fomatFormula_3"></span>" );</h2>
-		<div id="fomatFormula_3_out"></div>
-	</div>
-
-	<div class="formula">
-		<h2>excelFormulaUtilities.formula2Javascript( "<span id="fomatFormula_4"></span>" );</h2>
-		<pre id="fomatFormula_4_out"></pre>
-	</div>
+## Web methods
+excelFormulaUtilities is a global variable.
+    excelFormulaUtilities.getTokens (formula);
+    excelFormulaUtilities.formatFormula (formula, [opts])
+    excelFormulaUtilities.formula2JavaScript(formula)
+    excelFormulaUtilities.formula2CSharp(formula)
