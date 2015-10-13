@@ -25,7 +25,7 @@
   "scripts": {
     "test": "qunit -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js"
   },
-  "main": "./src/main",
+  "main": "index.js",
   "engines": {
     "node": "*"
   },

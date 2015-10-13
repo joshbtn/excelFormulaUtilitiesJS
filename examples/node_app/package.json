@@ -1,0 +1,14 @@
+{
+  "author": "Josh Bennett (http://joshbennett.me/)",
+  "name": "excel-formula-example-app",
+  "description": "Simple node example for excel-formula",
+  "version": "0.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "*"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "excel-formula": "file:../.."
+  }
+}

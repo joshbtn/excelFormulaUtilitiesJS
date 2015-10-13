@@ -11,3 +11,7 @@ index.html
 robots.txt
 testapp.js
 index.coffee
+dist
+.npmignore
+gulpfile.js
+license.include
