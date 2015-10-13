@@ -26,6 +26,7 @@ Grab the latest js files in the dist folder.
 
 ## Node methods
 See basic usage above.
+
     formula.getTokens (formula);
     formula.formatFormula (formula, [opts])
     formula.toJavaScript(formula)
@@ -33,6 +34,7 @@ See basic usage above.
 
 ## Web methods
 excelFormulaUtilities is a global variable.
+
     excelFormulaUtilities.getTokens (formula);
     excelFormulaUtilities.formatFormula (formula, [opts])
     excelFormulaUtilities.formula2JavaScript(formula)
