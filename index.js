@@ -2,9 +2,9 @@
 (function() {
   var xl;
 
-  require('./core');
+  require('./src/core');
 
-  require('./ExcelFormulaUtilities');
+  require('./src/ExcelFormulaUtilities');
 
   xl = excelFormulaUtilities;
 
