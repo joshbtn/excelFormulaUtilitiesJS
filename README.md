@@ -1,10 +1,9 @@
-# ExcelFormulaBeautifier.com
+# Excel Formula Utilities for JavaScript
 
-This lives under the gh-pages branch.
+## ExcelFormulaBeautifier.com
+To submit pull requests for ExcelFormulaBeautifier.com please oppen a pull request after gh-pages branch.
 To submit pull requests for [ExcelFormulaBeautifier.com](http://ExcelFormulaBeautifier.com) please use this branch.
 Changes to the core js library live in the master branch.
-
-# Excel Formula Utilities for JavaScript
 
 ##Install using npm
 npm install excel-formula
