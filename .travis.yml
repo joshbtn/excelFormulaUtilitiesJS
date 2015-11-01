@@ -3,3 +3,4 @@ node_js:
   - "stable"
   - "iojs"
   - "0.10.24"
+sudo: false
