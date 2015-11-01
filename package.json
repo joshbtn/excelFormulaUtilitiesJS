@@ -2,7 +2,7 @@
   "author": "Josh Bennett (http://joshbennett.me/)",
   "name": "excel-formula",
   "description": "Methods to beautify an excel formula and convert it to JavaScript or C#",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "homepage": "http://excelformulabeautifier.com/",
   "contributors": [
     {
@@ -23,7 +23,7 @@
     "convert"
   ],
   "scripts": {
-    "test": "qunit -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js"
+    "test": "./node_modules/qunit/bin/cli.js -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js"
   },
   "main": "index.js",
   "engines": {
@@ -31,13 +31,13 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "closure-compiler": "~0.2.6",
     "del": "^2.0.2",
     "docco": "~0.6.3",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.4.1"
+    "gulp-uglify": "^1.4.1",
+    "qunit": "~0.7.7"
   }
 }
