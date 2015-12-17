@@ -1,5 +1,6 @@
 # Excel Formula Utilities for JavaScript
-[![Build Status](https://travis-ci.org/josh3ennett/excelFormulaUtilitiesJS.svg)](https://travis-ci.org/josh3ennett/excelFormulaUtilitiesJS)
+
+master build status [![Build Status](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS.svg?branch=master)](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS)
 
 ## ExcelFormulaBeautifier.com
 To submit pull requests for ExcelFormulaBeautifier.com please oppen a pull request after gh-pages branch.
