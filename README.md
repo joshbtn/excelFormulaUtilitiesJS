@@ -1,6 +1,6 @@
 # Excel Formula Utilities for JavaScript
 
-master build status [![Build Status](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS.svg?branch=master)](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS)
+[![Build Status](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS.svg?branch=master)](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS)
 
 ## ExcelFormulaBeautifier.com
 To submit pull requests for ExcelFormulaBeautifier.com please oppen a pull request after gh-pages branch.
@@ -16,7 +16,7 @@ Grab the latest js files in the dist folder.
 ## Basic usage for web
     <script src="excel-formula.js" />
     <script>
-        var formattedFormula = excelFormulaUtilities.formatFormula('IF(1+1=2,"true","false")');
+        var formattedFormula = excelFormulaUtilities.formatFormulaHTML('IF(1+1=2,"true","false")');
         alert(formattedFormula)
     </script>
 
