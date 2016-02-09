@@ -27,16 +27,18 @@ Grab the latest js files in the dist folder.
 
 ## Node methods
 See basic usage above.
-
+```javascript
     formula.getTokens (formula);
     formula.formatFormula (formula, [opts])
     formula.toJavaScript(formula)
     formula.toCSharp(formula)
-
+```
 ## Web methods
 excelFormulaUtilities is a global variable.
-
+```javascript
     excelFormulaUtilities.getTokens (formula);
-    excelFormulaUtilities.formatFormula (formula, [opts])
+    excelFormulaUtilities.formatFormula (formula, [opts]) // This will work fine in a pre tag
+    excelFormulaUtilities.formatFormulaHTML(formula) // Use this if you want the output as html.
     excelFormulaUtilities.formula2JavaScript(formula)
     excelFormulaUtilities.formula2CSharp(formula)
+```
