@@ -187,7 +187,7 @@
  * http://jquery.org/license
  *
  * Based on Ewbi's Go Calc Prototype Excel Formula Parser. [http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html]
- */ 
+ */
 (function (root) {
     var excelFormulaUtilities = root.excelFormulaUtilities = root.excelFormulaUtilities || {},
     core = root.excelFormulaUtilities.core,
@@ -1210,7 +1210,9 @@
                     "ABS": "Math.ABS",
                     "SUM": "",
                     "IF": "",
-                    "&": "+"
+                    "&": "+",
+                    "AND": "",
+                    "OR": ""
                 },
                 currentFunctionOnStack = functionStack[functionStack.length - 1],
                 useTemplate = false;
@@ -1265,6 +1267,12 @@
                 case "sum":
                     outstr = "+";
                     break;
+                case "and":
+                    outstr = "&&";
+                    break;
+                case "or":
+                    outstr = "||";
+                    break;
                 default:
                     outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                     useTemplate = true;
@@ -1287,6 +1295,24 @@
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
                                 outstr = breakOutRanges(tokenString, "+");
+                            } else {
+                                outStr = tokenString;
+                            }
+
+                            break;
+                        case "and":
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "&&");
+                            } else {
+                                outStr = tokenString;
+                            }
+
+                            break;
+                        case "or":
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "||");
                             } else {
                                 outStr = tokenString;
                             }
