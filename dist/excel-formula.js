@@ -1205,9 +1205,9 @@
                 directConversionMap = {
                     "=": "==",
                     "<>": "!=",
-                    "MIN": "Math.Min",
-                    "MAX": "Math.Max",
-                    "ABS": "Math.ABS",
+                    "MIN": "Math.min",
+                    "MAX": "Math.max",
+                    "ABS": "Math.abs",
                     "SUM": "",
                     "IF": "",
                     "&": "+",

@@ -96,7 +96,7 @@ test("formula2CSharp", function() {
   equal(excelFormulaUtilities.formula2CSharp(inputFormula), expected, "Nested If Test.");
 
   inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
-  expected = '((Math.Max(1,-10)>0?"foo":"bar")=="foo"?"foo":"bar")';
+  expected = '((Math.max(1,-10)>0?"foo":"bar")=="foo"?"foo":"bar")';
   equal(excelFormulaUtilities.formula2CSharp(inputFormula), expected, "Nested If Test with a nested function.");
 
   inputFormula = 'SUM(1,1)';
@@ -130,7 +130,7 @@ test("formula2JavaScript", function() {
   equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Nested If Test.");
 
   inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
-  expected = '((Math.Max(1,-10)>0?"foo":"bar")==="foo"?"foo":"bar")';
+  expected = '((Math.max(1,-10)>0?"foo":"bar")==="foo"?"foo":"bar")';
   equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Nested If Test with a nested function.");
 
   inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
