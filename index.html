@@ -62,7 +62,7 @@
 
 	<div id="container" class="container">
 		<div class="row">
-            <div class="span12">
+            <div class="span10">
 	            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert excel formulas to JavaScript. It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
 				<div id="inputArea" class="row">
 					<div class="span8">
@@ -75,19 +75,36 @@
 							</div>
 						</div>
 					</div>
-					<div class="span4">
+					<div class="span2">
 		            	<!-- label class="" for="mode">Mode: </label -->
-		                <select id="mode" class="span4" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
+		                <select id="mode" class="span2" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
 		                    <option value="beautify">Beautify</option>
 		                    <option value="minify">Minify</option>
 		                    <option value="js">Formula to JavaScript</option>
 		                </select>
-		                <input type="checkbox" id="isEu" style="vertical-align:middle"/><span style="vertical-align:middle"> Use ; list seperator</span>
+
 		            </div>
 				</div>
 
 				<div class="formula">
 					<div id="fomatFormula_2_out"></div>
+				</div>
+			</div>
+
+			<div class="span2">
+				<div class="row">
+					<div class="span12">
+						<strong>Formatting Options</strong> <br/>
+						<p><input type="checkbox" id="isEu" style="vertical-align:middle"/><span style="vertical-align:middle"> Use ; list seperator</span></p>
+						<p>
+						<input type="radio" name="tabsOrSpaces" id="tabsOrSpaces" value="spaces" checked=checked/> Spaces
+						<input type="radio" name="tabsOrSpaces" id="tabsOrSpaces" value="tabs"/> Tabs
+						<br/>
+						Number of spaces: <br />
+						<input type="text" name="numberOfSpaces" id="numberOfSpaces" />
+						</p>
+
+					</div>
 				</div>
 			</div>
 
