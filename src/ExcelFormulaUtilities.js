@@ -452,8 +452,22 @@
         }
 
         // dump remaining accumulation
-        if (token.length > 0) {
+        if (token.length > 0 || inString || inPath || inRange || inError) {
+          if (inString || inPath || inRange || inError) {
+            if (inString) {
+              token = "\"" + token;
+            } else if (inPath) {
+              token = "'" + token;
+            } else if (inRange) {
+              token = "[" + token;
+            } else if (inError) {
+              token = "#" + token;
+            }
+
+            tokens.add(token, TOK_TYPE_UNKNOWN);
+          } else {
             tokens.add(token, TOK_TYPE_OPERAND);
+          }
         }
 
         // move all tokens to a new collection, excluding all unnecessary white-space tokens
