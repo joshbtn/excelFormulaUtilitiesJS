@@ -1113,6 +1113,7 @@
                 switch (token.subtype) {
 
                     case TOK_SUBTYPE_RANGE:
+                        //Assume '=' sign
                         if(!currentFunctionOnStack){
                           break;
                         }

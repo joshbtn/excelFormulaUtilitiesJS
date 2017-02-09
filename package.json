@@ -23,7 +23,7 @@
     "convert"
   ],
   "scripts": {
-    "test": "./node_modules/qunit/bin/cli.js -t ./test/browser/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js  & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.min.js -t ./test/browser/ExcelFormulaUtilities.test.js & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.js -t ./test/browser/ExcelFormulaUtilities.test.js"
+    "test": "./node_modules/mocha/bin/mocha & ./node_modules/qunit/bin/cli.js -t ./test/browser/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js  & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.min.js -t ./test/browser/ExcelFormulaUtilities.test.js & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.js -t ./test/browser/ExcelFormulaUtilities.test.js"
   },
   "main": "index.js",
   "engines": {

@@ -203,13 +203,13 @@ test("Logical operands TRUE and FALSE should not break formatting - found in iss
 
 test("Test parsing a formula that does not start with a function. From Issue #46", function(){
   var inputFormula='=A1+B1',
-  expected = '= A1 + A1',
+  expected = 'A1+B1',
   actual = excelFormulaUtilities.formula2JavaScript(inputFormula);
 
   equal(actual, expected, 'Should Covert to JS');
 
   inputFormula='=A5',
-  expected = '= A5',
+  expected = 'A5',
   actual = excelFormulaUtilities.formula2JavaScript(inputFormula);
 
   equal(actual, expected, "Should convert to JS");
