@@ -1113,7 +1113,9 @@
                 switch (token.subtype) {
 
                     case TOK_SUBTYPE_RANGE:
-
+                        if(!currentFunctionOnStack){
+                          break;
+                        }
                         switch (currentFunctionOnStack.name.toLowerCase()) {
                         // If in the sum function break aout cell names and add
                         case "sum":

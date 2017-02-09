@@ -2,12 +2,12 @@
   "author": "Josh Bennett (http://joshbennett.me/)",
   "name": "excel-formula",
   "description": "Methods to beautify an excel formula and convert it to JavaScript or C#",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "homepage": "http://excelformulabeautifier.com/",
   "contributors": [
     {
       "name": "Josh Bennett",
-      "url": "http://joshbennett.me"
+      "url": "http://j-ben.com"
     },
     {
       "name": "Adam Schmideg",
@@ -23,7 +23,7 @@
     "convert"
   ],
   "scripts": {
-    "test": "./node_modules/qunit/bin/cli.js -t ./test/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js  & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.min.js -t ./test/ExcelFormulaUtilities.test.js & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.js -t ./test/ExcelFormulaUtilities.test.js"
+    "test": "./node_modules/qunit/bin/cli.js -t ./test/browser/ExcelFormulaUtilities.test.js -d ./src/core.js -c ./src/ExcelFormulaUtilities.js  & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.min.js -t ./test/browser/ExcelFormulaUtilities.test.js & ./node_modules/qunit/bin/cli.js -c ./dist/excel-formula.js -t ./test/browser/ExcelFormulaUtilities.test.js"
   },
   "main": "index.js",
   "engines": {
