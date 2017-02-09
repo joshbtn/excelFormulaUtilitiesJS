@@ -3,7 +3,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     notify = require('gulp-notify'),
     concat = require('gulp-concat'),
-    del = require('del'), 
+    del = require('del'),
     paths = {scripts: ['src/core.js', 'src/ExcelFormulaUtilities.js']};
 
 
@@ -16,3 +16,5 @@ gulp.task('scripts', function() {
       .pipe(uglify())
       .pipe(gulp.dest('dist'))
 });
+
+gulp.task('default', ['scripts'])
