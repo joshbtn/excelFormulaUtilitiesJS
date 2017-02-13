@@ -1,6 +1,7 @@
 html, body{ font-family: 'Open Sans', sans-serif; margin-top:0.61em;}
 h1, h2, h3, h4, h5, h6 {font-family: 'Open Sans', sans-serif;}
-footer{display:none;}
+footer{margin-top:1.61em;text-align:  right}
+
 textarea{border:solid 1px #e4e4e4}
 h1{font-weight:normal; }
 

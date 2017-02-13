@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <title>Online Excel Formula Beautifier</title>
-  
+
   <meta name="description" content="Quickly beautify your excel formulas online or convert your Excel Formulas to JavaScript">
   <meta name="author" content="Josh Bennett">
-  
+
 
   <meta name="google-site-verification" content="1EsRidFTYqGKrnrC0Tm2-4cDKYb2FvCDkhN25lS_qUo" />
   <meta name="msvalidate.01" content="F075E5FA6F0F18E505A8BED664939F6A" />
@@ -17,37 +17,37 @@
   <meta property="og:url" content="http://excelformulabeautifier.com/" />
   <meta property="og:type" content="landing page" />
   <meta property="og:site_name" content="Excel Formula Beautifier" />
-  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css" />
   <link rel="stylesheet" type="text/css" href="css/screen.css" />
-  
+
   <script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-27681518-1']);
       _gaq.push(['_setDomainName', 'excelformulabeautifier.com']);
       _gaq.push(['_trackPageview']);
-    
+
       (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
         ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-      
-      
+
+
 
   </script>
-  
+
 </head>
 
 <body>
     <!-- Main Content -->
     <header class="container">
-    	
+
 		<div class="row">
     		<div class="span12">
     			<img class="" src="img/logo.png" height="100" width="104" alt="Logo" onclick="_gaq.push(['_trackEvent', 'Inactive Element', 'Clicked', 'Logo'])" />
@@ -57,9 +57,9 @@
 				</div>
 			</div>
 		</div>
-		
+
 	</header>
-	
+
 	<div id="container" class="container">
 		<div class="row">
             <div class="span12">
@@ -80,19 +80,19 @@
 		                <select id="mode" class="span4" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
 		                    <option value="beautify">Beautify</option>
 		                    <option value="minify">Minify</option>
-		                    <option value="js">Formula to JavaScript</option> 
+		                    <option value="js">Formula to JavaScript</option>
 		                </select>
 		                <input type="checkbox" id="isEu" style="vertical-align:middle"/><span style="vertical-align:middle"> Use ; list seperator</span>
 		            </div>
 				</div>
-				
+
 				<div class="formula">
 					<div id="fomatFormula_2_out"></div>
 				</div>
 			</div>
-			
+
 		</div>
-		
+
 		<div class="row">
 			<div id="sideContent" class="span12 ">
 		        <hr />
@@ -104,17 +104,19 @@
 		        </p>
 		    </div>
 		</div>
-		
-	</div>
-    
-    <footer>
-		&copy; copyright 2013 <a href="http://joshbennett.me" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Josh Bennett Blog'])">Josh Bennett</a>
-	</footer>
 
+
+<hr />
+    <footer>
+		<div>&copy; Copyright 2017 <a href="http://j-ben.com" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Josh Bennett Blog'])">Josh Bennett</a></div>
+    <div>ExcelFormulaUtilities.js Version: <span id="version"></span></div>
+	</footer>
+</div>
     <script src="js/page.js"></script>
     <script src="src/core.js"></script>
     <script src="src/ExcelFormulaUtilities.js"></script>
 	<script src="js/beautifier.js"></script>
+
 
   </body>
 </html>
