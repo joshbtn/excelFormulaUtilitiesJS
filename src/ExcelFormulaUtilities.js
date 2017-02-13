@@ -1078,7 +1078,7 @@
                     useTemplate = true;
                     switch (currentFunctionOnStack.name.toLowerCase()) {
                     case "if":
-                        outstr = ")";
+                        outstr = currentFunctionOnStack.argumentNumber === 1 ? ":0)" : ")";
                         useTemplate = false;
                         break;
                     default:
