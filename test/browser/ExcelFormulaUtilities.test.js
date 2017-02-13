@@ -125,6 +125,10 @@ test("formula2JavaScript", function() {
   expected = '("foo"==="foo"?"foo":"bar")';
   equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Simple if example.");
 
+  inputFormula = 'IF("foo" = "foo", "foo")',
+  expected = '("foo"==="foo"?"foo":0)';
+  equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- If with no else example.");
+
   inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
   expected = '((true?"foo":"bar")==="foo"?"foo":"bar")';
   equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Nested If Test.");
@@ -144,7 +148,6 @@ test("formula2JavaScript", function() {
   inputFormula = 'SUM(AA1:BA3)';
   expected = '(AA1+AB1+AC1+AD1+AE1+AF1+AG1+AH1+AI1+AJ1+AK1+AL1+AM1+AN1+AO1+AP1+AQ1+AR1+AS1+AT1+AU1+AV1+AW1+AX1+AY1+AZ1+BA1+AA2+AB2+AC2+AD2+AE2+AF2+AG2+AH2+AI2+AJ2+AK2+AL2+AM2+AN2+AO2+AP2+AQ2+AR2+AS2+AT2+AU2+AV2+AW2+AX2+AY2+AZ2+BA2+AA3+AB3+AC3+AD3+AE3+AF3+AG3+AH3+AI3+AJ3+AK3+AL3+AM3+AN3+AO3+AP3+AQ3+AR3+AS3+AT3+AU3+AV3+AW3+AX3+AY3+AZ3+BA3)';
   equal(excelFormulaUtilities.formula2JavaScript(inputFormula), expected, inputFormula + " -- Make sure the sum of ranges break out, See issue #6 https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/6");
-
 
   inputFormula = 'SUM(AG39:AG49)';
   expected = '(AG39+AG40+AG41+AG42+AG43+AG44+AG45+AG46+AG47+AG48+AG49)';
