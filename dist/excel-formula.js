@@ -105,9 +105,9 @@
 		}
 		// Own properties are enumerated firstly, so to speed up,
 		// if last one is own, then all properties are own.
-		var key;
-		for (key in obj) { }
-		return key === undefined || hasOwnProperty.call(obj, key);
+		var lastKey;
+		for (key in obj) { lastKey = key; }
+		return lastKey === undefined || hasOwnProperty.call(obj, lastKey);
 	};
 
 	/**
