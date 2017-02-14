@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>Online Excel Formula Beautifier</title>
@@ -7,12 +8,11 @@
   <meta name="description" content="Quickly beautify your excel formulas online or convert your Excel Formulas to JavaScript">
   <meta name="author" content="Josh Bennett">
 
-
   <meta name="google-site-verification" content="1EsRidFTYqGKrnrC0Tm2-4cDKYb2FvCDkhN25lS_qUo" />
   <meta name="msvalidate.01" content="F075E5FA6F0F18E505A8BED664939F6A" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Excel Formula Beautifier"/>
+  <meta property="og:title" content="Excel Formula Beautifier" />
   <meta property="og:image" content="http://excelformulabeautifier.com/img/logo.png" />
   <meta property="og:url" content="http://excelformulabeautifier.com/" />
   <meta property="og:type" content="landing page" />
@@ -26,97 +26,117 @@
   <link rel="stylesheet" type="text/css" href="css/screen.css" />
 
   <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-27681518-1']);
-      _gaq.push(['_setDomainName', 'excelformulabeautifier.com']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-
-
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-27681518-1']);
+    _gaq.push(['_setDomainName', 'excelformulabeautifier.com']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript';
+      ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ga, s);
+    })();
   </script>
 
 </head>
 
 <body>
-    <!-- Main Content -->
-    <header class="container">
+  <!-- Main Content -->
+  <header class="container">
 
-		<div class="row">
-    		<div class="span12">
-    			<img class="" src="img/logo.png" height="100" width="104" alt="Logo" onclick="_gaq.push(['_trackEvent', 'Inactive Element', 'Clicked', 'Logo'])" />
-				<div class="title">
-					<p>Beautify or Convert Excel Formulas to JavaScript.</p>
-					<h1>Excel Formula Beautifier</h1>
-				</div>
-			</div>
-		</div>
+    <div class="row">
+      <div class="span12">
+        <img class="" src="img/logo.png" height="100" width="104" alt="Logo" onclick="_gaq.push(['_trackEvent', 'Inactive Element', 'Clicked', 'Logo'])" />
+        <div class="title">
+          <p>Beautify or Convert Excel Formulas to JavaScript.</p>
+          <h1>Excel Formula Beautifier</h1>
+        </div>
+      </div>
+    </div>
 
-	</header>
+  </header>
 
-	<div id="container" class="container">
-		<div class="row">
-            <div class="span12">
-	            <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert excel formulas to JavaScript. It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
-				<div id="inputArea" class="row">
-					<div class="span8">
-						<div class="row">
-							<div class="span8">
-								<!-- input type="text" id="formula_input" class="input-xxlarge" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" /-->
-								<textarea rows="1" id="formula_input" class="span8"
-								    onclick="window.excelFormulaBeautifier.examples.beautifier.formulaAreaClicked()"
-									onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="span4">
-		            	<!-- label class="" for="mode">Mode: </label -->
-		                <select id="mode" class="span4" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
+  <div id="container" class="container">
+    <div class="row">
+      <div class="span12">
+        <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert excel formulas to JavaScript. It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
+        <div id="inputArea" class="row">
+          <div class="span8">
+            <div class="row">
+              <div class="span8">
+                <!-- input type="text" id="formula_input" class="input-xxlarge" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" /-->
+                <textarea rows="1" id="formula_input" class="span8" onclick="window.excelFormulaBeautifier.examples.beautifier.formulaAreaClicked()" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="span2">
+            <!-- label class="" for="mode">Mode: </label -->
+            <select id="mode" class="span2" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
 		                    <option value="beautify">Beautify</option>
 		                    <option value="minify">Minify</option>
 		                    <option value="js">Formula to JavaScript</option>
 		                </select>
-		                <input type="checkbox" id="isEu" style="vertical-align:middle"/><span style="vertical-align:middle"> Use ; list seperator</span>
-		            </div>
-				</div>
+          </div>
+        </div>
+        <div class="formula">
+          <div id="fomatFormula_2_out"></div>
+        </div>
+      </div>
 
-				<div class="formula">
-					<div id="fomatFormula_2_out"></div>
-				</div>
-			</div>
+    </div>
 
-		</div>
+    <!--Formatting-->
+    <div class="row" style="margin-top:1.61em;">
+      <div class="span12">
+        <div class="row">
+          <div class="span12">
+            <p><strong>Formatting Options:</strong></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span3">
+            <p><input type="checkbox" id="isEu" style="vertical-align:middle" /><span style="vertical-align:middle"> Use ; list seperator</span></p>
+            <p>
+              <!--<input type="radio" name="tabsOrSpaces" id="tabsOrSpaces" value="spaces" checked=checked/> Spaces
+              <input type="radio" name="tabsOrSpaces" id="tabsOrSpaces" value="tabs" /> Tabs-->
+              Number of indent spaces :
+              <input type="text" name="numberOfSpaces" id="numberOfSpaces" class="input-mini" value="4" onchange="window.excelFormulaBeautifier.examples.beautifier.update()" />
+            </p>
+          </div>
+          <div class="span9">
 
-		<div class="row">
-			<div id="sideContent" class="span12 ">
-		        <hr />
-		        <p>Have some feedback or feature requests? </p>
-		        <p>
-		            <a href="https://github.com/joshbtn/excelFormulaUtilitiesJS/issues?sort=comments&direction=desc&state=open" class="btn" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Github Feedback'])">Post Feedback</a>
-		            <a href="http://github.com/joshbtn/excelFormulaUtilitiesJS" class="external_link btn" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Github Fork'])">Fork Me on GitHub</a>
-		            <a href="https://twitter.com/btnpush" class="twitter-follow-button btn" data-show-count="false" data-size="large" data-lang="en" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Twitter'])">Follow me @joshatjben</a>
-		        </p>
-		    </div>
-		</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
-<hr />
+    <div class="row">
+      <div id="sideContent" class="span12 ">
+        <hr />
+        <p>Have some feedback or feature requests? </p>
+        <p>
+          <a href="https://github.com/joshbtn/excelFormulaUtilitiesJS/issues?sort=comments&direction=desc&state=open" class="btn" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Github Feedback'])">Post Feedback</a>
+          <a href="http://github.com/joshbtn/excelFormulaUtilitiesJS" class="external_link btn" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Github Fork'])">Fork Me on GitHub</a>
+          <a href="https://twitter.com/btnpush" class="twitter-follow-button btn" data-show-count="false" data-size="large" data-lang="en" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Twitter'])">Follow me on twitter</a>
+        </p>
+      </div>
+    </div>
+
+    <hr />
     <footer>
-		<div>&copy; Copyright 2017 <a href="http://j-ben.com" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Josh Bennett Blog'])">Josh Bennett</a></div>
-    <div>ExcelFormulaUtilities.js Version: <span id="version"></span></div>
-	</footer>
-</div>
-    <script src="js/page.js"></script>
-    <script src="src/core.js"></script>
-    <script src="src/ExcelFormulaUtilities.js"></script>
-	<script src="js/beautifier.js"></script>
+      <div>&copy; Copyright 2017 <a href="http://j-ben.com" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Josh Bennett Blog'])">Josh Bennett</a></div>
+      <div>ExcelFormulaUtilities.js Version: <span id="version"></span></div>
+    </footer>
+  </div>
 
+  <script src="js/page.js"></script>
+  <script src="src/core.js"></script>
+  <script src="src/ExcelFormulaUtilities.js"></script>
+  <script src="js/beautifier.js"></script>
 
-  </body>
+</body>
+
 </html>

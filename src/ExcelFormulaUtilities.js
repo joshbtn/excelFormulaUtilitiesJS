@@ -1005,8 +1005,8 @@
      * @param {string} formula
      * @param {object} options optional param
      */
-    var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula) {
-        var options = {
+    var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula, options) {
+        var defaultOptions = {
             tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><span class="function_start">(</span><br />',
             tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
             tmplOperandText: '{{autoindent}}<span class="quote_mark">"</span><span class="text">{{token}}</span><span class="quote_mark">"</span>',
@@ -1021,6 +1021,12 @@
             prefix: "=",
             customTokenRender: null
         };
+
+        if (options) {
+            options = core.extend(true, defaultOptions, options);
+        } else {
+            options = defaultOptions;
+        }
 
         return formatFormula(formula, options);
     }
