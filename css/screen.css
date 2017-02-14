@@ -51,3 +51,7 @@ header .title{float:left;}
 /*-----------FORMULA STYLES------------*/
 
 label{margin: 0.5em 0;}
+
+input[type="file"], input[type="image"], input[type="submit"], input[type="reset"], input[type="button"], input[type="radio"], input[type="checkbox"] {
+    vertical-align: text-top;
+}
