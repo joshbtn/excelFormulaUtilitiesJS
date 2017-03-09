@@ -2,12 +2,12 @@
   "author": "Josh Bennett (http://joshbennett.me/)",
   "name": "excel-formula",
   "description": "Methods to beautify an excel formula and convert it to JavaScript or C#",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "homepage": "http://excelformulabeautifier.com/",
   "contributors": [
     {
       "name": "Josh Bennett",
-      "url": "http://j-ben.com"
+      "url": "https://github.com/joshbtn"
     },
     {
       "name": "Adam Schmideg",

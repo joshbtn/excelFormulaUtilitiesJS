@@ -73,6 +73,12 @@
               case "js":
                 this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2JavaScript(this.formula);
                 break;
+              case "csharp":
+                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2CSharp(this.formula);
+                break;
+              case "python":
+                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2Python(this.formula);
+                break;
             }
           } catch (exception) {
             //Do nothing, This should throw an error when the formula is improperly formed, which shouldn't blow things up.
