@@ -217,3 +217,29 @@ test("Test parsing a formula that does not start with a function. From Issue #46
 
   equal(actual, expected, "Should convert to JS");
 })
+
+test("formula2Python", function() {
+  var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
+  expected = '("foo"=="foo" and "foo" or "bar")';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "Simple if example.");
+
+  inputFormula = 'IF(IF(true, "foo", "bar") = "foo", "foo", "bar")';
+  expected = '((True and "foo" or "bar")=="foo" and "foo" or "bar")';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "Nested If Test.");
+
+  inputFormula = 'IF(IF(MAX(1, -10)>0, "foo", "bar") = "foo", "foo", "bar")';
+  expected = '((max(1,-10)>0 and "foo" or "bar")=="foo" and "foo" or "bar")';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "Nested If Test with a nested function.");
+
+  inputFormula = 'SUM(1,1)';
+  expected = '(1+1)';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "SUM(1,1)");
+
+  inputFormula = 'SUM(1,1,1,1)';
+  expected = '(1+1+1+1)';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "SUM(1,1,1,1)");
+
+  inputFormula = 'IF(FOO_BAR = "foo bar", "THIS WORKED", "THIS ISN\'T WORKING")';
+  expected = '(FOO_BAR=="foo bar" and "THIS WORKED" or "THIS ISN\'T WORKING")';
+  equal(excelFormulaUtilities.formula2Python(inputFormula), expected, "Test that strings keep correct spaces. See issue #2. https://github.com/joshatjben/excelFormulaUtilitiesJS/issues/2");
+});

@@ -16,7 +16,8 @@
       return xl.formatFormula(f, opts);
     },
     toJavaScript: xl.formula2JavaScript,
-    toCSharp: xl.formula2CSharp
+    toCSharp: xl.formula2CSharp,
+    toPython: xl.formula2Python
   };
 
 }).call(this);

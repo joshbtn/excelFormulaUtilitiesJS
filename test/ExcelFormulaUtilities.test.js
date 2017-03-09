@@ -18,5 +18,9 @@ describe("Test parsing a formula that does not start with a function. From Issue
   expected = 'A1+B1';
   actual = formula.toJavaScript(inputFormula);
 
+  inputFormula='=A1+B1';
+  expected = 'A1+B1';
+  actual = formula.toPython(inputFormula);
+
   assert.equal(actual, expected);
 })

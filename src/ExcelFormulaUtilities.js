@@ -1235,6 +1235,208 @@
         return formula2CSharp(formula).replace('==', '===');
     }
 
+    /**
+     *
+     * @memberof excelFormulaUtilities.convert
+     * @function
+     * @param {string} formula
+     * @returns {string}
+     */
+    var formula2Python = excelFormulaUtilities.formula2Python = function (formula) {
+
+        //Custom callback to format as c#
+        var functionStack = [];
+
+        var tokRender = function (tokenStr, token, indent, linbreak) {
+            var outstr = "",
+                /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
+                tokenString = tokenStr,
+                directConversionMap = {
+                    "=": "==",
+                    "<>": "!=",
+                    "MIN": "min",
+                    "MAX": "max",
+                    "ABS": "math.fabs",
+                    "SUM": "",
+                    "IF": "",
+                    "&": "+",
+                    "AND": "",
+                    "OR": "",
+                    "NOT": "!",
+                    "TRUE": "True",
+                    "FALSE": "False"
+                },
+                currentFunctionOnStack = functionStack[functionStack.length - 1],
+                useTemplate = false;
+
+            switch (token.type.toString()) {
+
+            case TOK_TYPE_FUNCTION:
+
+                switch (token.subtype) {
+
+                case TOK_SUBTYPE_START:
+
+                    functionStack.push({
+                        name: tokenString,
+                        argumentNumber: 0
+                    });
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = true;
+
+                    break;
+
+                case TOK_SUBTYPE_STOP:
+
+                    useTemplate = true;
+                    switch (currentFunctionOnStack.name.toLowerCase()) {
+                    case "if":
+                        outstr = currentFunctionOnStack.argumentNumber === 1 ? ":0)" : ")";
+                        useTemplate = false;
+                        break;
+                    default:
+                        outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                        break
+                    }
+                    functionStack.pop();
+                    break;
+                }
+
+                break;
+
+            case TOK_TYPE_ARGUMENT:
+                switch (currentFunctionOnStack.name.toLowerCase()) {
+                case "if":
+                    switch (currentFunctionOnStack.argumentNumber) {
+                    case 0:
+                        outstr = " and ";
+                        break;
+                    case 1:
+                        outstr = " or ";
+                        break;
+                    }
+                    break;
+                case "sum":
+                    outstr = "+";
+                    break;
+                case "and":
+                    outstr = " and ";
+                    break;
+                case "or":
+                    outstr = " or ";
+                    break;
+                default:
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    useTemplate = true;
+                    break;
+                }
+
+                currentFunctionOnStack.argumentNumber += 1;
+
+                break;
+
+            case TOK_TYPE_OPERAND:
+
+                switch (token.subtype) {
+
+                    case TOK_SUBTYPE_RANGE:
+                        //Assume '=' sign
+                        if(!currentFunctionOnStack){
+                          break;
+                        }
+
+                        if (RegExp("true|false", "gi").test(tokenString)) {
+                          outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                          break;
+                        }
+
+                        switch (currentFunctionOnStack.name.toLowerCase()) {
+                        // If in the sum function break aout cell names and add
+                        case "sum":
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "+");
+                            } else {
+                                outStr = tokenString;
+                            }
+
+                            break;
+                        case "and":
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "&&");
+                            } else {
+                                outStr = tokenString;
+                            }
+
+                            break;
+                        case "or":
+                            //TODO make sure this is working
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = breakOutRanges(tokenString, "||");
+                            } else {
+                                outStr = tokenString;
+                            }
+
+                            break;
+                        // By Default return an array containing all cell names in array
+                        default:
+                            // Create array for ranges
+                            if(RegExp(":","gi").test(tokenString)){
+                                outstr = "[" + breakOutRanges(tokenString, ",") +"]";
+                            } else {
+                                outstr = tokenString;
+                            }
+                            //debugger;
+                            break;
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+            default:
+                if( outstr === "" ){
+                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                }
+                useTemplate = true;
+                break;
+            }
+
+            return {
+                tokenString: outstr,
+                useTemplate: useTemplate
+            };
+        };
+
+        var pythonOutput = formatFormula(
+        formula, {
+            tmplFunctionStart: '{{token}}(',
+            tmplFunctionStop: '{{token}})',
+            tmplOperandError: '{{token}}',
+            tmplOperandRange: '{{token}}',
+            tmplOperandLogical: '{{token}}',
+            tmplOperandNumber: '{{token}}',
+            tmplOperandText: '"{{token}}"',
+            tmplArgument: '{{token}}',
+            tmplOperandOperatorInfix: '{{token}}',
+            tmplFunctionStartArray: "",
+            tmplFunctionStartArrayRow: "{",
+            tmplFunctionStopArrayRow: "}",
+            tmplFunctionStopArray: "",
+            tmplSubexpressionStart: "(",
+            tmplSubexpressionStop: ")",
+            tmplIndentTab: "\t",
+            tmplIndentSpace: " ",
+            autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
+            trim: true,
+            customTokenRender: tokRender
+        });
+        return pythonOutput;
+    };
+
     excelFormulaUtilities.getTokens = getTokens;
 
 }(window|| module.exports || {}));
