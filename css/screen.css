@@ -58,5 +58,6 @@ input[type="file"], input[type="image"], input[type="submit"], input[type="reset
 
 #copyFormulaBtn{
 	float:right;
-
+  position: relative;
+	clear: none;
 }
