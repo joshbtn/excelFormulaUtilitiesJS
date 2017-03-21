@@ -22,7 +22,6 @@
 
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css" />
   <link rel="stylesheet" type="text/css" href="css/screen.css" />
 
   <script type="text/javascript">
@@ -47,7 +46,7 @@
   <header class="container">
 
     <div class="row">
-      <div class="span12">
+      <div class="col-md12">
         <img class="" src="img/logo.png" height="100" width="104" alt="Logo" onclick="_gaq.push(['_trackEvent', 'Inactive Element', 'Clicked', 'Logo'])" />
         <div class="title">
           <p>Beautify or Convert Excel Formulas to JavaScript.</p>
@@ -60,20 +59,18 @@
 
   <div id="container" class="container">
     <div class="row">
-      <div class="span12">
+      <div class="col-md-12">
         <p class="hide description">This is a JavaScript and html5 based excel formula beautifier. It can also convert excel formulas to JavaScript. It has been built using <a href="https://github.com/joshatjben/excelFormulaUtilitiesJS" target="_blank">Excel Formula Utilities JS</a></p>
         <div id="inputArea" class="row">
-          <div class="span8">
-            <div class="row">
-              <div class="span8">
+          <div class="col-md-8">
+
                 <!-- input type="text" id="formula_input" class="input-xxlarge" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()" /-->
-                <textarea rows="1" id="formula_input" class="span8" onclick="window.excelFormulaBeautifier.examples.beautifier.formulaAreaClicked()" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()"></textarea>
-              </div>
-            </div>
+                <textarea rows="1" id="formula_input" class="col-md-8 form-control" onclick="window.excelFormulaBeautifier.examples.beautifier.formulaAreaClicked()" onkeyup="window.excelFormulaBeautifier.examples.beautifier.update()"></textarea>
+
           </div>
-          <div class="span2">
+          <div class="col-md-2">
             <!-- label class="" for="mode">Mode: </label -->
-            <select id="mode" class="span2" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
+            <select id="mode" class="form-control" onchange="window.excelFormulaBeautifier.examples.beautifier.changeMode(this.value)">
 		                    <option value="beautify">Beautify</option>
 		                    <option value="minify">Minify</option>
 		                    <option value="js">Formula to JavaScript</option>
@@ -83,24 +80,30 @@
           </div>
         </div>
 
-        <div class="formula">
-          <button id="copyFormulaBtn" data-clipboard-target="#fomatFormula_2_out">Copy</button>
-          <div id="fomatFormula_2_out"></div>
-        </div>
+
       </div>
 
     </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <div class="formula">
+          <button id="copyFormulaBtn" class="button">Copy</button>
+          <div id="fomatFormula_2_out"></div>
+        </div>
+      </div>
+    </div>
+
     <!--Formatting-->
     <div class="row" style="margin-top:1.61em;">
-      <div class="span12">
+      <div class="col-md-12">
         <div class="row">
-          <div class="span12">
+          <div class="col-md-12">
             <p><strong>Formatting Options:</strong></p>
           </div>
         </div>
         <div class="row">
-          <div class="span3">
+          <div class="col-md-3">
             <p><input type="checkbox" id="isEu" style="vertical-align:middle" /><span style="vertical-align:middle"> Use ; list seperator</span></p>
             <p>
               <!--<input type="radio" name="tabsOrSpaces" id="tabsOrSpaces" value="spaces" checked=checked/> Spaces
@@ -109,7 +112,7 @@
               <input type="text" name="numberOfSpaces" id="numberOfSpaces" class="input-mini" value="4" onchange="window.excelFormulaBeautifier.examples.beautifier.update()" />
             </p>
           </div>
-          <div class="span9">
+          <div class="col-md-9">
 
           </div>
         </div>
@@ -136,11 +139,11 @@
     </footer>
   </div>
 
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
   <script src="js/clipboard.min.js"></script>
-  <script src="js/page.js"></script>
-  <script src="src/core.js"></script>
-  <script src="src/ExcelFormulaUtilities.js"></script>
-  <script src="js/beautifier.js"></script>
+  <script src="dist/excel-formula.min.js"></script>
+  <script src="js/beautifier.min.js"></script>
 
 </body>
 
