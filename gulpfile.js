@@ -44,7 +44,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('site', function() {
-  gulp.src(paths.siteScripts)
+  return gulp.src(paths.siteScripts)
       .pipe(concat('page.js'))
       .pipe(concat('beautifier.js'))
       .pipe(gulp.dest('js/tmp'))
