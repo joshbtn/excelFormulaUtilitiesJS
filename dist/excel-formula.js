@@ -1213,7 +1213,7 @@
      * @param {string} formula
      * @returns {string}
      */
-    var formula2CSharp = excelFormulaUtilities.formula2CSharp = function (formula) {
+    var formula2CSharp = excelFormulaUtilities.formula2CSharp = function (formula, options) {
 
         //Custom callback to format as c#
         var functionStack = [];
@@ -1373,8 +1373,7 @@
             };
         };
 
-        var cSharpOutput = formatFormula(
-        formula, {
+        var defaultOptions = {
             tmplFunctionStart: '{{token}}(',
             tmplFunctionStop: '{{token}})',
             tmplOperandError: '{{token}}',
@@ -1395,7 +1394,15 @@
             autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
             trim: true,
             customTokenRender: tokRender
-        });
+        };
+
+        if (options) {
+            options = core.extend(true, defaultOptions, options);
+        } else {
+            options = defaultOptions;
+        }
+
+        var cSharpOutput = formatFormula(formula, options);
         return cSharpOutput;
     };
 
@@ -1406,8 +1413,8 @@
      * @param {string} formula
      * @returns {string}
      */
-    var formula2JavaScript = excelFormulaUtilities.formula2JavaScript = function (formula) {
-        return formula2CSharp(formula).replace('==', '===');
+    var formula2JavaScript = excelFormulaUtilities.formula2JavaScript = function (formula, options) {
+        return formula2CSharp(formula, options).replace('==', '===');
     }
 
     /**
@@ -1417,7 +1424,7 @@
      * @param {string} formula
      * @returns {string}
      */
-    var formula2Python = excelFormulaUtilities.formula2Python = function (formula) {
+    var formula2Python = excelFormulaUtilities.formula2Python = function (formula, options) {
 
         //Custom callback to format as c#
         var functionStack = [];
@@ -1586,8 +1593,7 @@
             };
         };
 
-        var pythonOutput = formatFormula(
-        formula, {
+        var defaultOptions = {
             tmplFunctionStart: '{{token}}(',
             tmplFunctionStop: '{{token}})',
             tmplOperandError: '{{token}}',
@@ -1608,7 +1614,16 @@
             autoLineBreak: "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT",
             trim: true,
             customTokenRender: tokRender
-        });
+        };
+
+        if (options) {
+            options = core.extend(true, defaultOptions, options);
+        } else {
+            options = defaultOptions;
+        }
+
+        var pythonOutput = formatFormula(formula, options);
+
         return pythonOutput;
     };
 
