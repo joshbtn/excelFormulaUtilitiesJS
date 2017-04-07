@@ -1298,7 +1298,10 @@
                     useTemplate = true;
                     switch (currentFunctionOnStack.name.toLowerCase()) {
                     case "if":
-                        outstr = currentFunctionOnStack.argumentNumber === 1 ? ":0)" : ")";
+                        outstr = ",))[0]";
+                        if (currentFunctionOnStack.argumentNumber === 1) {
+                          outstr = " or (0" + outstr;
+                        }
                         useTemplate = false;
                         break;
                     default:
@@ -1316,10 +1319,10 @@
                 case "if":
                     switch (currentFunctionOnStack.argumentNumber) {
                     case 0:
-                        outstr = " and ";
+                        outstr = " and (";
                         break;
                     case 1:
-                        outstr = " or ";
+                        outstr = ",) or (";
                         break;
                     }
                     break;
@@ -1371,7 +1374,7 @@
                         case "and":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "&&");
+                                outstr = breakOutRanges(tokenString, " and ");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1380,7 +1383,7 @@
                         case "or":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "||");
+                                outstr = breakOutRanges(tokenString, " or ");
                             } else {
                                 outStr = tokenString;
                             }
