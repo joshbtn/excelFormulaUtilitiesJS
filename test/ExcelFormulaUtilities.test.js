@@ -1,8 +1,8 @@
 "use strict";
 
-let assert = require('assert');
+const assert = require('assert');
+const formula = require('../index.js');
 
-let formula = require('../index.js');
 describe("ExcelFormulaUtilities", () => {
 
   describe("#formatFormula", () => {
