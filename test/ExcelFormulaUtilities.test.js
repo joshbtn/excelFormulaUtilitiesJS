@@ -8,7 +8,10 @@ describe("ExcelFormulaUtilities", () => {
   describe("#formatFormula", () => {
 
     it("should replace < or > signs in a formula with &lt; and &gt;.  Tests fix for Issue #58.", () => {
-      assert.equals(true, false)
+      let inputFormula = '"<h1>foo</h1>"';
+      let expected = '"&lt;h1&gt;foo&lt;/h1&gt;"';
+      let actual = formula.formatFormula(inputFormula);
+      assert.equal(actual, expected);
     });
 
     it("should parse a formula that doesn't start with a function. Tests fix for Issue #46.", () => {
@@ -18,6 +21,16 @@ describe("ExcelFormulaUtilities", () => {
       assert.equal(actual, expected);
     });
 
+  });
+
+  describe("#formatFormulaHTML", () => {
+
+    it("should replace < or > signs in a formula with &lt; and &gt;.  Tests fix for Issue #58.", () => {
+      let inputFormula = '"<h1>foo</h1>"';
+      let expected = '=<span class="quote_mark">"</span><span class="text">&lt;h1&gt;foo&lt;/h1&gt;</span><span class="quote_mark">"</span>';
+      let actual = formula.formatFormulaHTML(inputFormula);
+      assert.equal(actual, expected);
+    });
   });
 
   describe("#toCSharp", () => {
