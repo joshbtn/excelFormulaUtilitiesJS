@@ -15,6 +15,7 @@
     formatFormula: function(f, opts) {
       return xl.formatFormula(f, opts);
     },
+    formatFormulaHTML: xl.formatFormulaHTML,
     toJavaScript: xl.formula2JavaScript,
     toCSharp: xl.formula2CSharp,
     toPython: xl.formula2Python

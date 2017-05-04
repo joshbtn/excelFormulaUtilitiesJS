@@ -218,6 +218,8 @@ test("Test parsing a formula that does not start with a function. From Issue #46
   equal(actual, expected, "Should convert to JS");
 })
 
+
+
 test("formula2Python", function() {
   var inputFormula = 'IF("foo" = "foo", "foo", "bar")',
   expected = '("foo"=="foo" and ("foo",) or ("bar",))[0]';
