@@ -1181,6 +1181,21 @@
      * @param {object} options optional param
      */
     var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula, options) {
+        var tokRender = function(tokenStr, token, indent, linbreak){
+          var outstr = tokenStr;
+          switch (token.type.toString()) {
+            case TOK_TYPE_OPERAND:
+              if(token.subtype === TOK_SUBTYPE_TEXT){
+                outstr = tokenStr.replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
+              }
+              break;
+          }
+
+          return {
+              tokenString: outstr,
+              useTemplate: true
+          };
+        }
         var defaultOptions = {
             tmplFunctionStart: '{{autoindent}}<span class="function">{{token}}</span><span class="function_start">(</span><br />',
             tmplFunctionStop: '<br />{{autoindent}}{{token}}<span class="function_stop">)</span>',
@@ -1194,7 +1209,7 @@
             autoLineBreak: 'TOK_TYPE_FUNCTION | TOK_TYPE_ARGUMENT | TOK_SUBTYPE_LOGICAL | TOK_TYPE_OP_IN ',
             trim: true,
             prefix: "=",
-            customTokenRender: null
+            customTokenRender: tokRender
         };
 
         if (options) {
