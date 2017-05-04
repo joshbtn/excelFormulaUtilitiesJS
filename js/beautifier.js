@@ -9,6 +9,11 @@
   //Check and setup name spaces.
   window.excelFormulaBeautifier = window.excelFormulaBeautifier || {};
   window.excelFormulaBeautifier.examples = window.excelFormulaBeautifier.examples || {};
+
+  function htmlReplace(text){
+    return text.replace(/</gi,"&lt;").replace(/>/gi,"&gt;")
+  }
+
   //Configuration
   //-------------------------------
   var config = {
@@ -46,6 +51,7 @@
             _gaq.push(['_trackEvent', 'Formula Input', 'Clicked', lastMode]);
         },
         update: function() {
+
           this.formula = this.input.value;
           //Test to see if the formula has changed, if it hasn't don't do anything
           if (oldFormula === this.formula) {
@@ -68,16 +74,16 @@
                 this.formulaBody.innerHTML = window.excelFormulaUtilities.formatFormulaHTML(this.formula, options);
                 break;
               case "minify":
-                this.formulaBody.innerHTML = this.formula.replace(/\s+/gi, ' ');
+                this.formulaBody.innerHTML = htmlReplace(this.formula.replace(/\s+/gi, ' '));
                 break;
               case "js":
-                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2JavaScript(this.formula);
+                this.formulaBody.innerHTML = htmlReplace(window.excelFormulaUtilities.formula2JavaScript(this.formula));
                 break;
               case "csharp":
-                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2CSharp(this.formula);
+                this.formulaBody.innerHTML = htmlReplace(window.excelFormulaUtilities.formula2CSharp(this.formula));
                 break;
               case "python":
-                this.formulaBody.innerHTML = window.excelFormulaUtilities.formula2Python(this.formula);
+                this.formulaBody.innerHTML = htmlReplace(window.excelFormulaUtilities.formula2Python(this.formula));
                 break;
             }
           } catch (exception) {
