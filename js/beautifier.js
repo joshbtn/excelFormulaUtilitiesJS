@@ -58,7 +58,7 @@
             return;
           }
           var numberOfSpaces = document.getElementById("numberOfSpaces").value || 4;
-          numberOfSpaces = Number.isNaN(Number.parseInt(numberOfSpaces)) ? 4 : Math.min(numberOfSpaces, 10)
+          numberOfSpaces = Number.isNaN(parseInt(numberOfSpaces)) ? 4 : Math.min(numberOfSpaces, 10)
           document.getElementById("numberOfSpaces").value = numberOfSpaces
           // Check to see which mode we're in, render appropriately
           try {
