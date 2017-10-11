@@ -1,6 +1,6 @@
 # Excel Formula Utilities for JavaScript
 
-[![Build Status](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS.svg?branch=master)](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS)
+[![Build Status](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS.svg?branch=master)](https://travis-ci.org/joshbtn/excelFormulaUtilitiesJS) [![CDNJS version](https://img.shields.io/cdnjs/v/excel-formula.svg)](https://cdnjs.com/libraries/excel-formula)
 
 Excel Formula Utilities for JavaScript is a library that can be used to
 pretty print excel formulas or convert excel formulas into JavaScript.
