@@ -52,5 +52,45 @@ describe("ExcelFormulaUtilities", () => {
       assert.equal(actual, expected);
     })
   })
+  
+  describe("#fromBase26", ()=>{
+    
+    it("Various base26 to base10 conversions to work", () =>{
+      var input = 'AAA';
+      var expected = '702';
+    
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+
+      input = 'BAA';
+      expected = '1378';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+
+    asdf
+      input = 'ZZ';
+      expected = '701';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+      input = 'A';
+      expected = '0';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+      input = 'Z';
+      expected = '25';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+      input = 'AA';
+      expected = '26';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+      input = 'AC';
+      expected = '28';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    
+      input = 'BA';
+      expected = '52';
+      assert.equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
+    })
+
+  });
 
 })

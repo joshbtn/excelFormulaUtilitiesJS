@@ -2,40 +2,7 @@ QUnit.module("base26");
 
 window.excelFormulaUtilities.isEu = false;
 
-test("fromBase26", function(){
-  var input = 'AAA';
-  var expected = '702';
 
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'BAA';
-  expected = '1378';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'ZZ';
-  expected = '701';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'A';
-  expected = '0';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'Z';
-  expected = '25';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'AA';
-  expected = '26';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'AC';
-  expected = '28';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-
-  input = 'BA';
-  expected = '52';
-  equal(excelFormulaUtilities.fromBase26(input), expected, input + " = " + expected);
-});
 
 
 QUnit.module("ExcelFormulaUtilities")
