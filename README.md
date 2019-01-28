@@ -9,7 +9,7 @@ You'll need to include something like
 [formula.js](https://github.com/sutoiku/formula.js/) to cover all the functions
 from Excel.
 
-##Install using npm
+## Install using npm
 npm install excel-formula
 
 ## Installation for web
@@ -27,7 +27,7 @@ Grab the latest js files in the dist folder.
 ```javascript
     var formula = require('excel-formula');
     var formattedFormula = formula.formatFormula('IF(1+1=2,"true","false")');
-    console.log(formatFormula);
+    console.log(formattedFormula);
 ```
 ## Node methods
 See basic usage above.
