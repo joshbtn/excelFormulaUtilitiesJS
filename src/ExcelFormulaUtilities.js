@@ -28,7 +28,7 @@
         TOK_TYPE_OP_PRE = types.TOK_TYPE_OP_PRE = "operator-prefix",
         TOK_TYPE_OP_IN = types.TOK_TYPE_OP_IN = "operator-infix",
         TOK_TYPE_OP_POST = types.TOK_TYPE_OP_POST = "operator-postfix",
-        TOK_TYPE_WSPACE = types.TOK_TYPE_WSPACE = "white-space",
+        TOK_TYPE_WHITE_SPACE = types.TOK_TYPE_WHITE_SPACE = "white-space",
         TOK_TYPE_UNKNOWN = types.TOK_TYPE_UNKNOWN = "unknown",
 
         TOK_SUBTYPE_START = types.TOK_SUBTYPE_START = "start",
@@ -228,7 +228,7 @@
                 continue;
             }
 
-            // bracked strings (range offset or linked workbook name)
+            // bracketed strings (range offset or linked workbook name)
             // no embeds (changed to "()" by Excel)
             // end does not mark a token
             if (inRange) {
@@ -264,7 +264,7 @@
                 }
             }
 
-            // independent character evaulation (order not important)
+            // independent character evaluation (order not important)
             // establish state-dependent character evaluations
             if (currentChar() === "\"") {
                 if (token.length > 0) {
@@ -323,7 +323,7 @@
 
             if (currentChar() === ";" ) {
                 if(root.excelFormulaUtilities.isEu){
-                    // If is EU then handle ; as list seperators
+                    // If is EU then handle ; as list separators
                     if (token.length > 0) {
                         tokens.add(token, TOK_TYPE_OPERAND);
                         token = "";
@@ -336,7 +336,7 @@
                     offset += 1;
                     continue;
                 } else {
-                    // Else if not Eu handle ; as array row seperator
+                    // Else if not Eu handle ; as array row separator
                     if (token.length > 0) {
                         tokens.add(token, TOK_TYPE_OPERAND);
                         token = "";
@@ -366,7 +366,7 @@
                     tokens.add(token, TOK_TYPE_OPERAND);
                     token = "";
                 }
-                tokens.add("", TOK_TYPE_WSPACE);
+                tokens.add("", TOK_TYPE_WHITE_SPACE);
                 offset += 1;
                 while ((currentChar() === " ") && (!EOF())) {
                     offset += 1;
@@ -477,7 +477,7 @@
 
             token = tokens.current();
 
-            if (token.type.toString() === TOK_TYPE_WSPACE) {
+            if (token.type.toString() === TOK_TYPE_WHITE_SPACE) {
                 var doAddToken = (tokens.BOF()) || (tokens.EOF());
                 //if ((tokens.BOF()) || (tokens.EOF())) {}
                 doAddToken = doAddToken && (((tokens.previous().type.toString() === TOK_TYPE_FUNCTION) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || ((tokens.previous().type.toString() === TOK_TYPE_SUBEXPR) && (tokens.previous().subtype.toString() === TOK_SUBTYPE_STOP)) || (tokens.previous().type.toString() === TOK_TYPE_OPERAND));
@@ -567,7 +567,7 @@
 
         tokens2.reset();
 
-        // move all tokens to a new collection, excluding all noops
+        // move all tokens to a new collection, excluding all no-ops
         tokens = new F_tokens();
 
         while (tokens2.moveNext()) {
@@ -702,7 +702,7 @@
             ,iteration = false
             ,remainder;
 
-       // Repeatedly divide the numerb by 26 and convert the
+       // Repeatedly divide the number by 26 and convert the
        // remainder into the appropriate letter.
        do {
            remainder = value % 26;
@@ -746,8 +746,6 @@
 
     function applyTokenTemplate(token, options, indent, lineBreak, override) {
 
-        var indt = indent;
-
         var lastToken = typeof arguments[5] === undefined || arguments[5] === null ? null : arguments[5];
 
         var replaceTokenTmpl = function (inStr) {
@@ -780,16 +778,16 @@
             //-----------------FUNCTION------------------
             switch (token.value) {
             case "ARRAY":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArray), tokenString, indent, lineBreak);
                 break;
             case "ARRAYROW":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indent, lineBreak);
                 break;
             default:
                 if (token.subtype.toString() === "start") {
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indt, lineBreak);
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStart), tokenString, indent, lineBreak);
                 } else {
-                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indt, lineBreak);
+                    tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStop), tokenString, indent, lineBreak);
                 }
                 break;
             }
@@ -798,45 +796,45 @@
             //-----------------OPERAND------------------
             switch (token.subtype.toString()) {
             case "error":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandError), tokenString, indent, lineBreak);
                 break;
             case "range":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandRange), tokenString, indent, lineBreak);
                 break;
             case "logical":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandLogical), tokenString, indent, lineBreak);
             break;
             case "number":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandNumber), tokenString, indent, lineBreak);
                 break;
             case "text":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplOperandText), tokenString, indent, lineBreak);
                 break;
             case "argument":
-                tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indent, lineBreak);
                 break;
             default:
                 break;
             }
             break;
         case "operator-infix":
-            tokenString = formatStr(replaceTokenTmpl(options.tmplOperandOperatorInfix), tokenString, indt, lineBreak);
+            tokenString = formatStr(replaceTokenTmpl(options.tmplOperandOperatorInfix), tokenString, indent, lineBreak);
             break;
         case "logical":
-            tokenString = formatStr(replaceTokenTmpl(options.tmplLogical), tokenString, indt, lineBreak);
+            tokenString = formatStr(replaceTokenTmpl(options.tmplLogical), tokenString, indent, lineBreak);
             break;
         case "argument":
         	if(lastToken.type !== "argument"){
-        		tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indt, lineBreak);
+        		tokenString = formatStr(replaceTokenTmpl(options.tmplArgument), tokenString, indent, lineBreak);
             } else  {
-            	tokenString = formatStr(replaceTokenTmpl("{{autoindent}}"+options.tmplArgument), tokenString, indt, lineBreak);
+            	tokenString = formatStr(replaceTokenTmpl("{{autoindent}}"+options.tmplArgument), tokenString, indent, lineBreak);
             }
             break;
         case "subexpression":
             if (token.subtype.toString() === "start") {
-                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStart), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStart), tokenString, indent, lineBreak);
             } else {
-                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStop), tokenString, indt, lineBreak);
+                tokenString = formatStr(replaceTokenTmpl(options.tmplSubexpressionStop), tokenString, indent, lineBreak);
             }
             break;
         default:
@@ -856,7 +854,7 @@
      *   TEMPLATE VALUES
      *  {{autoindent}} - apply auto indent based on current tree level
      *  {{token}} - the named token such as FUNCTION_NAME or "string"
-     *  {{autolinebreak}} - apply linbreak automaticly. tests for next element only at this point
+     *  {{autolinebreak}} - apply line break automatically. tests for next element only at this point
      *
      * Options include:
      *  tmplFunctionStart           - template for the start of a function, the {{token}} will contain the name of the function.
@@ -866,27 +864,27 @@
      *  tmplOperandLogical          - template for logical operators such as + - = ...
      *  tmplOperandNumber           - template for numbers.
      *  tmplOperandText             - template for text/strings.
-     *  tmplArgument				- template for argument seperators such as ,.
+     *  tmplArgument				- template for argument separators such as ,.
      *  tmplFunctionStartArray      - template for the start of an array.
      *  tmplFunctionStartArrayRow   - template for the start of an array row.
      *  tmplFunctionStopArrayRow    - template for the end of an array row.
      *  tmplFunctionStopArray       - template for the end of an array.
-     *  tmplSubexpressionStart      - template for the sub expresson start
-     *  tmplSubexpressionStop       - template for the sub expresson stop
+     *  tmplSubexpressionStart      - template for the sub expression start
+     *  tmplSubexpressionStop       - template for the sub expression stop
      *  tmplIndentTab               - template for the tab char.
      *  tmplIndentSpace             - template for space char.
-     *  autoLineBreak               - when rendering line breaks automaticly which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
+     *  autoLineBreak               - when rendering line breaks automatically which types should it break on. "TOK_SUBTYPE_STOP | TOK_SUBTYPE_START | TOK_TYPE_ARGUMENT"
      *  newLine                     - used for the {{autolinebreak}} replacement as well as some string parsing. if this is not set correctly you may get undesired results. usually \n for text or <br /> for html
      *  trim: true                  - trim the output.
      *	customTokenRender: null     - this is a call back to a custom token function. your call back should look like
      *                                EXAMPLE:
      *
-     *                                    customTokenRender: function(tokenString, token, indent, linbreak){
-     *                                        var outstr = token,
+     *                                    customTokenRender: function(tokenString, token, indent, lineBreak){
+     *                                        var outStr = token,
      *                                            useTemplate = true;
      *                                        // In the return object "useTemplate" tells formatFormula()
      *                                        // weather or not to apply the template to what your return from the "tokenString".
-     *                                        return {tokenString: outstr, useTemplate: useTemplate};
+     *                                        return {tokenString: outStr, useTemplate: useTemplate};
      *                                    }
      *
      *</pre>
@@ -976,11 +974,11 @@
                 matchEndNewLine = new RegExp(options.newLine + '$', ''),
                 autoBreak = testAutoBreak(nextToken),
                 autoIndent = isNewLine,
-                indt = autoIndent ? indent() : options.tmplIndentSpace,
+                indent = autoIndent ? indent() : options.tmplIndentSpace,
                 lineBreak = autoBreak ? options.newLine : "";
 
             // TODO this strips out spaces which breaks part of issue 28.  'Data Sheet' gets changed to DataSheet
-            outputFormula += applyTokenTemplate(token, options, indt, lineBreak, options.customTokenRender, lastToken);
+            outputFormula += applyTokenTemplate(token, options, indent, lineBreak, options.customTokenRender, lastToken);
 
             if (token.subtype.toString() === TOK_SUBTYPE_START) {
                 indentCount += 1;
@@ -1006,18 +1004,18 @@
      * @param {object} options optional param
      */
     var formatFormulaHTML = excelFormulaUtilities.formatFormulaHTML = function (formula, options) {
-        var tokRender = function(tokenStr, token, indent, linbreak){
-          var outstr = tokenStr;
+        var tokRender = function(tokenStr, token, indent, lineBreak){
+          var outStr = tokenStr;
           switch (token.type.toString()) {
             case TOK_TYPE_OPERAND:
               if(token.subtype === TOK_SUBTYPE_TEXT){
-                outstr = tokenStr.replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
+                outStr = tokenStr.replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
               }
               break;
           }
 
           return {
-              tokenString: outstr,
+              tokenString: outStr,
               useTemplate: true
           };
         }
@@ -1058,8 +1056,8 @@
         //Custom callback to format as c#
         var functionStack = [];
 
-        var tokRender = function (tokenStr, token, indent, linbreak) {
-            var outstr = "",
+        var tokRender = function (tokenStr, token, indent, lineBreak) {
+            var outStr = "",
                 /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
                 tokenString = tokenStr,
                 directConversionMap = {
@@ -1089,7 +1087,7 @@
                         name: tokenString,
                         argumentNumber: 0
                     });
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                     useTemplate = true;
 
                     break;
@@ -1099,11 +1097,11 @@
                     useTemplate = true;
                     switch (currentFunctionOnStack.name.toLowerCase()) {
                     case "if":
-                        outstr = currentFunctionOnStack.argumentNumber === 1 ? ":0)" : ")";
+                        outStr = currentFunctionOnStack.argumentNumber === 1 ? ":0)" : ")";
                         useTemplate = false;
                         break;
                     default:
-                        outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                        outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                         break
                     }
                     functionStack.pop();
@@ -1117,24 +1115,24 @@
                 case "if":
                     switch (currentFunctionOnStack.argumentNumber) {
                     case 0:
-                        outstr = "?";
+                        outStr = "?";
                         break;
                     case 1:
-                        outstr = ":";
+                        outStr = ":";
                         break;
                     }
                     break;
                 case "sum":
-                    outstr = "+";
+                    outStr = "+";
                     break;
                 case "and":
-                    outstr = "&&";
+                    outStr = "&&";
                     break;
                 case "or":
-                    outstr = "||";
+                    outStr = "||";
                     break;
                 default:
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                     useTemplate = true;
                     break;
                 }
@@ -1153,11 +1151,11 @@
                           break;
                         }
                         switch (currentFunctionOnStack.name.toLowerCase()) {
-                        // If in the sum function break aout cell names and add
+                        // If in the sum function break out cell names and add
                         case "sum":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "+");
+                                outStr = breakOutRanges(tokenString, "+");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1166,7 +1164,7 @@
                         case "and":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "&&");
+                                outStr = breakOutRanges(tokenString, "&&");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1175,7 +1173,7 @@
                         case "or":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "||");
+                                outStr = breakOutRanges(tokenString, "||");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1185,9 +1183,9 @@
                         default:
                             // Create array for ranges
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = "[" + breakOutRanges(tokenString, ",") +"]";
+                                outStr = "[" + breakOutRanges(tokenString, ",") +"]";
                             } else {
-                                outstr = tokenString;
+                                outStr = tokenString;
                             }
                             //debugger;
                             break;
@@ -1200,15 +1198,15 @@
                 }
 
             default:
-                if( outstr === "" ){
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                if( outStr === "" ){
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                 }
                 useTemplate = true;
                 break;
             }
 
             return {
-                tokenString: outstr,
+                tokenString: outStr,
                 useTemplate: useTemplate
             };
         };
@@ -1269,8 +1267,8 @@
         //Custom callback to format as c#
         var functionStack = [];
 
-        var tokRender = function (tokenStr, token, indent, linbreak) {
-            var outstr = "",
+        var tokRender = function (tokenStr, token, indent, lineBreak) {
+            var outStr = "",
                 /*tokenString = (token.value.length === 0) ? "" : token.value.toString(),*/
                 tokenString = tokenStr,
                 directConversionMap = {
@@ -1303,7 +1301,7 @@
                         name: tokenString,
                         argumentNumber: 0
                     });
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                     useTemplate = true;
 
                     break;
@@ -1313,14 +1311,14 @@
                     useTemplate = true;
                     switch (currentFunctionOnStack.name.toLowerCase()) {
                     case "if":
-                        outstr = ",))[0]";
+                        outStr = ",))[0]";
                         if (currentFunctionOnStack.argumentNumber === 1) {
-                          outstr = " or (0" + outstr;
+                          outStr = " or (0" + outStr;
                         }
                         useTemplate = false;
                         break;
                     default:
-                        outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                        outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                         break
                     }
                     functionStack.pop();
@@ -1334,24 +1332,24 @@
                 case "if":
                     switch (currentFunctionOnStack.argumentNumber) {
                     case 0:
-                        outstr = " and (";
+                        outStr = " and (";
                         break;
                     case 1:
-                        outstr = ",) or (";
+                        outStr = ",) or (";
                         break;
                     }
                     break;
                 case "sum":
-                    outstr = "+";
+                    outStr = "+";
                     break;
                 case "and":
-                    outstr = " and ";
+                    outStr = " and ";
                     break;
                 case "or":
-                    outstr = " or ";
+                    outStr = " or ";
                     break;
                 default:
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                     useTemplate = true;
                     break;
                 }
@@ -1371,16 +1369,16 @@
                         }
 
                         if (RegExp("true|false", "gi").test(tokenString)) {
-                          outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                          outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                           break;
                         }
 
                         switch (currentFunctionOnStack.name.toLowerCase()) {
-                        // If in the sum function break aout cell names and add
+                        // If in the sum function break out cell names and add
                         case "sum":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, "+");
+                                outStr = breakOutRanges(tokenString, "+");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1389,7 +1387,7 @@
                         case "and":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, " and ");
+                                outStr = breakOutRanges(tokenString, " and ");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1398,7 +1396,7 @@
                         case "or":
                             //TODO make sure this is working
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = breakOutRanges(tokenString, " or ");
+                                outStr = breakOutRanges(tokenString, " or ");
                             } else {
                                 outStr = tokenString;
                             }
@@ -1408,9 +1406,9 @@
                         default:
                             // Create array for ranges
                             if(RegExp(":","gi").test(tokenString)){
-                                outstr = "[" + breakOutRanges(tokenString, ",") +"]";
+                                outStr = "[" + breakOutRanges(tokenString, ",") +"]";
                             } else {
-                                outstr = tokenString;
+                                outStr = tokenString;
                             }
                             //debugger;
                             break;
@@ -1423,15 +1421,15 @@
                 }
 
             default:
-                if( outstr === "" ){
-                    outstr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
+                if( outStr === "" ){
+                    outStr = typeof directConversionMap[tokenString.toUpperCase()] === "string" ? directConversionMap[tokenString.toUpperCase()] : tokenString;
                 }
                 useTemplate = true;
                 break;
             }
 
             return {
-                tokenString: outstr,
+                tokenString: outStr,
                 useTemplate: useTemplate
             };
         };
