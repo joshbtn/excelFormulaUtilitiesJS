@@ -17,7 +17,7 @@
 (function () {
 
     if (typeof window === 'undefined') {
-      window = root;
+      window = global;
     }
     var excelFormulaUtilities = window.excelFormulaUtilities = window.excelFormulaUtilities || {};
     var core = window.excelFormulaUtilities.core = {};
