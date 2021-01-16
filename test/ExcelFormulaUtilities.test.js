@@ -53,4 +53,13 @@ describe("ExcelFormulaUtilities", () => {
     })
   })
 
+  describe("#arrayliterals", () => {
+    it("Test parsing a formula that contains array literals. From Issue #89", () => {
+      let inputFormula='={A1:C2,B2:C3}';
+      let expected = '={&nbsp;A1:C2,<br /><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>B2:C3}';
+      let actual = formula.formatFormulaHTML(inputFormula);
+      assert.equal(actual, expected);
+    })
+  })
+
 })

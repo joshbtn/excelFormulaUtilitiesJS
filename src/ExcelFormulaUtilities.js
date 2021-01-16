@@ -185,7 +185,6 @@
 
 
         while (!EOF()) {
-
             // state-dependent character evaluation (order is important)
             // double-quoted strings
             // embeds are doubled
@@ -782,6 +781,12 @@
                 break;
             case "ARRAYROW":
                 tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStartArrayRow), tokenString, indent, lineBreak);
+                break;
+            case "ARRAYSTOP":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStopArray), tokenString, indent, lineBreak);
+                break;
+            case "ARRAYROWSTOP":
+                tokenString = formatStr(replaceTokenTmpl(options.tmplFunctionStopArrayRow), tokenString, indent, lineBreak);
                 break;
             default:
                 if (token.subtype.toString() === "start") {
