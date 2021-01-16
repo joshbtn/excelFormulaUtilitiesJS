@@ -930,7 +930,7 @@
 
         var indentCount = 0;
 
-        var indent = function () {
+        var indent_f = function () {
             var s = "",
                 i = 0;
 
@@ -974,7 +974,7 @@
                 matchEndNewLine = new RegExp(options.newLine + '$', ''),
                 autoBreak = testAutoBreak(nextToken),
                 autoIndent = isNewLine,
-                indent = autoIndent ? indent() : options.tmplIndentSpace,
+                indent = autoIndent ? indent_f() : options.tmplIndentSpace,
                 lineBreak = autoBreak ? options.newLine : "";
 
             // TODO this strips out spaces which breaks part of issue 28.  'Data Sheet' gets changed to DataSheet
