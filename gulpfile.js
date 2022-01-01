@@ -31,7 +31,7 @@ gulp.task('update_bs_fonts', function(){
     .pipe(gulp.dest('fonts'));
 });
 
-gulp.task('libs', ['update_jquery', 'update_bs_js', 'update_bs_css', 'update_bs_fonts']);
+gulp.task('libs', gulp.series('update_jquery', 'update_bs_js', 'update_bs_css', 'update_bs_fonts'));
 
 gulp.task('scripts', function() {
   return gulp.src(paths.scripts)
@@ -61,4 +61,4 @@ gulp.task('watch', function() {
   gulp.watch(paths.scripts, ['site']);
 });
 
-gulp.task('default', ['scripts'])
+gulp.task('default', gulp.series('scripts'))
