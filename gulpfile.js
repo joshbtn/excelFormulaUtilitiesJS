@@ -3,6 +3,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     notify = require('gulp-notify'),
     concat = require('gulp-concat'),
+    webpack = require('webpack-stream'),
     del = require('del'),
     fs = require('fs.extra'),
     paths = {
@@ -33,15 +34,33 @@ gulp.task('update_bs_fonts', function(){
 
 gulp.task('libs', gulp.series('update_jquery', 'update_bs_js', 'update_bs_css', 'update_bs_fonts'));
 
-gulp.task('scripts', function() {
+gulp.task('script-concat', function() {
   return gulp.src(paths.scripts)
-      .pipe(concat('core.js'))
-      .pipe(concat('excel-formula.js'))
-      .pipe(gulp.dest('dist'))
-      .pipe(rename({suffix: '.min'}))
-      .pipe(uglify())
-      .pipe(gulp.dest('dist'))
+  .pipe(webpack({
+    mode: 'production',
+    output: {
+      filename: 'excel-formula.js',
+    },
+    optimization: {
+      minimize: false
+    }
+  }))
+  .pipe(gulp.dest('dist'))
 });
+
+gulp.task('script-minify', function() {
+  return gulp.src(paths.scripts)
+  .pipe(webpack({
+    mode: 'production',
+    output: {
+      filename: 'excel-formula.js',
+    }
+  }))
+  .pipe(rename({suffix: '.min'}))
+  .pipe(gulp.dest('dist'))
+});
+
+gulp.task('scripts', gulp.series(['script-concat', 'script-minify']))
 
 gulp.task('site', function() {
   return gulp.src(paths.siteScripts)
