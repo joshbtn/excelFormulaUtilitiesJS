@@ -65,7 +65,7 @@ describe("ExcelFormulaUtilities", () => {
   describe("#arrayliterals", () => {
     it("Test parsing a formula that contains array literals. From Issue #83", () => {
       let inputFormula='=SORT($B$3:$F$20,{2,1},{-1,1})';
-      let expected = '={&nbsp;A1:C2,<br /><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>B2:C3}';
+      let expected = '=<span class="function">SORT</span><span class="function_start">(</span><br /><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>$B$3:$F$20,<br />{&nbsp;2,<br /><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>1},<br />{-&nbsp;1,<br /><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tabbed">&nbsp;&nbsp;&nbsp;&nbsp;</span>1}<br /><span class="function_stop">)</span>';
       let actual = formula.formatFormulaHTML(inputFormula);
       assert.equal(actual, expected);
     })
