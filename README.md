@@ -7,7 +7,7 @@ You'll need to include something like
 [formula.js](https://github.com/sutoiku/formula.js/) to cover all the functions
 from Excel.
 
-##Install using npm
+## Install using npm
 npm install excel-formula
 
 ## Installation for web
