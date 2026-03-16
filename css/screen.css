@@ -2,6 +2,36 @@ html, body{ font-family: 'Open Sans', sans-serif; margin-top:0.61em;}
 h1, h2, h3, h4, h5, h6 {font-family: 'Open Sans', sans-serif;}
 footer{margin-top:1.61em;text-align:  right}
 
+.bookmark-notice {
+	background: #fdf4cf;
+	border-bottom: 1px solid #ecd58f;
+	color: #4f3d03;
+	font-size: 0.95em;
+	padding: 0.55em 0;
+}
+
+.bookmark-notice a {
+	color: #2f5d88;
+	text-decoration: underline;
+}
+
+.bookmark-notice .container {
+	align-items: center;
+	display: flex;
+	gap: 0.75em;
+	justify-content: space-between;
+}
+
+.bookmark-notice-dismiss {
+	flex-shrink: 0;
+}
+
+.project-status {
+	color: #666;
+	font-size: 0.9em;
+	margin-top: 0.4em;
+}
+
 textarea{border:solid 1px #e4e4e4}
 h1{font-weight:normal; }
 
@@ -23,6 +53,10 @@ header .title{float:left;}
 	header img{width:50px; height: 52px;}
 	header h1{font-size:1.31em; line-height:0.91em; }
 	header p{font-size:0.61em; line-height:1.61em;  }
+	.bookmark-notice .container {
+	  align-items: flex-start;
+	  flex-direction: column;
+	}
 }
 
 /*-----------FORMULA INPUT-------------*/

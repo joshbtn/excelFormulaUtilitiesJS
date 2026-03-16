@@ -43,6 +43,13 @@
 
 <body>
   <!-- Main Content -->
+  <div id="bookmarkNotice" class="bookmark-notice" role="status" aria-live="polite">
+    <div class="container">
+      <span>Please update your bookmark to <a href="https://joshbtn.github.io/excelFormulaUtilitiesJS">https://joshbtn.github.io/excelFormulaUtilitiesJS</a>.</span>
+      <button id="dismissBookmarkNotice" type="button" class="btn btn-xs bookmark-notice-dismiss" aria-label="Dismiss bookmark notice">Dismiss</button>
+    </div>
+  </div>
+
   <header class="container">
 
     <div class="row">
@@ -142,6 +149,7 @@
     <footer>
       <div>&copy; Copyright 2017 <a href="http://j-ben.com" onclick="_gaq.push(['_trackEvent', 'Outbound Links', 'Clicked', 'Josh Bennett Blog'])">Josh Bennett</a></div>
       <div>ExcelFormulaUtilities.js Version: <span id="version"></span></div>
+      <div class="project-status">This project has been archived and is no longer actively maintained.</div>
     </footer>
   </div>
 
@@ -150,6 +158,54 @@
   <script src="js/clipboard.min.js"></script>
   <script src="dist/excel-formula.min.js"></script>
   <script src="js/beautifier.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      "use strict";
+
+      var noticeCookieName = "efu_home_notice_dismissed";
+      var noticeCookieMaxAgeSeconds = 60 * 60 * 24 * 365;
+
+      function getCookie(name) {
+        var escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        var matches = document.cookie.match(new RegExp("(?:^|; )" + escapedName + "=([^;]*)"));
+        return matches ? decodeURIComponent(matches[1]) : null;
+      }
+
+      function setCookie(name, value, maxAgeSeconds) {
+        var cookie = name + "=" + encodeURIComponent(value) + "; path=/; max-age=" + maxAgeSeconds + "; SameSite=Lax";
+        if (window.location.protocol === "https:") {
+          cookie += "; Secure";
+        }
+        document.cookie = cookie;
+      }
+
+      function hideNotice() {
+        var notice = document.getElementById("bookmarkNotice");
+        if (notice) {
+          notice.style.display = "none";
+        }
+      }
+
+      window.addEventListener("load", function() {
+        var notice = document.getElementById("bookmarkNotice");
+        var dismissButton = document.getElementById("dismissBookmarkNotice");
+
+        if (!notice || !dismissButton) {
+          return;
+        }
+
+        if (getCookie(noticeCookieName) === "1") {
+          hideNotice();
+          return;
+        }
+
+        dismissButton.addEventListener("click", function() {
+          setCookie(noticeCookieName, "1", noticeCookieMaxAgeSeconds);
+          hideNotice();
+        });
+      });
+    })();
+  </script>
 
 </body>
 
